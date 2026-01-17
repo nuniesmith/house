@@ -1,0 +1,39 @@
+[package]
+name = "floorplan-frontend"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Workspace dependencies
+floorplan-core = { path = "../core" }
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+
+# WASM/Leptos dependencies
+leptos.workspace = true
+leptos_router.workspace = true
+wasm-bindgen.workspace = true
+web-sys.workspace = true
+js-sys.workspace = true
+console_error_panic_hook.workspace = true
+gloo.workspace = true
+
+# Additional frontend dependencies
+wasm-bindgen-futures = "0.4"
+log = "0.4"
+console_log = { version = "1.0", features = ["color"] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[features]
+default = []
+hydrate = ["leptos/hydrate"]
+csr = ["leptos/csr"]

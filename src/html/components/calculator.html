@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Construction Cost Calculator</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #00ff88;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #0f0f23;
+            border: 3px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #88ff00;
+        }
+        
+        .header h1 {
+            color: #00ff88;
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 0 0 10px #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .app-integration {
+            background: #2a2a5a;
+            border: 2px solid #88ff00;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .integration-info {
+            color: #88ff00;
+            font-weight: bold;
+        }
+
+        .integration-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: #00ff88;
+            color: #0f0f23;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-size: 0.8em;
+        }
+
+        .btn:hover {
+            background: #88ff00;
+            box-shadow: 0 0 15px rgba(136, 255, 0, 0.5);
+        }
+
+        .btn-secondary {
+            background: #2a2a5a;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+
+        .btn-secondary:hover {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .project-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .project-btn {
+            padding: 15px 30px;
+            background: #2a2a5a;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .project-btn.active {
+            background: #00ff88;
+            color: #0f0f23;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+        
+        .project-btn:hover {
+            background: #88ff00;
+            color: #0f0f23;
+        }
+        
+        .project-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #88ff00;
+            border-radius: 10px;
+        }
+        
+        .spec-item {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .spec-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            display: block;
+            color: #88ff00;
+            text-shadow: 0 0 5px #88ff00;
+        }
+        
+        .spec-label {
+            font-size: 0.9em;
+            color: #00ff88;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            background: #1a1a3a;
+            padding: 15px;
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+        }
+        
+        .control-group h4 {
+            margin: 0 0 10px 0;
+            color: #88ff00;
+        }
+        
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .control-item label {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .control-item input, .control-item select {
+            width: 100px;
+            padding: 5px;
+            background: #2a2a5a;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .cost-section {
+            margin-bottom: 25px;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #1a1a3a;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+        }
+        
+        .section-content {
+            padding: 20px;
+            background: #0f0f23;
+        }
+        
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #2a2a5a;
+            border-radius: 8px;
+            border: 1px solid #00ffff;
+        }
+        
+        .item-row:hover {
+            background: #3a3a6a;
+            border-color: #88ff00;
+            transition: all 0.3s ease;
+        }
+        
+        .item-header {
+            background: #00ff88;
+            color: #0f0f23;
+            font-weight: bold;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+            background: #1a1a3a;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+        }
+        
+        input[type="number"]:focus {
+            border-color: #88ff00;
+            outline: none;
+            box-shadow: 0 0 8px rgba(136, 255, 0, 0.5);
+        }
+        
+        .total-row {
+            background: linear-gradient(135deg, #88ff00 0%, #00ff88 100%);
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #0f0f23;
+        }
+        
+        .grand-total {
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            border: 3px solid #ffff00;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+        
+        .grand-total h2 {
+            margin: 0;
+            font-size: 3em;
+            color: #0f0f23;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .cost-per-sf {
+            margin-top: 15px;
+            font-size: 1.3em;
+            color: #1a1a3a;
+            font-weight: bold;
+        }
+        
+        .financing-section {
+            background: #1a1a3a;
+            border: 2px solid #ffff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .financing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .financing-item {
+            background: #2a2a5a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffff00;
+            text-align: center;
+        }
+        
+        .financing-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffff00;
+            margin-bottom: 5px;
+        }
+        
+        .notes {
+            background: #2a2a5a;
+            border: 2px solid #ff8800;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .section-content.collapsed {
+            display: none;
+        }
+        
+        .savings-calculator {
+            background: #1a1a3a;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #2a2a5a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            transition: width 0.3s ease;
+        }
+
+        .sync-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #2a2a5a;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            font-size: 0.9em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sync-indicator.synced {
+            border-color: #88ff00;
+            color: #88ff00;
+        }
+
+        .sync-indicator.syncing {
+            border-color: #ffff00;
+            color: #ffff00;
+        }
+
+        .history-panel {
+            background: #1a1a3a;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: #2a2a5a;
+            border-radius: 6px;
+            border-left: 4px solid #00ffff;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sync-indicator" id="syncIndicator">
+        📊 Standalone Mode
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Universal Construction Cost Calculator</h1>
+            <p style="margin: 10px 0 0 0; color: #88ff00;">Complete cost estimation for any construction project</p>
+        </div>
+
+        <div class="app-integration" id="appIntegration" style="display: none;">
+            <div class="integration-info">
+                <span id="integrationStatus">🔗 Connected to Construction Management App</span>
+            </div>
+            <div class="integration-controls">
+                <button class="btn" onclick="syncToApp()">📊 Sync to Dashboard</button>
+                <button class="btn btn-secondary" onclick="viewProject()">👁️ View Project</button>
+            </div>
+        </div>
+        
+        <div class="project-selector">
+            <button class="project-btn active" onclick="selectProject('bunker')">🏢 Underground Bunker</button>
+            <button class="project-btn" onclick="selectProject('farmhouse')">🏡 Modern Farmhouse</button>
+            <button class="project-btn" onclick="selectProject('cabin')">🏘️ Long Creek Cabin</button>
+        </div>
+        
+        <div class="project-specs" id="project-specs">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h4>📍 Regional Adjustments</h4>
+                <div class="control-item">
+                    <label>Location Factor:</label>
+                    <select id="locationFactor" onchange="updateCalculations()">
+                        <option value="0.8">Rural (-20%)</option>
+                        <option value="1.0" selected>Standard</option>
+                        <option value="1.2">Suburban (+20%)</option>
+                        <option value="1.5">Urban (+50%)</option>
+                        <option value="2.0">Major City (+100%)</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Labor Multiplier:</label>
+                    <input type="number" id="laborMultiplier" value="1.0" step="0.1" min="0.5" max="3.0" onchange="updateCalculations()">
+                </div>
+                <div class="control-item">
+                    <label>Material Multiplier:</label>
+                    <input type="number" id="materialMultiplier" value="1.0" step="0.1" min="0.5" max="3.0" onchange="updateCalculations()">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h4>⚙️ Quality Level</h4>
+                <div class="control-item">
+                    <label>Finish Quality:</label>
+                    <select id="qualityLevel" onchange="updateCalculations()">
+                        <option value="0.8">Basic (-20%)</option>
+                        <option value="1.0" selected>Standard</option>
+                        <option value="1.3">High (+30%)</option>
+                        <option value="1.6">Luxury (+60%)</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Contingency %:</label>
+                    <input type="number" id="contingencyPercent" value="15" min="5" max="30" onchange="updateCalculations()">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h4>📊 Analysis Options</h4>
+                <div class="control-item">
+                    <label>Show Labor Breakdown:</label>
+                    <input type="checkbox" id="showLabor" checked onchange="updateDisplay()">
+                </div>
+                <div class="control-item">
+                    <label>Include Permits:</label>
+                    <input type="checkbox" id="includePermits" checked onchange="updateCalculations()">
+                </div>
+                <div class="control-item">
+                    <label>Auto-Calculate:</label>
+                    <input type="checkbox" id="autoCalculate" checked>
+                </div>
+            </div>
+        </div>
+
+        <div id="cost-sections">
+            <!-- Dynamic cost sections will be loaded here -->
+        </div>
+
+        <div class="grand-total">
+            <h2 id="grandTotal">$0</h2>
+            <div class="cost-per-sf" id="costPerSf">$0 per square foot</div>
+            <div style="margin-top: 15px; font-size: 1.1em; color: #1a1a3a;">
+                <span id="projectType">Project</span> • <span id="totalSqFt">0</span> sq ft • <span id="completionTime">0</span> months
+            </div>
+        </div>
+        
+        <!-- Financing Calculator -->
+        <div class="financing-section">
+            <h3 style="color: #ffff00; margin-top: 0; text-align: center;">💰 FINANCING CALCULATOR</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px;">Down Payment %:</label>
+                    <input type="number" id="downPaymentPercent" value="20" min="0" max="100" onchange="calculateFinancing()">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px;">Interest Rate %:</label>
+                    <input type="number" id="interestRate" value="6.5" step="0.1" min="1" max="15" onchange="calculateFinancing()">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px;">Loan Term (years):</label>
+                    <input type="number" id="loanTerm" value="30" min="5" max="40" onchange="calculateFinancing()">
+                </div>
+            </div>
+            
+            <div class="financing-grid">
+                <div class="financing-item">
+                    <div class="financing-value" id="downPaymentAmount">$0</div>
+                    <div>Down Payment</div>
+                </div>
+                <div class="financing-item">
+                    <div class="financing-value" id="loanAmount">$0</div>
+                    <div>Loan Amount</div>
+                </div>
+                <div class="financing-item">
+                    <div class="financing-value" id="monthlyPayment">$0</div>
+                    <div>Monthly Payment</div>
+                </div>
+                <div class="financing-item">
+                    <div class="financing-value" id="totalInterest">$0</div>
+                    <div>Total Interest</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Savings Calculator -->
+        <div class="savings-calculator">
+            <h3 style="color: #ff00ff; margin-top: 0; text-align: center;">🎯 SAVINGS GOAL CALCULATOR</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 5px;">Monthly Savings:</label>
+                    <input type="number" id="monthlySavings" value="2000" min="0" onchange="calculateSavings()">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px;">Current Savings:</label>
+                    <input type="number" id="currentSavings" value="50000" min="0" onchange="calculateSavings()">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px;">Savings Interest %:</label>
+                    <input type="number" id="savingsRate" value="4.5" step="0.1" min="0" max="10" onchange="calculateSavings()">
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 15px;">
+                <div style="font-size: 1.2em; color: #ff00ff;">Time to Reach Goal: <span id="timeToGoal">0</span> months</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="savingsProgress" style="width: 0%"></div>
+                </div>
+                <div style="font-size: 1em; color: #00ffff;">Progress: <span id="progressPercent">0</span>% complete</div>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="history-panel">
+            <h3 style="color: #00ffff; margin-top: 0; text-align: center;">📜 CALCULATION HISTORY</h3>
+            <div id="calculationHistory">
+                <!-- History items will be populated here -->
+            </div>
+            <div class="export-options">
+                <button class="btn btn-secondary" onclick="exportToCSV()">📄 Export CSV</button>
+                <button class="btn btn-secondary" onclick="exportToPDF()">📑 Export PDF</button>
+                <button class="btn btn-secondary" onclick="savePreset()">💾 Save Preset</button>
+                <button class="btn btn-secondary" onclick="loadPreset()">📂 Load Preset</button>
+            </div>
+        </div>
+
+        <div class="notes">
+            <h3 style="color: #ff8800; margin-top: 0;">📋 Important Notes & Disclaimers:</h3>
+            <ul style="color: #00ff88;">
+                <li><strong>Regional Variations:</strong> Construction costs vary significantly by location. Use location factors to adjust for your area.</li>
+                <li><strong>Quality Levels:</strong> Estimates assume mid-range materials. Luxury finishes can increase costs by 50-100%.</li>
+                <li><strong>Market Conditions:</strong> Material and labor costs fluctuate. Check current local rates.</li>
+                <li><strong>Permits & Inspections:</strong> Requirements vary by jurisdiction. Consult local building departments.</li>
+                <li><strong>Professional Consultation:</strong> These estimates are for planning purposes. Consult licensed contractors for official bids.</li>
+                <li><strong>Timeline Factors:</strong> Construction time affects costs due to inflation and carrying costs.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced project data structure with more detailed information
+        const projectData = {
+            bunker: {
+                name: "Underground Bunker Facility",
+                sqft: 15000,
+                stories: 6,
+                bedrooms: 8,
+                bathrooms: 6,
+                months: 16,
+                sections: [
+                    {
+                        name: "🏗️ Excavation & Foundation",
+                        items: [
+                            { name: "Deep Excavation (72' depth)", qty: 1, unit: 85000, labor: 35000 },
+                            { name: "Reinforced Foundation Pad", qty: 1, unit: 125000, labor: 75000 },
+                            { name: "ICF Wall System (6 levels)", qty: 1, unit: 180000, labor: 220000 },
+                            { name: "Waterproofing & Drainage", qty: 1, unit: 95000, labor: 65000 }
+                        ]
+                    },
+                    {
+                        name: "🔨 Structural Systems",
+                        items: [
+                            { name: "Post-Tensioned Floor Slabs", qty: 6, unit: 85000, labor: 65000 },
+                            { name: "Elevator Shaft Construction", qty: 1, unit: 145000, labor: 85000 },
+                            { name: "Emergency Stairwell", qty: 1, unit: 75000, labor: 45000 },
+                            { name: "Structural Steel & Reinforcement", qty: 1, unit: 185000, labor: 125000 }
+                        ]
+                    },
+                    {
+                        name: "⚡ Power & Electrical",
+                        items: [
+                            { name: "Backup Generators (500kW total)", qty: 1, unit: 285000, labor: 85000 },
+                            { name: "Battery Storage Systems", qty: 1, unit: 385000, labor: 125000 },
+                            { name: "Electrical Distribution", qty: 1, unit: 95000, labor: 145000 },
+                            { name: "Emergency Power Systems", qty: 1, unit: 125000, labor: 75000 }
+                        ]
+                    },
+                    {
+                        name: "🌬️ HVAC & Life Support",
+                        items: [
+                            { name: "CBRN Filtration Systems", qty: 1, unit: 385000, labor: 185000 },
+                            { name: "Air Handling Equipment", qty: 1, unit: 185000, labor: 125000 },
+                            { name: "Environmental Controls", qty: 1, unit: 125000, labor: 85000 },
+                            { name: "Emergency Air Supplies", qty: 1, unit: 85000, labor: 45000 }
+                        ]
+                    },
+                    {
+                        name: "💧 Water & Waste Systems",
+                        items: [
+                            { name: "Water Treatment Plant", qty: 1, unit: 185000, labor: 125000 },
+                            { name: "Water Storage (50,000 gal)", qty: 1, unit: 125000, labor: 85000 },
+                            { name: "Waste Treatment Systems", qty: 1, unit: 145000, labor: 95000 },
+                            { name: "Plumbing Distribution", qty: 1, unit: 85000, labor: 125000 }
+                        ]
+                    },
+                    {
+                        name: "🔒 Security & Communications",
+                        items: [
+                            { name: "Security Systems", qty: 1, unit: 185000, labor: 125000 },
+                            { name: "Communication Equipment", qty: 1, unit: 125000, labor: 85000 },
+                            { name: "Fire Protection Systems", qty: 1, unit: 95000, labor: 65000 },
+                            { name: "Access Control", qty: 1, unit: 65000, labor: 45000 }
+                        ]
+                    },
+                    {
+                        name: "🏠 Interior Finishes",
+                        items: [
+                            { name: "Flooring & Finishes", qty: 15000, unit: 35, labor: 25 },
+                            { name: "Kitchen & Cabinetry", qty: 1, unit: 185000, labor: 125000 },
+                            { name: "Bathroom Finishes", qty: 6, unit: 25000, labor: 15000 },
+                            { name: "Furniture & Equipment", qty: 1, unit: 285000, labor: 85000 }
+                        ]
+                    }
+                ]
+            },
+            farmhouse: {
+                name: "Modern Farmhouse",
+                sqft: 3200,
+                stories: 1,
+                bedrooms: 4,
+                bathrooms: 3,
+                months: 8,
+                sections: [
+                    {
+                        name: "🏗️ Foundation & Structure",
+                        items: [
+                            { name: "Basement Excavation & Foundation", qty: 1, unit: 45000, labor: 35000 },
+                            { name: "Framing Package (2x6 walls)", qty: 1, unit: 85000, labor: 125000 },
+                            { name: "Roof Trusses & Sheathing", qty: 1, unit: 45000, labor: 65000 },
+                            { name: "Structural Steel & Beams", qty: 1, unit: 25000, labor: 15000 }
+                        ]
+                    },
+                    {
+                        name: "🏠 Exterior Systems",
+                        items: [
+                            { name: "Metal Roofing System", qty: 4200, unit: 12, labor: 8 },
+                            { name: "Board & Batten Siding", qty: 3800, unit: 8, labor: 6 },
+                            { name: "Windows & Doors", qty: 1, unit: 35000, labor: 15000 },
+                            { name: "Stone Veneer & Trim", qty: 1, unit: 25000, labor: 35000 }
+                        ]
+                    },
+                    {
+                        name: "⚡ Electrical & Plumbing",
+                        items: [
+                            { name: "Electrical Rough-in & Panel", qty: 1, unit: 18000, labor: 25000 },
+                            { name: "Plumbing Rough-in", qty: 1, unit: 15000, labor: 20000 },
+                            { name: "HVAC System (Heat Pump)", qty: 1, unit: 18000, labor: 12000 },
+                            { name: "Fixtures & Finish Electric", qty: 1, unit: 12000, labor: 8000 }
+                        ]
+                    },
+                    {
+                        name: "🛠️ Interior Systems",
+                        items: [
+                            { name: "Insulation & Drywall", qty: 3200, unit: 8, labor: 12 },
+                            { name: "Hardwood Flooring", qty: 2400, unit: 12, labor: 8 },
+                            { name: "Interior Trim & Doors", qty: 1, unit: 15000, labor: 18000 },
+                            { name: "Paint & Finishes", qty: 1, unit: 8000, labor: 12000 }
+                        ]
+                    },
+                    {
+                        name: "🍳 Kitchen & Baths",
+                        items: [
+                            { name: "Kitchen Cabinets & Island", qty: 1, unit: 35000, labor: 15000 },
+                            { name: "Countertops (Quartz)", qty: 85, unit: 125, labor: 45 },
+                            { name: "Kitchen Appliances", qty: 1, unit: 18000, labor: 2500 },
+                            { name: "Bathroom Finishes (3 baths)", qty: 3, unit: 15000, labor: 12000 }
+                        ]
+                    },
+                    {
+                        name: "🌿 Outdoor & Misc",
+                        items: [
+                            { name: "Covered Porches & Decks", qty: 800, unit: 35, labor: 25 },
+                            { name: "Driveway & Landscaping", qty: 1, unit: 15000, labor: 12000 },
+                            { name: "Permits & Inspections", qty: 1, unit: 8500, labor: 0 },
+                            { name: "Site Preparation", qty: 1, unit: 12000, labor: 8000 }
+                        ]
+                    }
+                ]
+            },
+            cabin: {
+                name: "Long Creek Cabin",
+                sqft: 1577,
+                stories: 2,
+                bedrooms: 3,
+                bathrooms: 2,
+                months: 6,
+                sections: [
+                    {
+                        name: "🏗️ Foundation & Concrete",
+                        items: [
+                            { name: "Concrete Foundation (45 CY)", qty: 45, unit: 150, labor: 80 },
+                            { name: "Foundation Forms & Rebar", qty: 200, unit: 8, labor: 12 },
+                            { name: "Porch Concrete (6 CY)", qty: 6, unit: 160, labor: 90 },
+                            { name: "Site Preparation", qty: 1, unit: 3000, labor: 2000 }
+                        ]
+                    },
+                    {
+                        name: "🔨 Framing & Structure",
+                        items: [
+                            { name: "Floor Joists (2x12)", qty: 84, unit: 45, labor: 15 },
+                            { name: "Wall Framing Lumber", qty: 1, unit: 8500, labor: 6500 },
+                            { name: "Roof Rafters (2x12)", qty: 56, unit: 48, labor: 20 },
+                            { name: "Ridge Beam & Hardware", qty: 1, unit: 1500, labor: 800 }
+                        ]
+                    },
+                    {
+                        name: "🏠 Exterior & Roofing",
+                        items: [
+                            { name: "Exterior Sheathing", qty: 1422, unit: 1.8, labor: 1.2 },
+                            { name: "Clapboard Siding", qty: 1422, unit: 4.5, labor: 3.5 },
+                            { name: "Metal Roofing", qty: 1453, unit: 8, labor: 4 },
+                            { name: "Gutters & Downspouts", qty: 120, unit: 8, labor: 6 }
+                        ]
+                    },
+                    {
+                        name: "🚪 Windows & Doors",
+                        items: [
+                            { name: "Casement Windows (7 units)", qty: 7, unit: 650, labor: 200 },
+                            { name: "Exterior Doors (4 units)", qty: 4, unit: 750, labor: 150 },
+                            { name: "Interior Doors (3 units)", qty: 3, unit: 250, labor: 100 },
+                            { name: "Hardware & Trim", qty: 1, unit: 1200, labor: 800 }
+                        ]
+                    },
+                    {
+                        name: "🧱 Insulation & Drywall",
+                        items: [
+                            { name: "Wall Insulation (R-21)", qty: 1800, unit: 1.2, labor: 0.8 },
+                            { name: "Ceiling Insulation (R-38)", qty: 1200, unit: 1.8, labor: 0.7 },
+                            { name: "Drywall & Finishing", qty: 3500, unit: 1.5, labor: 2.5 },
+                            { name: "Interior Paint", qty: 1, unit: 2500, labor: 3500 }
+                        ]
+                    },
+                    {
+                        name: "🪵 Flooring & Finishes",
+                        items: [
+                            { name: "Subfloor (3/4\" Plywood)", qty: 1577, unit: 2.2, labor: 1.3 },
+                            { name: "Hardwood Flooring", qty: 1577, unit: 8, labor: 4 },
+                            { name: "Bathroom Tile", qty: 100, unit: 12, labor: 8 },
+                            { name: "Interior Trim", qty: 1, unit: 3500, labor: 4500 }
+                        ]
+                    },
+                    {
+                        name: "🔧 MEP Systems",
+                        items: [
+                            { name: "Plumbing Rough & Finish", qty: 1, unit: 8000, labor: 6000 },
+                            { name: "Electrical Rough & Finish", qty: 1, unit: 6500, labor: 8500 },
+                            { name: "Mini-Split HVAC System", qty: 2, unit: 2000, labor: 1500 },
+                            { name: "Stone Chimney", qty: 1, unit: 4000, labor: 3000 }
+                        ]
+                    },
+                    {
+                        name: "🍳 Kitchen & Bath",
+                        items: [
+                            { name: "Kitchen Cabinets", qty: 20, unit: 400, labor: 200 },
+                            { name: "Countertops", qty: 40, unit: 80, labor: 40 },
+                            { name: "Appliances", qty: 1, unit: 6000, labor: 500 },
+                            { name: "Bathroom Fixtures", qty: 2, unit: 2500, labor: 1000 }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let currentProject = 'bunker';
+        let calculationHistory = [];
+        let isAppConnected = false;
+        let parentApp = null;
+
+        // Initialize calculator
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're embedded in the main app
+            checkAppConnection();
+            
+            loadProjectData();
+            updateCalculations();
+            loadCalculationHistory();
+            
+            console.log('🧮 Calculator initialized');
+        });
+
+        // App integration functions
+        function checkAppConnection() {
+            try {
+                if (window.parent !== window && window.parent.constructionApp) {
+                    isAppConnected = true;
+                    parentApp = window.parent.constructionApp;
+                    setupAppIntegration();
+                }
+            } catch (e) {
+                // Cross-origin restrictions or no parent app
+                isAppConnected = false;
+            }
+            
+            updateSyncIndicator();
+        }
+
+        function setupAppIntegration() {
+            document.getElementById('appIntegration').style.display = 'flex';
+            
+            // Listen for messages from parent app
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type) {
+                    switch (event.data.type) {
+                        case 'loadProjectData':
+                            loadExternalProjectData(event.data);
+                            break;
+                        case 'projectChanged':
+                            selectProject(event.data.project);
+                            break;
+                    }
+                }
+            });
+
+            // Request current project data from parent
+            window.parent.postMessage({
+                type: 'requestProjectData',
+                requestId: 'calculator_init'
+            }, '*');
+        }
+
+        function loadExternalProjectData(data) {
+            if (data.project && projectData[data.project]) {
+                selectProject(data.project);
+                
+                // If external data has cost information, use it
+                if (data.data && data.data.cost) {
+                    // Could update specific cost sections here
+                    console.log(`📊 Loaded external data for ${data.project}`);
+                }
+            }
+        }
+
+        function updateSyncIndicator() {
+            const indicator = document.getElementById('syncIndicator');
+            if (isAppConnected) {
+                indicator.textContent = '🔗 Connected to App';
+                indicator.className = 'sync-indicator synced';
+            } else {
+                indicator.textContent = '📊 Standalone Mode';
+                indicator.className = 'sync-indicator';
+            }
+        }
+
+        function syncToApp() {
+            if (isAppConnected && parentApp) {
+                const grandTotal = parseFloat(document.getElementById('grandTotal').textContent.replace(/[$,]/g, ''));
+                
+                // Send updated cost to parent app
+                window.parent.postMessage({
+                    type: 'costUpdated',
+                    project: currentProject,
+                    cost: grandTotal,
+                    timestamp: new Date().toISOString()
+                }, '*');
+
+                // Show sync feedback
+                const indicator = document.getElementById('syncIndicator');
+                indicator.textContent = '📤 Syncing...';
+                indicator.className = 'sync-indicator syncing';
+                
+                setTimeout(() => {
+                    indicator.textContent = '✅ Synced';
+                    indicator.className = 'sync-indicator synced';
+                    setTimeout(() => updateSyncIndicator(), 2000);
+                }, 1000);
+            }
+        }
+
+        function viewProject() {
+            if (isAppConnected) {
+                window.parent.postMessage({
+                    type: 'navigateToProject',
+                    project: currentProject,
+                    view: 'blueprint'
+                }, '*');
+            } else {
+                window.open(`${currentProject}.html`, '_blank');
+            }
+        }
+
+        // Enhanced calculation functions
+        function selectProject(projectType) {
+            currentProject = projectType;
+            
+            // Update active button
+            document.querySelectorAll('.project-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="selectProject('${projectType}')"]`).classList.add('active');
+            
+            loadProjectData();
+            updateCalculations();
+            
+            // Save to history
+            addToHistory('Project Changed', `Switched to ${projectData[projectType].name}`, 0);
+        }
+
+        function loadProjectData() {
+            const project = projectData[currentProject];
+            
+            // Update project specs
+            document.getElementById('project-specs').innerHTML = `
+                <div class="spec-item">
+                    <span class="spec-value">${project.sqft.toLocaleString()}</span>
+                    <div class="spec-label">Total Sq Ft</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${project.stories}</span>
+                    <div class="spec-label">Stories</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${project.bedrooms}</span>
+                    <div class="spec-label">Bedrooms</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${project.bathrooms}</span>
+                    <div class="spec-label">Bathrooms</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${project.months}</span>
+                    <div class="spec-label">Est. Months</div>
+                </div>
+            `;
+            
+            // Update project info in grand total
+            document.getElementById('projectType').textContent = project.name;
+            document.getElementById('totalSqFt').textContent = project.sqft.toLocaleString();
+            document.getElementById('completionTime').textContent = project.months;
+            
+            // Load cost sections
+            loadCostSections(project);
+        }
+
+        function loadCostSections(project) {
+            const sectionsContainer = document.getElementById('cost-sections');
+            sectionsContainer.innerHTML = '';
+            
+            project.sections.forEach((section, sectionIndex) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'cost-section';
+                sectionDiv.innerHTML = `
+                    <div class="section-header" onclick="toggleSection(this)">
+                        ${section.name}
+                        <button class="toggle-btn">−</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="item-row item-header">
+                            <div>Item</div>
+                            <div>Quantity</div>
+                            <div>Unit Cost</div>
+                            <div>Labor</div>
+                            <div>Total</div>
+                        </div>
+                        ${section.items.map((item, itemIndex) => `
+                            <div class="item-row">
+                                <div>${item.name}</div>
+                                <div>${item.qty}</div>
+                                <div><input type="number" value="${item.unit}" data-section="${sectionIndex}" data-item="${itemIndex}" data-type="unit" oninput="updateItemTotal(this)"></div>
+                                <div><input type="number" value="${item.labor}" data-section="${sectionIndex}" data-item="${itemIndex}" data-type="labor" oninput="updateItemTotal(this)"></div>
+                                <div class="total">$${((item.qty * (item.unit + item.labor)).toLocaleString())}</div>
+                            </div>
+                        `).join('')}
+                        <div class="item-row total-row">
+                            <div><strong>${section.name} Subtotal</strong></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div class="section-total"><strong>$0</strong></div>
+                        </div>
+                    </div>
+                `;
+                sectionsContainer.appendChild(sectionDiv);
+            });
+        }
+        
+        function updateItemTotal(input) {
+            const row = input.closest('.item-row');
+            const sectionIndex = parseInt(input.dataset.section);
+            const itemIndex = parseInt(input.dataset.item);
+            const type = input.dataset.type;
+            
+            // Update the project data
+            projectData[currentProject].sections[sectionIndex].items[itemIndex][type] = parseFloat(input.value) || 0;
+            
+            // Calculate row total
+            const item = projectData[currentProject].sections[sectionIndex].items[itemIndex];
+            const total = item.qty * (item.unit + item.labor);
+            row.querySelector('.total').textContent = '$' + total.toLocaleString();
+            
+            if (document.getElementById('autoCalculate').checked) {
+                updateCalculations();
+            }
+        }
+        
+        function updateCalculations() {
+            const project = projectData[currentProject];
+            let grandTotal = 0;
+            
+            // Calculate section totals
+            project.sections.forEach((section, sectionIndex) => {
+                let sectionTotal = 0;
+                section.items.forEach(item => {
+                    const locationFactor = parseFloat(document.getElementById('locationFactor').value);
+                    const laborMultiplier = parseFloat(document.getElementById('laborMultiplier').value);
+                    const materialMultiplier = parseFloat(document.getElementById('materialMultiplier').value);
+                    const qualityLevel = parseFloat(document.getElementById('qualityLevel').value);
+                    
+                    const adjustedUnit = item.unit * materialMultiplier * locationFactor * qualityLevel;
+                    const adjustedLabor = item.labor * laborMultiplier * locationFactor;
+                    const itemTotal = item.qty * (adjustedUnit + adjustedLabor);
+                    
+                    sectionTotal += itemTotal;
+                });
+                
+                // Update section total display
+                const sectionElement = document.querySelector(`[data-section="${sectionIndex}"] .section-total`);
+                if (sectionElement) {
+                    sectionElement.textContent = '$' + sectionTotal.toLocaleString();
+                }
+                
+                grandTotal += sectionTotal;
+            });
+            
+            // Add permits if checked
+            if (document.getElementById('includePermits').checked) {
+                const permitCost = grandTotal * 0.02; // 2% for permits
+                grandTotal += permitCost;
+            }
+            
+            // Add contingency
+            const contingencyPercent = parseFloat(document.getElementById('contingencyPercent').value) / 100;
+            const contingency = grandTotal * contingencyPercent;
+            grandTotal += contingency;
+            
+            // Update displays
+            document.getElementById('grandTotal').textContent = '$' + grandTotal.toLocaleString();
+            document.getElementById('costPerSf').textContent = '$' + (grandTotal / project.sqft).toFixed(2) + ' per square foot';
+            
+            // Update financing and savings
+            calculateFinancing();
+            calculateSavings();
+            
+            // Add to history
+            addToHistory('Calculation Updated', `${project.name} - $${grandTotal.toLocaleString()}`, grandTotal);
+        }
+        
+        function calculateFinancing() {
+            const grandTotal = parseFloat(document.getElementById('grandTotal').textContent.replace(/[$,]/g, ''));
+            const downPaymentPercent = parseFloat(document.getElementById('downPaymentPercent').value) / 100;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+            const loanTermMonths = parseFloat(document.getElementById('loanTerm').value) * 12;
+            
+            const downPayment = grandTotal * downPaymentPercent;
+            const loanAmount = grandTotal - downPayment;
+            
+            let monthlyPayment = 0;
+            let totalInterest = 0;
+            
+            if (loanAmount > 0 && interestRate > 0) {
+                monthlyPayment = loanAmount * (interestRate * Math.pow(1 + interestRate, loanTermMonths)) / 
+                                (Math.pow(1 + interestRate, loanTermMonths) - 1);
+                totalInterest = (monthlyPayment * loanTermMonths) - loanAmount;
+            }
+            
+            document.getElementById('downPaymentAmount').textContent = '$' + downPayment.toLocaleString();
+            document.getElementById('loanAmount').textContent = '$' + loanAmount.toLocaleString();
+            document.getElementById('monthlyPayment').textContent = '$' + monthlyPayment.toLocaleString();
+            document.getElementById('totalInterest').textContent = '$' + totalInterest.toLocaleString();
+        }
+        
+        function calculateSavings() {
+            const grandTotal = parseFloat(document.getElementById('grandTotal').textContent.replace(/[$,]/g, ''));
+            const monthlySavings = parseFloat(document.getElementById('monthlySavings').value);
+            const currentSavings = parseFloat(document.getElementById('currentSavings').value);
+            const savingsRate = parseFloat(document.getElementById('savingsRate').value) / 100 / 12;
+            
+            const neededAmount = grandTotal - currentSavings;
+            let timeToGoal = 0;
+            
+            if (neededAmount > 0 && monthlySavings > 0) {
+                // Calculate months to reach goal with compound interest
+                if (savingsRate > 0) {
+                    timeToGoal = Math.log(1 + (neededAmount * savingsRate) / monthlySavings) / Math.log(1 + savingsRate);
+                } else {
+                    timeToGoal = neededAmount / monthlySavings;
+                }
+            }
+            
+            const progressPercent = Math.min((currentSavings / grandTotal) * 100, 100);
+            
+            document.getElementById('timeToGoal').textContent = Math.ceil(timeToGoal);
+            document.getElementById('progressPercent').textContent = progressPercent.toFixed(1);
+            document.getElementById('savingsProgress').style.width = progressPercent + '%';
+        }
+        
+        // History and export functions
+        function addToHistory(action, description, cost) {
+            const historyItem = {
+                timestamp: new Date().toISOString(),
+                action: action,
+                description: description,
+                cost: cost,
+                project: currentProject
+            };
+            
+            calculationHistory.unshift(historyItem);
+            
+            // Keep only last 10 items
+            if (calculationHistory.length > 10) {
+                calculationHistory = calculationHistory.slice(0, 10);
+            }
+            
+            saveCalculationHistory();
+            updateHistoryDisplay();
+        }
+
+        function loadCalculationHistory() {
+            try {
+                const saved = localStorage.getItem('calculator_history');
+                if (saved) {
+                    calculationHistory = JSON.parse(saved);
+                    updateHistoryDisplay();
+                }
+            } catch (e) {
+                console.warn('Could not load calculation history');
+            }
+        }
+
+        function saveCalculationHistory() {
+            try {
+                localStorage.setItem('calculator_history', JSON.stringify(calculationHistory));
+            } catch (e) {
+                console.warn('Could not save calculation history');
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const container = document.getElementById('calculationHistory');
+            if (calculationHistory.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #88ff00; padding: 20px;">No calculations yet</div>';
+                return;
+            }
+            
+            container.innerHTML = calculationHistory.map(item => `
+                <div class="history-item">
+                    <div>
+                        <strong>${item.action}</strong><br>
+                        <small>${item.description}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>${item.cost > 0 ? '$' + item.cost.toLocaleString() : ''}</strong><br>
+                        <small>${new Date(item.timestamp).toLocaleString()}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function exportToCSV() {
+            const project = projectData[currentProject];
+            const grandTotal = parseFloat(document.getElementById('grandTotal').textContent.replace(/[$,]/g, ''));
+            
+            let csv = 'Section,Item,Quantity,Unit Cost,Labor Cost,Total Cost\n';
+            
+            project.sections.forEach(section => {
+                section.items.forEach(item => {
+                    const total = item.qty * (item.unit + item.labor);
+                    csv += `"${section.name}","${item.name}",${item.qty},${item.unit},${item.labor},${total}\n`;
+                });
+            });
+            
+            csv += `\n"Grand Total","","","","",${grandTotal}\n`;
+            
+            downloadFile(csv, `${currentProject}_cost_estimate.csv`, 'text/csv');
+            addToHistory('Export CSV', `Exported ${project.name} to CSV`, grandTotal);
+        }
+
+        function exportToPDF() {
+            // This would require a PDF library - for now, just show the functionality
+            const grandTotal = parseFloat(document.getElementById('grandTotal').textContent.replace(/[$,]/g, ''));
+            addToHistory('Export PDF', `Exported ${projectData[currentProject].name} to PDF`, grandTotal);
+            alert('PDF export functionality would be implemented with a PDF library like jsPDF');
+        }
+
+        function savePreset() {
+            const presetName = prompt('Enter preset name:');
+            if (presetName) {
+                const preset = {
+                    name: presetName,
+                    project: currentProject,
+                    locationFactor: document.getElementById('locationFactor').value,
+                    laborMultiplier: document.getElementById('laborMultiplier').value,
+                    materialMultiplier: document.getElementById('materialMultiplier').value,
+                    qualityLevel: document.getElementById('qualityLevel').value,
+                    contingencyPercent: document.getElementById('contingencyPercent').value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                try {
+                    const presets = JSON.parse(localStorage.getItem('calculator_presets') || '[]');
+                    presets.push(preset);
+                    localStorage.setItem('calculator_presets', JSON.stringify(presets));
+                    addToHistory('Save Preset', `Saved preset: ${presetName}`, 0);
+                    alert('Preset saved successfully!');
+                } catch (e) {
+                    alert('Failed to save preset');
+                }
+            }
+        }
+
+        function loadPreset() {
+            try {
+                const presets = JSON.parse(localStorage.getItem('calculator_presets') || '[]');
+                if (presets.length === 0) {
+                    alert('No presets saved');
+                    return;
+                }
+                
+                const presetList = presets.map((p, i) => `${i}: ${p.name} (${p.project})`).join('\n');
+                const choice = prompt(`Select preset:\n${presetList}\n\nEnter number:`);
+                
+                if (choice !== null && presets[parseInt(choice)]) {
+                    const preset = presets[parseInt(choice)];
+                    
+                    // Apply preset values
+                    selectProject(preset.project);
+                    document.getElementById('locationFactor').value = preset.locationFactor;
+                    document.getElementById('laborMultiplier').value = preset.laborMultiplier;
+                    document.getElementById('materialMultiplier').value = preset.materialMultiplier;
+                    document.getElementById('qualityLevel').value = preset.qualityLevel;
+                    document.getElementById('contingencyPercent').value = preset.contingencyPercent;
+                    
+                    updateCalculations();
+                    addToHistory('Load Preset', `Loaded preset: ${preset.name}`, 0);
+                }
+            } catch (e) {
+                alert('Failed to load presets');
+            }
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const button = header.querySelector('.toggle-btn');
+            
+            content.classList.toggle('collapsed');
+            button.textContent = content.classList.contains('collapsed') ? '+' : '−';
+        }
+        
+        function updateDisplay() {
+            updateCalculations();
+        }
+    </script>
+</body>
+</html>

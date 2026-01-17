@@ -1,0 +1,21 @@
+# ============================================
+# FloorPlan Designer - Docker Compose
+# ============================================
+# Simple setup for house build planning project
+# ============================================
+
+services:
+    floorplan:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        container_name: floorplan-designer
+        ports:
+            - "${PORT:-8666}:80"
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost/"]
+            interval: 30s
+            timeout: 3s
+            retries: 3
+            start_period: 5s

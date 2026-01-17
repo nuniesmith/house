@@ -1,325 +1,136 @@
-# Construction Management Suite - Docker Deployment
+# 🏠 FloorPlan Designer
 
-This guide provides instructions for containerizing and deploying the Construction Management Suite using Docker and Docker Compose.
+A web application for designing floor plans and calculating construction materials for our house build.
 
-## 📋 Prerequisites
+## 📋 Features
 
-- Docker Engine 20.10 or later
-- Docker Compose 2.0 or later
-- Git (for cloning the repository)
+- **Interactive Floor Plan Designer** - Design rooms, walls, doors, and windows visually
+- **Material Calculator** - Automatically calculate materials needed based on your floor plan
+- **Cost Estimation** - Get cost estimates across different quality tiers (Economy, Standard, Premium, Luxury)
+- **Multi-room Support** - Support for all room types (bedrooms, bathrooms, kitchen, garage, porches, etc.)
 
 ## 🏗️ Project Structure
 
 ```
-construction-management-suite/
-├── Dockerfile              # Container definition
-├── docker-compose.yml      # Multi-container orchestration
-├── nginx.conf              # Nginx web server configuration
-├── .dockerignore           # Files to exclude from Docker build
-├── index.html              # Main application shell
-├── dashboard.html          # Dashboard page
-├── calculator.html         # Cost calculator
-├── scheduler.html          # Project scheduler
-├── bunker.html            # Bunker blueprints
-├── house.html             # Farmhouse blueprints
-├── cabin.html             # Cabin blueprints
-├── bunker.md              # Bunker construction guide
-├── house.md               # Farmhouse construction guide
-├── cabin.md               # Cabin construction guide
-├── main.js                # Main application logic
-└── js/
-    └── modules/
-        └── marked.js       # Markdown parser
+house/
+├── docker-compose.yml            # Docker Compose configuration
+├── run.sh                        # Project runner script
+├── docker/
+│   └── Dockerfile                # Docker build file
+├── config/
+│   └── nginx.conf                # Nginx configuration
+└── src/
+    ├── html/                     # Static HTML frontend
+    │   ├── index.html
+    │   ├── assets/               # Static assets
+    │   │   ├── farmhouse_floorplan.jpg
+    │   │   ├── css/              # Stylesheets
+    │   │   │   └── main.css      # Main stylesheet
+    │   │   ├── js/               # JavaScript files
+    │   │   └── data/             # Data files
+    │   ├── components/           # UI components
+    │   └── projects/             # Project-specific pages
+    │       ├── farmhouse/
+    │       ├── cabin/
+    │       └── bunker/
+    └── crates/                   # Rust libraries (for future use)
+        ├── core/
+        ├── backend/
+        └── frontend/
 ```
 
 ## 🚀 Quick Start
 
-### Option 1: Using Docker Compose (Recommended)
+### Prerequisites
 
-1. **Clone or prepare your project files:**
-   ```bash
-   # Ensure all your HTML, JS, CSS, and MD files are in the project directory
-   ls -la
-   # Should show: index.html, dashboard.html, calculator.html, etc.
-   ```
+- Docker and Docker Compose installed
 
-2. **Start the application:**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Access the application:**
-   - Open your browser and navigate to: `http://localhost:8080`
-   - The Construction Management Suite welcome screen should appear
-
-4. **Stop the application:**
-   ```bash
-   docker-compose down
-   ```
-
-### Option 2: Using Docker directly
-
-1. **Build the image:**
-   ```bash
-   docker build -t construction-management-suite .
-   ```
-
-2. **Run the container:**
-   ```bash
-   docker run -d \
-     --name construction-app \
-     -p 8080:80 \
-     construction-management-suite
-   ```
-
-3. **Access the application:**
-   - Navigate to: `http://localhost:8080`
-
-## 🔧 Configuration Options
-
-### Environment Variables
-
-The application can be configured using environment variables in the `docker-compose.yml`:
-
-```yaml
-environment:
-  - NGINX_HOST=localhost
-  - NGINX_PORT=80
-```
-
-### Port Configuration
-
-To change the external port, modify the `docker-compose.yml`:
-
-```yaml
-ports:
-  - "3000:80"  # Application will be available on port 3000
-```
-
-### Volume Mounts for Development
-
-For development with live file updates, uncomment the volume mount in `docker-compose.yml`:
-
-```yaml
-volumes:
-  - ./:/usr/share/nginx/html:ro
-```
-
-This allows you to edit files locally and see changes immediately without rebuilding.
-
-## 🌐 Production Deployment
-
-### Option 1: Basic Production Setup
-
-1. **Build for production:**
-   ```bash
-   docker-compose -f docker-compose.yml up -d --build
-   ```
-
-2. **Use environment-specific configuration:**
-   ```bash
-   # Create production environment file
-   echo "NGINX_HOST=your-domain.com" > .env
-   echo "NGINX_PORT=80" >> .env
-   
-   docker-compose --env-file .env up -d
-   ```
-
-### Option 2: With Reverse Proxy (Traefik)
-
-Uncomment the Traefik service in `docker-compose.yml` for automatic SSL and routing:
-
-```yaml
-traefik:
-  image: traefik:v2.10
-  container_name: traefik
-  # ... configuration
-```
-
-### Option 3: Behind External Load Balancer
-
-For deployment behind external load balancers (AWS ALB, CloudFlare, etc.):
-
-1. **Modify nginx.conf** to trust forwarded headers:
-   ```nginx
-   real_ip_header X-Forwarded-For;
-   set_real_ip_from 10.0.0.0/8;
-   ```
-
-2. **Update security headers** for your domain:
-   ```nginx
-   add_header Content-Security-Policy "default-src 'self' https://your-domain.com;...";
-   ```
-
-## 🔍 Monitoring and Logging
-
-### View Application Logs
+### Using the Run Script (Recommended)
 
 ```bash
-# View real-time logs
-docker-compose logs -f construction-app
+# Make run.sh executable
+chmod +x run.sh
 
-# View nginx access logs
-docker-compose exec construction-app tail -f /var/log/nginx/construction_access.log
+# Start the application
+./run.sh start
 
-# View nginx error logs
-docker-compose exec construction-app tail -f /var/log/nginx/construction_error.log
+# View all available commands
+./run.sh help
 ```
 
-### Health Checks
+The application will be available at **http://localhost:8666**
 
-The container includes a health check endpoint:
+### Manual Docker Commands
 
 ```bash
-# Check container health
-docker-compose ps
+# Build the Docker image
+docker compose build
 
-# Manual health check
-curl http://localhost:8080/health
+# Start the application
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop the application
+docker compose down
 ```
 
-## 🐛 Troubleshooting
+## 📜 Run Script Commands
 
-### Common Issues
+| Command | Description |
+|---------|-------------|
+| `./run.sh start` | Start the application |
+| `./run.sh stop` | Stop the application |
+| `./run.sh restart` | Restart the application |
+| `./run.sh build` | Build the Docker image |
+| `./run.sh logs` | View application logs |
+| `./run.sh status` | Show status of services |
+| `./run.sh clean` | Clean up containers and images |
+| `./run.sh help` | Show help message |
 
-1. **Port already in use:**
-   ```bash
-   # Check what's using port 8080
-   lsof -i :8080
-   
-   # Use a different port
-   docker-compose down
-   # Edit docker-compose.yml to change port mapping
-   docker-compose up -d
-   ```
+## 🌐 Environment Variables
 
-2. **Files not loading:**
-   ```bash
-   # Check if all required files are present
-   docker-compose exec construction-app ls -la /usr/share/nginx/html/
-   
-   # Check nginx configuration
-   docker-compose exec construction-app nginx -t
-   ```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `8666` | Port to access the application |
 
-3. **Permission issues:**
-   ```bash
-   # Fix file permissions
-   docker-compose exec construction-app chmod -R 755 /usr/share/nginx/html
-   ```
-
-### Performance Optimization
-
-1. **Enable additional caching:**
-   ```nginx
-   # Add to nginx.conf
-   location ~* \.(html|js|css)$ {
-       expires 24h;
-       add_header Cache-Control "public, must-revalidate";
-   }
-   ```
-
-2. **Optimize Docker image size:**
-   ```dockerfile
-   # Use multi-stage build for smaller images
-   FROM nginx:alpine AS production
-   COPY --from=build /app/dist /usr/share/nginx/html
-   ```
-
-## 📊 Scaling
-
-### Horizontal Scaling
-
-```yaml
-# In docker-compose.yml
-services:
-  construction-app:
-    deploy:
-      replicas: 3
-    ports:
-      - "8080-8082:80"
-```
-
-### Load Balancing
-
-Use the included Traefik configuration or external load balancers:
-
-```yaml
-# Traefik labels for load balancing
-labels:
-  - "traefik.enable=true"
-  - "traefik.http.services.construction.loadbalancer.server.port=80"
-```
-
-## 🔒 Security
-
-### HTTPS Setup
-
-For production, always use HTTPS:
-
-1. **With Traefik (automatic):**
-   ```yaml
-   labels:
-     - "traefik.http.routers.construction.tls.certresolver=letsencrypt"
-   ```
-
-2. **With external SSL termination:**
-   - Configure your load balancer for SSL
-   - Update nginx.conf to handle forwarded headers
-
-### Security Headers
-
-The nginx configuration includes security headers:
-- X-Frame-Options
-- X-XSS-Protection  
-- X-Content-Type-Options
-- Content-Security-Policy
-
-## 📈 Maintenance
-
-### Updates
-
-1. **Update application:**
-   ```bash
-   # Pull latest changes
-   git pull
-   
-   # Rebuild and restart
-   docker-compose up -d --build
-   ```
-
-2. **Update base image:**
-   ```bash
-   # Update nginx base image
-   docker-compose pull
-   docker-compose up -d --force-recreate
-   ```
-
-### Backup
-
+Example:
 ```bash
-# Backup application data (if using volumes)
-docker run --rm -v construction-data:/data -v $(pwd):/backup alpine tar czf /backup/construction-backup.tar.gz /data
-
-# Backup configuration
-cp docker-compose.yml nginx.conf /path/to/backup/
+PORT=9000 ./run.sh start
 ```
 
-## 🎯 Next Steps
+## 📁 Project Files
 
-1. **Domain Setup:** Configure your domain to point to the server
-2. **SSL Certificate:** Set up HTTPS using Let's Encrypt or your certificate provider
-3. **Monitoring:** Add application monitoring with tools like Prometheus/Grafana
-4. **CI/CD:** Set up automated deployment pipelines
-5. **Backup Strategy:** Implement automated backups for any user data
+### HTML Frontend
 
-## 🆘 Support
+The static HTML frontend is located in `src/html/` and includes:
 
-For issues with the Docker deployment:
+- `index.html` - Main entry point
+- `components/` - Reusable UI components (calculator, dashboard, scheduler)
+- `projects/` - Project-specific pages for different house plans
 
-1. Check the troubleshooting section above
-2. Review container logs: `docker-compose logs`
-3. Verify all required files are present in the project directory
-4. Ensure Docker and Docker Compose are properly installed
+### Assets
 
-The application should be accessible at `http://localhost:8080` and display the Construction Management Suite welcome screen with options to launch the full application or access specific tools.# house
+Static assets are in `src/html/assets/`:
+
+- `farmhouse_floorplan.jpg` - Reference floor plan image
+- `css/main.css` - Main stylesheet with CSS variables and common styles
+- `js/` - JavaScript modules
+- `data/` - Data files
+
+### Configuration
+
+- `config/nginx.conf` - Nginx web server configuration with caching and security headers
+
+## 🏠 House Projects
+
+This tool supports multiple house project configurations:
+
+- **Farmhouse** - Main house build project
+- **Cabin** - Cabin/guest house planning
+- **Bunker** - Storage/utility building
+
+## 📄 License
+
+Personal project for house build planning.

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Construction Scheduler & Timeline Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #00ff88;
+            overflow-x: auto;
+        }
+        
+        .scheduler-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-areas: 
+                "sidebar header"
+                "sidebar main";
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: 80px 1fr;
+        }
+        
+        .sidebar {
+            grid-area: sidebar;
+            background: #0f0f23;
+            border-right: 2px solid #00ff88;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            grid-area: header;
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #88ff00;
+        }
+        
+        .main-content {
+            grid-area: main;
+            padding: 20px;
+            background: #1a1a2e;
+            overflow: auto;
+        }
+        
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #88ff00;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        
+        .project-selector {
+            margin-bottom: 20px;
+        }
+        
+        .project-selector select {
+            width: 100%;
+            padding: 10px;
+            background: #2a2a5a;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #2a2a5a;
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+        }
+        
+        .sidebar-section h3 {
+            color: #88ff00;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 1em;
+        }
+        
+        .task-list {
+            list-style: none;
+        }
+        
+        .task-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #1a1a3a;
+            border-radius: 4px;
+            border-left: 4px solid #00ff88;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .task-item:hover {
+            background: #3a3a6a;
+            border-left-color: #88ff00;
+        }
+        
+        .task-item.critical {
+            border-left-color: #ff4444;
+        }
+        
+        .task-item.completed {
+            border-left-color: #44ff44;
+            opacity: 0.7;
+        }
+        
+        .gantt-container {
+            background: #0f0f23;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .gantt-header {
+            background: #00ff88;
+            color: #0f0f23;
+            padding: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .gantt-controls {
+            padding: 15px;
+            background: #2a2a5a;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .gantt-controls select,
+        .gantt-controls input {
+            padding: 8px;
+            background: #1a1a3a;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .gantt-chart {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 600px;
+            background: #0f0f23;
+        }
+        
+        .gantt-grid {
+            display: grid;
+            min-width: 1200px;
+        }
+        
+        .gantt-timeline {
+            display: grid;
+            grid-template-columns: 250px repeat(52, 60px);
+            gap: 1px;
+            background: #2a2a5a;
+            padding: 10px;
+        }
+        
+        .timeline-header {
+            background: #00ff88;
+            color: #0f0f23;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        
+        .timeline-cell {
+            background: #1a1a3a;
+            border: 1px solid #2a2a5a;
+            min-height: 40px;
+            position: relative;
+        }
+        
+        .task-row {
+            display: grid;
+            grid-template-columns: 250px repeat(52, 60px);
+            gap: 1px;
+            margin-bottom: 2px;
+        }
+        
+        .task-label {
+            background: #2a2a5a;
+            padding: 10px;
+            border: 1px solid #00ff88;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        
+        .task-bar {
+            background: linear-gradient(90deg, #00ff88, #88ff00);
+            color: #0f0f23;
+            padding: 5px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .task-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 255, 136, 0.3);
+        }
+        
+        .task-bar.critical {
+            background: linear-gradient(90deg, #ff4444, #ff8888);
+        }
+        
+        .task-bar.completed {
+            background: linear-gradient(90deg, #44ff44, #88ff88);
+        }
+        
+        .task-bar.delayed {
+            background: linear-gradient(90deg, #ffff44, #ffff88);
+            color: #0f0f23;
+        }
+        
+        .milestone {
+            width: 20px;
+            height: 20px;
+            background: #ffff00;
+            transform: rotate(45deg);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid #0f0f23;
+        }
+        
+        .dependency-line {
+            position: absolute;
+            height: 2px;
+            background: #ff8800;
+            z-index: 10;
+        }
+        
+        .calendar-view {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-top: 20px;
+            background: #0f0f23;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .calendar-header {
+            background: #00ff88;
+            color: #0f0f23;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .calendar-day {
+            background: #2a2a5a;
+            border: 1px solid #00ff88;
+            min-height: 80px;
+            padding: 5px;
+            position: relative;
+        }
+        
+        .calendar-day.today {
+            background: #88ff00;
+            color: #0f0f23;
+        }
+        
+        .calendar-day.has-tasks {
+            border-color: #ff8800;
+            border-width: 2px;
+        }
+        
+        .calendar-task {
+            background: #00ff88;
+            color: #0f0f23;
+            padding: 2px 4px;
+            margin: 1px 0;
+            border-radius: 3px;
+            font-size: 0.7em;
+            cursor: pointer;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #2a2a5a;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #88ff00;
+            text-shadow: 0 0 8px #88ff00;
+        }
+        
+        .stat-label {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #00ff88;
+        }
+        
+        .progress-ring {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px auto;
+        }
+        
+        .progress-ring-circle {
+            stroke: #2a2a5a;
+            stroke-width: 8;
+            fill: transparent;
+            r: 30;
+            cx: 40;
+            cy: 40;
+        }
+        
+        .progress-ring-progress {
+            stroke: #00ff88;
+            stroke-width: 8;
+            fill: transparent;
+            r: 30;
+            cx: 40;
+            cy: 40;
+            stroke-dasharray: 188.4;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #00ff88;
+            color: #0f0f23;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #88ff00;
+            box-shadow: 0 0 15px rgba(136, 255, 0, 0.5);
+        }
+        
+        .btn-secondary {
+            background: #2a2a5a;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+        
+        .btn-secondary:hover {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0f0f23;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            color: #88ff00;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #88ff00;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: #2a2a5a;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .critical-path {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a2a5a;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: #2a2a5a;
+            border: none;
+            cursor: pointer;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 2px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .tab:hover {
+            background: #88ff00;
+            color: #0f0f23;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 1024px) {
+            .scheduler-container {
+                grid-template-areas: 
+                    "header"
+                    "sidebar"
+                    "main";
+                grid-template-columns: 1fr;
+                grid-template-rows: 80px auto 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid #00ff88;
+            }
+            
+            .gantt-timeline {
+                grid-template-columns: 200px repeat(52, 40px);
+            }
+            
+            .task-row {
+                grid-template-columns: 200px repeat(52, 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scheduler-container">
+        <nav class="sidebar">
+            <div class="logo">📅 SCHEDULER</div>
+            
+            <div class="project-selector">
+                <select id="projectSelect" onchange="switchProject()">
+                    <option value="bunker">🏢 Underground Bunker</option>
+                    <option value="farmhouse">🏡 Modern Farmhouse</option>
+                    <option value="cabin">🏘️ Long Creek Cabin</option>
+                </select>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>📊 Project Stats</h3>
+                <div id="projectStats">
+                    <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                        <span>Total Tasks:</span>
+                        <span id="totalTasks">45</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                        <span>Completed:</span>
+                        <span id="completedTasks">12</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                        <span>In Progress:</span>
+                        <span id="inProgressTasks">8</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                        <span>Delayed:</span>
+                        <span id="delayedTasks" style="color: #ff4444;">3</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>🎯 Critical Path</h3>
+                <ul class="task-list" id="criticalPath">
+                    <li class="task-item critical">Foundation Excavation</li>
+                    <li class="task-item critical">Concrete Pour</li>
+                    <li class="task-item critical">Structural Framing</li>
+                    <li class="task-item critical">Roof Installation</li>
+                    <li class="task-item critical">Final Inspection</li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>⚠️ Upcoming Deadlines</h3>
+                <ul class="task-list" id="upcomingDeadlines">
+                    <li class="task-item">Foundation Inspection - 3 days</li>
+                    <li class="task-item">Material Delivery - 5 days</li>
+                    <li class="task-item">Permit Renewal - 12 days</li>
+                    <li class="task-item">Progress Review - 15 days</li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>👥 Resource Allocation</h3>
+                <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                    <span>General Crew:</span>
+                    <span>85%</span>
+                </div>
+                <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                    <span>Specialists:</span>
+                    <span>60%</span>
+                </div>
+                <div style="margin: 8px 0; display: flex; justify-content: space-between;">
+                    <span>Equipment:</span>
+                    <span>75%</span>
+                </div>
+            </div>
+        </nav>
+        
+        <header class="header">
+            <div>
+                <h1>Advanced Construction Scheduler</h1>
+                <p id="currentProjectName">Underground Bunker Facility</p>
+            </div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button class="btn" onclick="openTaskModal()">+ Add Task</button>
+                <button class="btn btn-secondary" onclick="exportSchedule()">📤 Export</button>
+                <div style="color: #0f0f23; font-weight: bold;" id="currentDate"></div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <svg class="progress-ring">
+                        <circle class="progress-ring-circle"></circle>
+                        <circle class="progress-ring-progress" id="overallProgress"></circle>
+                    </svg>
+                    <div class="stat-value" id="progressPercentage">27%</div>
+                    <div class="stat-label">Overall Progress</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="daysRemaining">147</div>
+                    <div class="stat-label">Days Remaining</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="tasksOnTrack">42</div>
+                    <div class="stat-label">Tasks On Track</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="budgetUtilized">$8.2M</div>
+                    <div class="stat-label">Budget Utilized</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('gantt')">📊 Gantt Chart</button>
+                <button class="tab" onclick="showTab('calendar')">📅 Calendar View</button>
+                <button class="tab" onclick="showTab('resources')">👥 Resources</button>
+                <button class="tab" onclick="showTab('reports')">📄 Reports</button>
+            </div>
+            
+            <!-- Gantt Chart Tab -->
+            <div id="gantt" class="tab-content active">
+                <div class="gantt-container">
+                    <div class="gantt-header">
+                        📊 Project Timeline - Gantt Chart View
+                    </div>
+                    
+                    <div class="gantt-controls">
+                        <label>View Scale:</label>
+                        <select id="timeScale" onchange="updateTimeScale()">
+                            <option value="weeks" selected>Weeks</option>
+                            <option value="months">Months</option>
+                            <option value="days">Days</option>
+                        </select>
+                        
+                        <label>Start Date:</label>
+                        <input type="date" id="startDate" value="2025-06-01" onchange="updateTimeline()">
+                        
+                        <label>Show:</label>
+                        <select id="taskFilter" onchange="filterTasks()">
+                            <option value="all">All Tasks</option>
+                            <option value="critical">Critical Path Only</option>
+                            <option value="delayed">Delayed Tasks</option>
+                            <option value="upcoming">Upcoming Tasks</option>
+                        </select>
+                        
+                        <button class="btn btn-secondary" onclick="autoSchedule()">🔄 Auto-Schedule</button>
+                    </div>
+                    
+                    <div class="gantt-chart">
+                        <div class="gantt-timeline">
+                            <!-- Timeline Header -->
+                            <div class="timeline-header">Task</div>
+                            <div class="timeline-header">W1</div>
+                            <div class="timeline-header">W2</div>
+                            <div class="timeline-header">W3</div>
+                            <div class="timeline-header">W4</div>
+                            <div class="timeline-header">W5</div>
+                            <div class="timeline-header">W6</div>
+                            <div class="timeline-header">W7</div>
+                            <div class="timeline-header">W8</div>
+                            <div class="timeline-header">W9</div>
+                            <div class="timeline-header">W10</div>
+                            <div class="timeline-header">W11</div>
+                            <div class="timeline-header">W12</div>
+                            <div class="timeline-header">W13</div>
+                            <div class="timeline-header">W14</div>
+                            <div class="timeline-header">W15</div>
+                            <div class="timeline-header">W16</div>
+                            <div class="timeline-header">W17</div>
+                            <div class="timeline-header">W18</div>
+                            <div class="timeline-header">W19</div>
+                            <div class="timeline-header">W20</div>
+                            <div class="timeline-header">W21</div>
+                            <div class="timeline-header">W22</div>
+                            <div class="timeline-header">W23</div>
+                            <div class="timeline-header">W24</div>
+                            <div class="timeline-header">W25</div>
+                            <div class="timeline-header">W26</div>
+                            <div class="timeline-header">W27</div>
+                            <div class="timeline-header">W28</div>
+                            <div class="timeline-header">W29</div>
+                            <div class="timeline-header">W30</div>
+                            <div class="timeline-header">W31</div>
+                            <div class="timeline-header">W32</div>
+                            <div class="timeline-header">W33</div>
+                            <div class="timeline-header">W34</div>
+                            <div class="timeline-header">W35</div>
+                            <div class="timeline-header">W36</div>
+                            <div class="timeline-header">W37</div>
+                            <div class="timeline-header">W38</div>
+                            <div class="timeline-header">W39</div>
+                            <div class="timeline-header">W40</div>
+                            <div class="timeline-header">W41</div>
+                            <div class="timeline-header">W42</div>
+                            <div class="timeline-header">W43</div>
+                            <div class="timeline-header">W44</div>
+                            <div class="timeline-header">W45</div>
+                            <div class="timeline-header">W46</div>
+                            <div class="timeline-header">W47</div>
+                            <div class="timeline-header">W48</div>
+                            <div class="timeline-header">W49</div>
+                            <div class="timeline-header">W50</div>
+                            <div class="timeline-header">W51</div>
+                            <div class="timeline-header">W52</div>
+                        </div>
+                        
+                        <!-- Task Rows -->
+                        <div id="taskRows">
+                            <!-- Site Preparation -->
+                            <div class="task-row">
+                                <div class="task-label">Site Preparation & Excavation</div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"><div class="task-bar completed">SITE PREP</div></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <!-- ... remaining cells ... -->
+                                <div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div>
+                            </div>
+                            
+                            <!-- Foundation Work -->
+                            <div class="task-row">
+                                <div class="task-label">Foundation & Concrete Work</div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"><div class="task-bar critical">FOUNDATION</div></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <!-- ... remaining cells ... -->
+                                <div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div>
+                            </div>
+                            
+                            <!-- Structural Framing -->
+                            <div class="task-row">
+                                <div class="task-label">Structural Framing</div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"><div class="task-bar critical">FRAMING</div></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <!-- ... remaining cells ... -->
+                                <div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div>
+                            </div>
+                            
+                            <!-- MEP Systems -->
+                            <div class="task-row">
+                                <div class="task-label">MEP Systems Installation</div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"><div class="task-bar">MEP ROUGH</div></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <!-- ... remaining cells ... -->
+                                <div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div>
+                            </div>
+                            
+                            <!-- Interior Finishes -->
+                            <div class="task-row">
+                                <div class="task-label">Interior Finishes</div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"><div class="task-bar">FINISHES</div></div>
+                                <div class="timeline-cell"></div>
+                                <!-- ... remaining cells ... -->
+                                <div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div>
+                            </div>
+                            
+                            <!-- Final Inspection -->
+                            <div class="task-row">
+                                <div class="task-label">Final Inspection & Completion</div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"></div>
+                                <div class="timeline-cell"><div class="milestone"></div></div>
+                                <!-- ... remaining cells ... -->
+                                <div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div><div class="timeline-cell"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Calendar View Tab -->
+            <div id="calendar" class="tab-content">
+                <h3 style="color: #88ff00; margin-bottom: 20px;">📅 CALENDAR VIEW - JUNE 2025</h3>
+                <div class="calendar-view">
+                    <div class="calendar-header">SUN</div>
+                    <div class="calendar-header">MON</div>
+                    <div class="calendar-header">TUE</div>
+                    <div class="calendar-header">WED</div>
+                    <div class="calendar-header">THU</div>
+                    <div class="calendar-header">FRI</div>
+                    <div class="calendar-header">SAT</div>
+                    
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day has-tasks">2
+                        <div class="calendar-task">Site Prep Start</div>
+                    </div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day has-tasks">5
+                        <div class="calendar-task">Material Delivery</div>
+                    </div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+                    
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day has-tasks">9
+                        <div class="calendar-task">Foundation Pour</div>
+                    </div>
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day has-tasks">12
+                        <div class="calendar-task">Inspection</div>
+                    </div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+                    
+                    <div class="calendar-day today">15</div>
+                    <div class="calendar-day has-tasks">16
+                        <div class="calendar-task">Framing Start</div>
+                    </div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day has-tasks">19
+                        <div class="calendar-task">Progress Review</div>
+                    </div>
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+                    
+                    <div class="calendar-day">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day has-tasks">26
+                        <div class="calendar-task">MEP Start</div>
+                    </div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+                    
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                    <div class="calendar-day"></div>
+                    <div class="calendar-day"></div>
+                    <div class="calendar-day"></div>
+                    <div class="calendar-day"></div>
+                    <div class="calendar-day"></div>
+                </div>
+            </div>
+            
+            <!-- Resources Tab -->
+            <div id="resources" class="tab-content">
+                <h3 style="color: #88ff00; margin-bottom: 20px;">👥 RESOURCE MANAGEMENT</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">18</div>
+                        <div class="stat-label">Active Workers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">85%</div>
+                        <div class="stat-label">Crew Utilization</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Equipment Units</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">$2.1M</div>
+                        <div class="stat-label">Material Costs</div>
+                    </div>
+                </div>
+                
+                <div style="background: #2a2a5a; padding: 20px; border-radius: 10px; border: 2px solid #00ff88; margin-top: 20px;">
+                    <h4 style="color: #88ff00; margin-bottom: 15px;">Resource Allocation by Phase</h4>
+                    <div style="display: grid; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Foundation Team (8 workers):</span>
+                            <div style="background: #1a1a3a; width: 200px; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #00ff88, #88ff00); width: 90%; height: 100%;"></div>
+                            </div>
+                            <span>90%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Framing Crew (6 workers):</span>
+                            <div style="background: #1a1a3a; width: 200px; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #00ff88, #88ff00); width: 60%; height: 100%;"></div>
+                            </div>
+                            <span>60%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>MEP Specialists (4 workers):</span>
+                            <div style="background: #1a1a3a; width: 200px; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #00ff88, #88ff00); width: 25%; height: 100%;"></div>
+                            </div>
+                            <span>25%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content">
+                <h3 style="color: #88ff00; margin-bottom: 20px;">📄 SCHEDULE REPORTS & ANALYTICS</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: #2a2a5a; padding: 20px; border-radius: 10px; border: 2px solid #00ff88;">
+                        <h4 style="color: #88ff00; margin-bottom: 15px;">Schedule Performance</h4>
+                        <div style="margin: 10px 0;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tasks On Schedule:</span>
+                                <span style="color: #44ff44;">89%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tasks Delayed:</span>
+                                <span style="color: #ff4444;">7%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Tasks Ahead:</span>
+                                <span style="color: #88ff00;">4%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #2a2a5a; padding: 20px; border-radius: 10px; border: 2px solid #00ff88;">
+                        <h4 style="color: #88ff00; margin-bottom: 15px;">Critical Path Analysis</h4>
+                        <div style="margin: 10px 0;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Critical Tasks:</span>
+                                <span>12</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Float Time:</span>
+                                <span>8 days</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Risk Level:</span>
+                                <span style="color: #ffff00;">Medium</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #2a2a5a; padding: 20px; border-radius: 10px; border: 2px solid #00ff88; margin-top: 20px;">
+                    <h4 style="color: #88ff00; margin-bottom: 15px;">Export Options</h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn">📊 Export Gantt Chart</button>
+                        <button class="btn btn-secondary">📅 Export Calendar</button>
+                        <button class="btn btn-secondary">📋 Task List PDF</button>
+                        <button class="btn btn-secondary">📈 Progress Report</button>
+                        <button class="btn btn-secondary">💰 Cost Schedule</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Add New Task</div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>Task Name:</label>
+                    <input type="text" id="taskName" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (days):</label>
+                    <input type="number" id="taskDuration" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Date:</label>
+                    <input type="date" id="taskStartDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Assigned To:</label>
+                    <select id="taskAssignee">
+                        <option value="foundation">Foundation Crew</option>
+                        <option value="framing">Framing Team</option>
+                        <option value="mep">MEP Specialists</option>
+                        <option value="finishes">Finish Crew</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority:</label>
+                    <select id="taskPriority">
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dependencies:</label>
+                    <textarea id="taskDependencies" placeholder="List prerequisite tasks..."></textarea>
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button type="button" class="btn" onclick="saveTask()">Save Task</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeTaskModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Project data
+        const projectData = {
+            bunker: {
+                name: "Underground Bunker Facility",
+                duration: 72,
+                totalTasks: 45,
+                completedTasks: 12,
+                inProgressTasks: 8,
+                delayedTasks: 3
+            },
+            farmhouse: {
+                name: "Modern Farmhouse",
+                duration: 32,
+                totalTasks: 28,
+                completedTasks: 3,
+                inProgressTasks: 2,
+                delayedTasks: 1
+            },
+            cabin: {
+                name: "Long Creek Cabin",
+                duration: 26,
+                totalTasks: 22,
+                completedTasks: 18,
+                inProgressTasks: 3,
+                delayedTasks: 0
+            }
+        };
+
+        let currentProject = 'bunker';
+
+        // Initialize scheduler
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            updateProjectStats();
+            updateProgressRing();
+            setInterval(updateCurrentDate, 60000);
+        });
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function switchProject() {
+            const selector = document.getElementById('projectSelect');
+            currentProject = selector.value;
+            updateProjectStats();
+            updateProgressRing();
+        }
+
+        function updateProjectStats() {
+            const project = projectData[currentProject];
+            document.getElementById('currentProjectName').textContent = project.name;
+            document.getElementById('totalTasks').textContent = project.totalTasks;
+            document.getElementById('completedTasks').textContent = project.completedTasks;
+            document.getElementById('inProgressTasks').textContent = project.inProgressTasks;
+            document.getElementById('delayedTasks').textContent = project.delayedTasks;
+            
+            const progressPercent = Math.round((project.completedTasks / project.totalTasks) * 100);
+            document.getElementById('progressPercentage').textContent = progressPercent + '%';
+            document.getElementById('daysRemaining').textContent = project.duration - Math.round(project.duration * progressPercent / 100);
+            document.getElementById('tasksOnTrack').textContent = project.totalTasks - project.delayedTasks;
+        }
+
+        function updateProgressRing() {
+            const project = projectData[currentProject];
+            const progressPercent = (project.completedTasks / project.totalTasks) * 100;
+            const circumference = 188.4; // 2 * PI * 30
+            const offset = circumference - (progressPercent / 100) * circumference;
+            
+            document.getElementById('overallProgress').style.strokeDashoffset = offset;
+        }
+
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function openTaskModal() {
+            document.getElementById('taskModal').style.display = 'block';
+        }
+
+        function closeTaskModal() {
+            document.getElementById('taskModal').style.display = 'none';
+        }
+
+        function saveTask() {
+            // Here you would save the task data
+            alert('Task saved successfully!');
+            closeTaskModal();
+        }
+
+        function updateTimeScale() {
+            const scale = document.getElementById('timeScale').value;
+            // Update timeline headers based on scale
+            alert(`Timeline updated to ${scale} view`);
+        }
+
+        function updateTimeline() {
+            const startDate = document.getElementById('startDate').value;
+            alert(`Timeline updated with start date: ${startDate}`);
+        }
+
+        function filterTasks() {
+            const filter = document.getElementById('taskFilter').value;
+            alert(`Filtering tasks: ${filter}`);
+        }
+
+        function autoSchedule() {
+            alert('Auto-scheduling tasks based on dependencies and resource availability...');
+        }
+
+        function exportSchedule() {
+            alert('Exporting schedule to PDF...');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target === modal) {
+                closeTaskModal();
+            }
+        }
+
+        // Task bar click handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('task-bar')) {
+                const taskName = e.target.textContent;
+                alert(`Task Details: ${taskName}\n\nClick to edit task properties, dependencies, and progress.`);
+            }
+        });
+
+        // Calendar task click handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('calendar-task')) {
+                const taskName = e.target.textContent;
+                alert(`Calendar Task: ${taskName}\n\nClick to view/edit task details.`);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Creek Cabin - Architectural Blueprint</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #00ff88;
+            overflow-x: auto;
+        }
+        
+        .blueprint-container {
+            background: #0f0f23;
+            border: 3px solid #00ff88;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,255,136,0.3);
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00ff88;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #88ff00;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 25px 0 15px 0;
+            color: #88ff00;
+            border-bottom: 2px solid #88ff00;
+            padding-bottom: 5px;
+        }
+        
+        .grid-lines {
+            stroke: #333;
+            stroke-width: 0.5;
+            opacity: 0.8;
+        }
+        
+        .exterior-wall {
+            fill: #2a2a5a;
+            stroke: #00ff88;
+            stroke-width: 3;
+        }
+        
+        .interior-wall {
+            fill: #1a1a3a;
+            stroke: #00ffff;
+            stroke-width: 2;
+        }
+        
+        .room {
+            fill: rgba(0, 255, 136, 0.2);
+            stroke: #00ff88;
+            stroke-width: 1.5;
+        }
+        
+        .kitchen {
+            fill: rgba(255, 136, 0, 0.25);
+            stroke: #ff8800;
+            stroke-width: 1.5;
+        }
+        
+        .bedroom {
+            fill: rgba(136, 0, 255, 0.2);
+            stroke: #8800ff;
+            stroke-width: 1.5;
+        }
+        
+        .bathroom {
+            fill: rgba(0, 255, 255, 0.25);
+            stroke: #00ffff;
+            stroke-width: 1.5;
+        }
+        
+        .utility {
+            fill: rgba(255, 255, 0, 0.2);
+            stroke: #ffff00;
+            stroke-width: 1.5;
+        }
+        
+        .outdoor {
+            fill: rgba(0, 255, 0, 0.25);
+            stroke: #00ff00;
+            stroke-width: 1.5;
+        }
+        
+        .loft {
+            fill: rgba(255, 0, 255, 0.2);
+            stroke: #ff00ff;
+            stroke-width: 1.5;
+        }
+        
+        .text {
+            fill: #00ff88;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+        
+        .room-label {
+            fill: #00ff88;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+        
+        .dimension {
+            fill: #ff8800;
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+        
+        .feature-text {
+            fill: #88ff00;
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+            font-style: italic;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: #2a2a5a;
+            border: none;
+            cursor: pointer;
+            margin-right: 2px;
+            color: #00ff88;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .tab:hover {
+            background: #88ff00;
+            color: #0f0f23;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .legend {
+            background: #1a1a3a;
+            padding: 20px;
+            border: 2px solid #00ff88;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            color: #00ff88;
+        }
+        
+        .legend-color {
+            width: 24px;
+            height: 18px;
+            margin-right: 12px;
+            border: 1px solid #00ff88;
+            border-radius: 3px;
+        }
+        
+        .specifications {
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            color: #00ff88;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #88ff00;
+        }
+        
+        .window {
+            fill: none;
+            stroke: #00ffff;
+            stroke-width: 3;
+        }
+        
+        .door {
+            fill: none;
+            stroke: #ff8800;
+            stroke-width: 3;
+        }
+        
+        .appliance {
+            fill: #4a4a8a;
+            stroke: #00ffff;
+            stroke-width: 1;
+        }
+        
+        .fixture {
+            fill: #2a2a5a;
+            stroke: #88ff00;
+            stroke-width: 1;
+        }
+        
+        .chimney {
+            fill: #666;
+            stroke: #888;
+            stroke-width: 2;
+        }
+        
+        .stairs {
+            fill: none;
+            stroke: #ffff00;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="blueprint-container">
+        <div class="title">Long Creek Cabin</div>
+        <div class="subtitle">Architectural Blueprints | Scale 1:100 | Total: 1,577 sq ft</div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('floor-plans')">Floor Plans</div>
+            <div class="tab" onclick="showTab('elevations')">Elevations</div>
+            <div class="tab" onclick="showTab('details')">Construction Details</div>
+            <div class="tab" onclick="showTab('specifications')">Specifications</div>
+        </div>
+        
+        <!-- Floor Plans -->
+        <div id="floor-plans" class="tab-content active">
+            <div class="section-title">FLOOR PLANS - MAIN FLOOR & LOFT</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <!-- Ground Floor -->
+                <div>
+                    <h3 style="color: #88ff00; margin-bottom: 15px;">GROUND FLOOR PLAN - 1,159 sq ft</h3>
+                    <svg width="600" height="600" style="border: 2px solid #00ff88; background: #0f0f23;">
+                        <defs>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" class="grid-lines"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        
+                        <!-- Exterior Walls -->
+                        <rect x="50" y="100" width="500" height="400" fill="none" stroke="#00ff88" stroke-width="4"/>
+                        
+                        <!-- Great Room -->
+                        <rect x="70" y="280" width="320" height="200" class="room"/>
+                        <text x="230" y="385" class="room-label">GREAT ROOM</text>
+                        <text x="230" y="400" class="dimension">20' × 16'</text>
+                        
+                        <!-- Kitchen -->
+                        <rect x="390" y="320" width="140" height="160" class="kitchen"/>
+                        <text x="460" y="405" class="room-label">KITCHEN</text>
+                        <text x="460" y="420" class="dimension">9' × 10'</text>
+                        
+                        <!-- Kitchen Island -->
+                        <rect x="420" y="370" width="80" height="40" class="appliance"/>
+                        <text x="460" y="395" class="feature-text">Island</text>
+                        
+                        <!-- Bedroom 1 -->
+                        <rect x="70" y="120" width="160" height="160" class="bedroom"/>
+                        <text x="150" y="205" class="room-label">BEDROOM 1</text>
+                        <text x="150" y="220" class="dimension">10' × 12'</text>
+                        
+                        <!-- Bedroom 2 -->
+                        <rect x="370" y="120" width="160" height="160" class="bedroom"/>
+                        <text x="450" y="205" class="room-label">BEDROOM 2</text>
+                        <text x="450" y="220" class="dimension">10' × 12'</text>
+                        
+                        <!-- Bathroom -->
+                        <rect x="390" y="280" width="80" height="80" class="bathroom"/>
+                        <text x="430" y="325" class="room-label">BATH</text>
+                        <text x="430" y="340" class="dimension">5' × 6'</text>
+                        
+                        <!-- Bathroom Fixtures -->
+                        <circle cx="410" cy="295" r="8" class="fixture"/>
+                        <text x="410" y="290" class="feature-text">Tub</text>
+                        <rect x="455" y="290" width="10" height="15" class="fixture"/>
+                        <text x="465" y="300" class="feature-text">WC</text>
+                        
+                        <!-- Closets -->
+                        <rect x="250" y="120" width="60" height="40" class="utility"/>
+                        <text x="280" y="145" class="feature-text">Closet</text>
+                        
+                        <rect x="330" y="120" width="60" height="40" class="utility"/>
+                        <text x="360" y="145" class="feature-text">Closet</text>
+                        
+                        <!-- W/D -->
+                        <rect x="250" y="200" width="30" height="40" class="utility"/>
+                        <text x="265" y="225" class="feature-text">W/D</text>
+                        
+                        <!-- Staircase -->
+                        <rect x="290" y="200" width="80" height="80" class="utility"/>
+                        <text x="330" y="245" class="room-label">STAIRS</text>
+                        
+                        <!-- Stair Steps -->
+                        <g class="stairs">
+                            <line x1="300" y1="210" x2="360" y2="210"/>
+                            <line x1="300" y1="220" x2="360" y2="220"/>
+                            <line x1="300" y1="230" x2="360" y2="230"/>
+                            <line x1="300" y1="240" x2="360" y2="240"/>
+                            <line x1="300" y1="250" x2="360" y2="250"/>
+                            <line x1="300" y1="260" x2="360" y2="260"/>
+                            <line x1="300" y1="270" x2="360" y2="270"/>
+                        </g>
+                        <text x="330" y="265" class="feature-text">UP</text>
+                        
+                        <!-- Fireplace -->
+                        <rect x="80" y="340" width="40" height="80" class="chimney"/>
+                        <text x="100" y="385" class="feature-text">FP</text>
+                        
+                        <!-- Windows -->
+                        <line x1="100" y1="100" x2="180" y2="100" class="window"/>
+                        <line x1="420" y1="100" x2="500" y2="100" class="window"/>
+                        <line x1="50" y1="200" x2="50" y2="250" class="window"/>
+                        <line x1="550" y1="350" x2="550" y2="400" class="window"/>
+                        
+                        <!-- Doors -->
+                        <path d="M 150 280 A 30 30 0 0 1 180 250" class="door"/>
+                        <path d="M 450 280 A 25 25 0 0 0 475 305" class="door"/>
+                        <path d="M 390 200 A 25 25 0 0 1 415 175" class="door"/>
+                        
+                        <!-- Patio -->
+                        <rect x="50" y="500" width="500" height="80" class="outdoor"/>
+                        <text x="300" y="545" class="room-label">COVERED PATIO</text>
+                        <text x="300" y="560" class="dimension">32' × 6'</text>
+                        
+                        <!-- Dimensions -->
+                        <line x1="40" y1="100" x2="40" y2="500" stroke="#ff8800" stroke-width="1"/>
+                        <text x="25" y="300" class="dimension" transform="rotate(-90 25 300)">32'-0"</text>
+                        
+                        <line x1="50" y1="90" x2="550" y2="90" stroke="#ff8800" stroke-width="1"/>
+                        <text x="300" y="80" class="dimension">40'-0"</text>
+                    </svg>
+                </div>
+                
+                <!-- Second Floor -->
+                <div>
+                    <h3 style="color: #88ff00; margin-bottom: 15px;">SECOND FLOOR PLAN - 418 sq ft</h3>
+                    <svg width="600" height="600" style="border: 2px solid #00ff88; background: #0f0f23;">
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        
+                        <!-- Loft Area -->
+                        <rect x="150" y="200" width="300" height="200" class="loft"/>
+                        <text x="300" y="305" class="room-label">LOFT</text>
+                        <text x="300" y="320" class="dimension">18' × 12'</text>
+                        
+                        <!-- Bedroom -->
+                        <rect x="70" y="150" width="140" height="120" class="bedroom"/>
+                        <text x="140" y="215" class="room-label">BEDROOM</text>
+                        <text x="140" y="230" class="dimension">8' × 9'</text>
+                        
+                        <!-- Bathroom -->
+                        <rect x="70" y="270" width="80" height="80" class="bathroom"/>
+                        <text x="110" y="315" class="room-label">BATH</text>
+                        <text x="110" y="330" class="dimension">5' × 6'</text>
+                        
+                        <!-- Closet -->
+                        <rect x="70" y="350" width="60" height="50" class="utility"/>
+                        <text x="100" y="380" class="feature-text">Closet</text>
+                        
+                        <!-- Staircase -->
+                        <rect x="290" y="100" width="80" height="80" class="utility"/>
+                        <text x="330" y="145" class="room-label">STAIRS</text>
+                        
+                        <!-- Stair Steps -->
+                        <g class="stairs">
+                            <line x1="300" y1="110" x2="360" y2="110"/>
+                            <line x1="300" y1="120" x2="360" y2="120"/>
+                            <line x1="300" y1="130" x2="360" y2="130"/>
+                            <line x1="300" y1="140" x2="360" y2="140"/>
+                            <line x1="300" y1="150" x2="360" y2="150"/>
+                            <line x1="300" y1="160" x2="360" y2="160"/>
+                            <line x1="300" y1="170" x2="360" y2="170"/>
+                        </g>
+                        <text x="330" y="135" class="feature-text">DN</text>
+                        
+                        <!-- Open to Below -->
+                        <polygon points="450,200 550,200 500,300 450,300" fill="none" stroke="#ffff00" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="490" y="255" class="feature-text">OPEN TO</text>
+                        <text x="495" y="270" class="feature-text">BELOW</text>
+                        
+                        <!-- Roof Slopes (indicated areas) -->
+                        <polygon points="50,100 150,100 100,200 50,200" fill="rgba(100,100,100,0.3)" stroke="#666" stroke-dasharray="3,3"/>
+                        <polygon points="450,100 550,100 550,200 500,200" fill="rgba(100,100,100,0.3)" stroke="#666" stroke-dasharray="3,3"/>
+                        <text x="100" y="150" class="feature-text">ROOF SLOPE</text>
+                        <text x="500" y="150" class="feature-text">ROOF SLOPE</text>
+                        
+                        <!-- Windows -->
+                        <line x1="180" y1="150" x2="220" y2="150" class="window"/>
+                        <line x1="480" y1="200" x2="520" y2="200" class="window"/>
+                        
+                        <!-- Doors -->
+                        <path d="M 210 200 A 25 25 0 0 1 235 175" class="door"/>
+                        <path d="M 150 300 A 20 20 0 0 0 170 280" class="door"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Elevations -->
+        <div id="elevations" class="tab-content">
+            <div class="section-title">EXTERIOR ELEVATIONS</div>
+            
+            <div style="margin-bottom: 30px;">
+                <h3 style="color: #88ff00;">SOUTH ELEVATION (Front)</h3>
+                <svg width="1200" height="400" style="border: 2px solid #00ff88; background: #0f0f23;">
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    
+                    <!-- Foundation -->
+                    <rect x="100" y="300" width="1000" height="80" fill="#444" stroke="#666"/>
+                    <text x="600" y="345" class="feature-text">STONE FOUNDATION</text>
+                    
+                    <!-- Main Structure -->
+                    <rect x="150" y="150" width="900" height="150" fill="#2a2a5a" stroke="#00ff88" stroke-width="2"/>
+                    
+                    <!-- Roof -->
+                    <polygon points="100,150 600,50 1100,150" fill="#333" stroke="#555" stroke-width="2"/>
+                    <text x="580" y="40" class="feature-text">METAL ROOFING</text>
+                    
+                    <!-- Chimney -->
+                    <rect x="200" y="50" width="60" height="200" class="chimney"/>
+                    <text x="220" y="45" class="feature-text">STONE CHIMNEY</text>
+                    
+                    <!-- Windows -->
+                    <rect x="250" y="180" width="80" height="100" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    <rect x="350" y="180" width="80" height="100" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    <rect x="550" y="180" width="80" height="100" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    <rect x="750" y="180" width="80" height="100" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    <rect x="850" y="180" width="80" height="100" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    
+                    <!-- Front Door -->
+                    <rect x="470" y="220" width="60" height="80" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                    <text x="500" y="210" class="feature-text">ENTRY</text>
+                    
+                    <!-- Porch -->
+                    <rect x="100" y="280" width="1000" height="20" fill="rgba(139, 69, 19, 0.3)" stroke="#8B4513"/>
+                    <text x="590" y="275" class="feature-text">COVERED PORCH</text>
+                    
+                    <!-- Porch Posts -->
+                    <rect x="180" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="280" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="380" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="480" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="580" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="680" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="780" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="880" y="250" width="15" height="50" fill="#8B4513"/>
+                    <rect x="980" y="250" width="15" height="50" fill="#8B4513"/>
+                    
+                    <!-- Siding Lines -->
+                    <g stroke="#bdc3c7" stroke-width="1" opacity="0.7">
+                        <line x1="150" y1="170" x2="1050" y2="170"/>
+                        <line x1="150" y1="190" x2="1050" y2="190"/>
+                        <line x1="150" y1="210" x2="1050" y2="210"/>
+                        <line x1="150" y1="230" x2="1050" y2="230"/>
+                        <line x1="150" y1="250" x2="1050" y2="250"/>
+                        <line x1="150" y1="270" x2="1050" y2="270"/>
+                        <line x1="150" y1="290" x2="1050" y2="290"/>
+                    </g>
+                    <text x="1070" y="220" class="feature-text">CLAPBOARD SIDING</text>
+                    
+                    <!-- Dimensions -->
+                    <line x1="100" y1="390" x2="1100" y2="390" stroke="#ff8800" stroke-width="1"/>
+                    <text x="600" y="405" class="dimension">40'-0" TOTAL WIDTH</text>
+                </svg>
+            </div>
+            
+            <div>
+                <h3 style="color: #88ff00;">EAST ELEVATION (Side)</h3>
+                <svg width="1200" height="400" style="border: 2px solid #00ff88; background: #0f0f23;">
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    
+                    <!-- Foundation -->
+                    <rect x="200" y="300" width="800" height="80" fill="#444" stroke="#666"/>
+                    
+                    <!-- Main Structure -->
+                    <rect x="250" y="150" width="700" height="150" fill="#2a2a5a" stroke="#00ff88" stroke-width="2"/>
+                    
+                    <!-- Roof -->
+                    <polygon points="200,150 600,50 1000,150" fill="#333" stroke="#555" stroke-width="2"/>
+                    
+                    <!-- Gable End -->
+                    <polygon points="250,150 600,80 950,150" fill="#2a2a5a" stroke="#00ff88" stroke-width="2"/>
+                    
+                    <!-- Window -->
+                    <rect x="550" y="120" width="60" height="80" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    
+                    <!-- Side Windows -->
+                    <rect x="300" y="180" width="60" height="80" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    <rect x="840" y="180" width="60" height="80" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+                    
+                    <!-- Siding -->
+                    <g stroke="#bdc3c7" stroke-width="1" opacity="0.7">
+                        <line x1="250" y1="170" x2="950" y2="170"/>
+                        <line x1="250" y1="190" x2="950" y2="190"/>
+                        <line x1="250" y1="210" x2="950" y2="210"/>
+                        <line x1="250" y1="230" x2="950" y2="230"/>
+                        <line x1="250" y1="250" x2="950" y2="250"/>
+                        <line x1="250" y1="270" x2="950" y2="270"/>
+                        <line x1="250" y1="290" x2="950" y2="290"/>
+                    </g>
+                    
+                    <!-- Dimensions -->
+                    <line x1="200" y1="390" x2="1000" y2="390" stroke="#ff8800" stroke-width="1"/>
+                    <text x="600" y="405" class="dimension">32'-0" DEPTH</text>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Construction Details -->
+        <div id="details" class="tab-content">
+            <div class="section-title">CONSTRUCTION DETAILS</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <h3 style="color: #88ff00;">FOUNDATION DETAIL</h3>
+                    <svg width="500" height="300" style="border: 1px solid #00ff88; background: #0f0f23;">
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        
+                        <!-- Ground Level -->
+                        <line x1="50" y1="100" x2="450" y2="100" stroke="#8B4513" stroke-width="3"/>
+                        <text x="250" y="90" class="feature-text">NATURAL GRADE</text>
+                        
+                        <!-- Concrete Foundation -->
+                        <rect x="150" y="100" width="200" height="120" fill="#666" stroke="#888" stroke-width="2"/>
+                        <text x="250" y="165" class="feature-text">CONCRETE FOUNDATION</text>
+                        <text x="250" y="180" class="feature-text">8" THICK</text>
+                        
+                        <!-- Footer -->
+                        <rect x="125" y="220" width="250" height="50" fill="#666" stroke="#888" stroke-width="2"/>
+                        <text x="250" y="250" class="feature-text">20" × 8" FOOTER</text>
+                        
+                        <!-- Drainage -->
+                        <circle cx="100" cy="200" r="15" fill="none" stroke="#ffff00" stroke-width="2"/>
+                        <text x="70" y="175" class="feature-text">PERIMETER</text>
+                        <text x="75" y="190" class="feature-text">DRAIN</text>
+                        
+                        <!-- Waterproofing -->
+                        <path d="M 150 100 Q 140 110 150 120 Q 140 130 150 140" stroke="#0088ff" stroke-width="2" fill="none"/>
+                        <text x="60" y="125" class="feature-text">WATERPROOF</text>
+                        <text x="70" y="140" class="feature-text">MEMBRANE</text>
+                    </svg>
+                </div>
+                
+                <div>
+                    <h3 style="color: #88ff00;">ROOF DETAIL</h3>
+                    <svg width="500" height="300" style="border: 1px solid #00ff88; background: #0f0f23;">
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        
+                        <!-- Roof Structure -->
+                        <line x1="100" y1="200" x2="400" y2="80" stroke="#8B4513" stroke-width="4"/>
+                        <text x="250" y="70" class="feature-text">2×12 RAFTERS @ 24" O.C.</text>
+                        
+                        <!-- Ridge Beam -->
+                        <rect x="390" y="70" width="20" height="80" fill="#8B4513" stroke="#654321"/>
+                        <text x="415" y="115" class="feature-text">4×12 RIDGE</text>
+                        
+                        <!-- Roof Sheathing -->
+                        <line x1="100" y1="195" x2="400" y2="75" stroke="#D2691E" stroke-width="3"/>
+                        <text x="250" y="125" class="feature-text">3/4" PLYWOOD SHEATHING</text>
+                        
+                        <!-- Metal Roofing -->
+                        <line x1="100" y1="190" x2="400" y2="70" stroke="#666" stroke-width="3"/>
+                        <text x="250" y="110" class="feature-text">STANDING SEAM METAL</text>
+                        
+                        <!-- Soffit -->
+                        <rect x="80" y="200" width="40" height="15" fill="#8B4513" stroke="#654321"/>
+                        <text x="60" y="235" class="feature-text">SOFFIT</text>
+                        
+                        <!-- Gutter -->
+                        <path d="M 100 215 L 120 215 L 115 225 L 105 225 Z" fill="#666" stroke="#888"/>
+                        <text x="75" y="250" class="feature-text">GUTTER</text>
+                    </svg>
+                </div>
+                
+                <div>
+                    <h3 style="color: #88ff00;">WALL SECTION</h3>
+                    <svg width="500" height="300" style="border: 1px solid #00ff88; background: #0f0f23;">
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        
+                        <!-- Wall Framing -->
+                        <rect x="200" y="50" width="100" height="200" fill="#D2691E" stroke="#8B4513" stroke-width="2"/>
+                        <text x="250" y="40" class="feature-text">2×6 WALL @ 16" O.C.</text>
+                        
+                        <!-- Exterior Sheathing -->
+                        <rect x="190" y="50" width="10" height="200" fill="#8B4513" stroke="#654321"/>
+                        <text x="150" y="160" class="feature-text" transform="rotate(-90 150 160)">1/2" SHEATHING</text>
+                        
+                        <!-- Siding -->
+                        <g stroke="#bdc3c7" stroke-width="1">
+                            <line x1="160" y1="60" x2="190" y2="60"/>
+                            <line x1="160" y1="80" x2="190" y2="80"/>
+                            <line x1="160" y1="100" x2="190" y2="100"/>
+                            <line x1="160" y1="120" x2="190" y2="120"/>
+                            <line x1="160" y1="140" x2="190" y2="140"/>
+                            <line x1="160" y1="160" x2="190" y2="160"/>
+                            <line x1="160" y1="180" x2="190" y2="180"/>
+                            <line x1="160" y1="200" x2="190" y2="200"/>
+                            <line x1="160" y1="220" x2="190" y2="220"/>
+                            <line x1="160" y1="240" x2="190" y2="240"/>
+                        </g>
+                        <text x="120" y="160" class="feature-text">CLAPBOARD</text>
+                        <text x="130" y="175" class="feature-text">SIDING</text>
+                        
+                        <!-- Insulation -->
+                        <rect x="210" y="50" width="80" height="200" fill="rgba(255,255,0,0.3)" stroke="#ffff00"/>
+                        <text x="250" y="160" class="feature-text">R-21</text>
+                        <text x="240" y="175" class="feature-text">INSULATION</text>
+                        
+                        <!-- Interior Finish -->
+                        <rect x="300" y="50" width="10" height="200" fill="#fff" stroke="#ddd"/>
+                        <text x="320" y="160" class="feature-text">DRYWALL</text>
+                    </svg>
+                </div>
+                
+                <div>
+                    <h3 style="color: #88ff00;">FLOOR SYSTEM</h3>
+                    <svg width="500" height="300" style="border: 1px solid #00ff88; background: #0f0f23;">
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        
+                        <!-- Floor Joists -->
+                        <rect x="50" y="150" width="400" height="60" fill="#D2691E" stroke="#8B4513" stroke-width="2"/>
+                        <text x="250" y="140" class="feature-text">2×12 FLOOR JOISTS @ 16" O.C.</text>
+                        
+                        <!-- Individual Joists -->
+                        <g fill="#8B4513">
+                            <rect x="70" y="150" width="15" height="60"/>
+                            <rect x="110" y="150" width="15" height="60"/>
+                            <rect x="150" y="150" width="15" height="60"/>
+                            <rect x="190" y="150" width="15" height="60"/>
+                            <rect x="230" y="150" width="15" height="60"/>
+                            <rect x="270" y="150" width="15" height="60"/>
+                            <rect x="310" y="150" width="15" height="60"/>
+                            <rect x="350" y="150" width="15" height="60"/>
+                            <rect x="390" y="150" width="15" height="60"/>
+                        </g>
+                        
+                        <!-- Subfloor -->
+                        <rect x="50" y="140" width="400" height="10" fill="#D2691E" stroke="#8B4513"/>
+                        <text x="250" y="130" class="feature-text">3/4" PLYWOOD SUBFLOOR</text>
+                        
+                        <!-- Finish Floor -->
+                        <rect x="50" y="130" width="400" height="10" fill="#DEB887" stroke="#CD853F"/>
+                        <text x="250" y="120" class="feature-text">HARDWOOD FLOORING</text>
+                        
+                        <!-- Foundation Wall -->
+                        <rect x="40" y="210" width="20" height="60" fill="#666" stroke="#888"/>
+                        <rect x="440" y="210" width="20" height="60" fill="#666" stroke="#888"/>
+                        <text x="250" y="250" class="feature-text">FOUNDATION WALLS</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Specifications -->
+        <div id="specifications" class="tab-content">
+            <div class="specifications">
+                <h2 style="margin-top: 0; color: #88ff00;">CONSTRUCTION SPECIFICATIONS</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h4 style="color: #00ffff;">FOUNDATION & STRUCTURE</h4>
+                        <ul style="color: #00ff88;">
+                            <li>Poured concrete foundation: 8" thick walls</li>
+                            <li>Footer: 20" × 8" reinforced concrete</li>
+                            <li>Floor joists: 2×12 @ 16" O.C.</li>
+                            <li>Wall framing: 2×6 @ 16" O.C.</li>
+                            <li>Roof rafters: 2×12 @ 24" O.C.</li>
+                            <li>Ridge beam: 4×12 engineered lumber</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #00ffff;">EXTERIOR FINISHES</h4>
+                        <ul style="color: #00ff88;">
+                            <li>Siding: Cedar clapboard</li>
+                            <li>Roof: Standing seam metal</li>
+                            <li>Foundation: Natural stone veneer</li>
+                            <li>Windows: Double-hung, wood frame</li>
+                            <li>Doors: Solid wood with glass panels</li>
+                            <li>Chimney: Natural stone construction</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #00ffff;">INTERIOR SYSTEMS</h4>
+                        <ul style="color: #00ff88;">
+                            <li>Insulation: R-21 walls, R-38 attic</li>
+                            <li>Flooring: Hardwood throughout</li>
+                            <li>Heating: Wood stove + mini-splits</li>
+                            <li>Plumbing: Copper and PEX distribution</li>
+                            <li>Electrical: 200-amp service</li>
+                            <li>Interior: Drywall with wood trim</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title">ROOM SCHEDULE & SPECIFICATIONS</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+                <div style="background: #1a1a3a; padding: 20px; border: 1px solid #00ff88; border-radius: 8px;">
+                    <h4 style="color: #88ff00; margin-top: 0;">GROUND FLOOR ROOMS</h4>
+                    <table style="width: 100%; color: #00ff88; font-size: 12px;">
+                        <tr><td><strong>Great Room:</strong></td><td>320 sq ft</td></tr>
+                        <tr><td><strong>Kitchen:</strong></td><td>140 sq ft</td></tr>
+                        <tr><td><strong>Bedroom 1:</strong></td><td>160 sq ft</td></tr>
+                        <tr><td><strong>Bedroom 2:</strong></td><td>160 sq ft</td></tr>
+                        <tr><td><strong>Bathroom:</strong></td><td>48 sq ft</td></tr>
+                        <tr><td><strong>Utility/Storage:</strong></td><td>139 sq ft</td></tr>
+                        <tr><td><strong>Circulation:</strong></td><td>192 sq ft</td></tr>
+                        <tr><td><strong>Ground Floor Total:</strong></td><td><strong>1,159 sq ft</strong></td></tr>
+                    </table>
+                </div>
+                
+                <div style="background: #1a1a3a; padding: 20px; border: 1px solid #00ff88; border-radius: 8px;">
+                    <h4 style="color: #88ff00; margin-top: 0;">SECOND FLOOR ROOMS</h4>
+                    <table style="width: 100%; color: #00ff88; font-size: 12px;">
+                        <tr><td><strong>Loft Area:</strong></td><td>216 sq ft</td></tr>
+                        <tr><td><strong>Bedroom:</strong></td><td>112 sq ft</td></tr>
+                        <tr><td><strong>Bathroom:</strong></td><td>48 sq ft</td></tr>
+                        <tr><td><strong>Closet:</strong></td><td>30 sq ft</td></tr>
+                        <tr><td><strong>Circulation:</strong></td><td>12 sq ft</td></tr>
+                        <tr><td><strong>Second Floor Total:</strong></td><td><strong>418 sq ft</strong></td></tr>
+                        <tr style="border-top: 2px solid #88ff00;"><td><strong>TOTAL LIVING AREA:</strong></td><td><strong>1,577 sq ft</strong></td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div style="background: #1a1a3a; padding: 20px; border: 1px solid #00ff88; border-radius: 8px; margin-top: 20px;">
+                <h4 style="color: #88ff00; margin-top: 0;">BUILDING FEATURES</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; color: #00ff88; font-size: 12px;">
+                    <div>
+                        <strong>Structural Features:</strong><br>
+                        • Stone fireplace with chimney<br>
+                        • Open beam ceiling in great room<br>
+                        • Covered front porch<br>
+                        • Rear patio area<br>
+                        • Loft with cathedral ceiling
+                    </div>
+                    <div>
+                        <strong>Efficiency Features:</strong><br>
+                        • Compact design<br>
+                        • Efficient floor plan<br>
+                        • Natural ventilation<br>
+                        • Energy-efficient envelope<br>
+                        • Minimal maintenance exterior
+                    </div>
+                    <div>
+                        <strong>Rustic Features:</strong><br>
+                        • Exposed wood framing<br>
+                        • Natural materials<br>
+                        • Traditional proportions<br>
+                        • Simple detailing<br>
+                        • Connection to outdoors
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <h3 style="color: #88ff00; margin-top: 0;">LEGEND & SYMBOLS</h3>
+            <div class="legend-grid">
+                <div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(0, 255, 136, 0.2); border-color: #00ff88;"></div>
+                        <span>Living Spaces</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(255, 136, 0, 0.25); border-color: #ff8800;"></div>
+                        <span>Kitchen</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(136, 0, 255, 0.2); border-color: #8800ff;"></div>
+                        <span>Bedrooms</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(0, 255, 255, 0.25); border-color: #00ffff;"></div>
+                        <span>Bathrooms</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(255, 255, 0, 0.2); border-color: #ffff00;"></div>
+                        <span>Utility/Storage</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(255, 0, 255, 0.2); border-color: #ff00ff;"></div>
+                        <span>Loft Area</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="legend-item">
+                        <div style="width: 24px; height: 4px; background: #00ffff; margin-right: 12px;"></div>
+                        <span>Windows</span>
+                    </div>
+                    <div class="legend-item">
+                        <div style="width: 24px; height: 4px; background: #ff8800; margin-right: 12px;"></div>
+                        <span>Doors</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2a2a5a; border-color: #00ff88;"></div>
+                        <span>Structural Walls</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

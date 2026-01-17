@@ -1,0 +1,348 @@
+{
+  "name": "Luxury Farmhouse",
+  "description": "Large single-story luxury farmhouse with 4 bedrooms, vaulted ceilings, and extensive outdoor living areas",
+  "level": 1,
+  "overall_length": "144'-0\"",
+  "overall_width": "82'-0\"",
+  "rooms": [
+      {
+        "name": "2 Car Garage",
+        "type": "garage",
+        "x": 0.0,
+        "y": 0.0,
+        "length": "25'-2\"",
+        "width": "31'-9\"",
+        "ceiling": "9'-8\"",
+        "notes": "A.F.F. ceiling"
+      },
+      {
+        "name": "Bedroom 2",
+        "type": "bedroom",
+        "x": 28.0,
+        "y": 0.0,
+        "length": "14'-2\"",
+        "width": "14'-5\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Bath 3",
+        "type": "full_bath",
+        "x": 28.0,
+        "y": 14.5,
+        "length": "8'-0\"",
+        "width": "8'-0\""
+      },
+      {
+        "name": "WIC (BR2)",
+        "type": "walk_in_closet",
+        "x": 36.0,
+        "y": 14.5,
+        "length": "6'-0\"",
+        "width": "8'-0\""
+      },
+      {
+        "name": "Bath 2",
+        "type": "full_bath",
+        "x": 42.0,
+        "y": 0.0,
+        "length": "8'-0\"",
+        "width": "10'-0\""
+      },
+      {
+        "name": "Bedroom 3",
+        "type": "bedroom",
+        "x": 28.0,
+        "y": 24.0,
+        "length": "17'-3\"",
+        "width": "13'-4\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Laundry",
+        "type": "laundry",
+        "x": 45.0,
+        "y": 24.0,
+        "length": "12'-0\"",
+        "width": "7'-0\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Powder Room",
+        "type": "powder_room",
+        "x": 57.0,
+        "y": 24.0,
+        "length": "6'-0\"",
+        "width": "7'-0\""
+      },
+      {
+        "name": "Mud Room",
+        "type": "mud_room",
+        "x": 28.0,
+        "y": 40.0,
+        "length": "11'-4\"",
+        "width": "7'-5\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Bath 4",
+        "type": "full_bath",
+        "x": 40.0,
+        "y": 40.0,
+        "length": "6'-0\"",
+        "width": "8'-0\""
+      },
+      {
+        "name": "WIC (BR4)",
+        "type": "walk_in_closet",
+        "x": 46.0,
+        "y": 40.0,
+        "length": "6'-0\"",
+        "width": "8'-0\""
+      },
+      {
+        "name": "Bedroom 4",
+        "type": "bedroom",
+        "x": 28.0,
+        "y": 52.0,
+        "length": "18'-4\"",
+        "width": "13'-11\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Breakfast Nook",
+        "type": "breakfast_nook",
+        "x": 50.0,
+        "y": 0.0,
+        "length": "14'-1\"",
+        "width": "14'-9\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Kitchen",
+        "type": "kitchen",
+        "x": 64.0,
+        "y": 0.0,
+        "length": "14'-0\"",
+        "width": "14'-9\""
+      },
+      {
+        "name": "Pantry",
+        "type": "pantry",
+        "x": 64.0,
+        "y": 15.0,
+        "length": "8'-0\"",
+        "width": "8'-0\""
+      },
+      {
+        "name": "Butler's Pantry",
+        "type": "butlers_pantry",
+        "x": 52.0,
+        "y": 40.0,
+        "length": "15'-10\"",
+        "width": "9'-0\""
+      },
+      {
+        "name": "Family Room",
+        "type": "family_room",
+        "x": 78.0,
+        "y": 15.0,
+        "length": "16'-6\"",
+        "width": "15'-2\"",
+        "ceiling": {
+          "type": "vaulted",
+          "min_height": "9'-0\"",
+          "pitch": 7
+        },
+        "notes": "7/12 vaulted ceiling"
+      },
+      {
+        "name": "Front Hall",
+        "type": "foyer",
+        "x": 68.0,
+        "y": 40.0,
+        "length": "10'-2\"",
+        "width": "12'-5\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Dining Room",
+        "type": "dining_room",
+        "x": 52.0,
+        "y": 52.0,
+        "length": "18'-4\"",
+        "width": "14'-6\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Foyer",
+        "type": "foyer",
+        "x": 70.0,
+        "y": 52.0,
+        "length": "11'-4\"",
+        "width": "13'-4\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Lounge",
+        "type": "lounge",
+        "x": 82.0,
+        "y": 52.0,
+        "length": "14'-2\"",
+        "width": "12'-2\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Bar",
+        "type": "bar",
+        "x": 96.0,
+        "y": 40.0,
+        "length": "14'-4\"",
+        "width": "9'-0\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Office",
+        "type": "office",
+        "x": 96.0,
+        "y": 15.0,
+        "length": "12'-0\"",
+        "width": "12'-0\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Office Porch",
+        "type": "porch",
+        "x": 96.0,
+        "y": 0.0,
+        "length": "11'-4\"",
+        "width": "10'-8\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Master Suite",
+        "type": "master_suite",
+        "x": 110.0,
+        "y": 15.0,
+        "length": "17'-8\"",
+        "width": "22'-8\"",
+        "ceiling": {
+          "type": "vaulted",
+          "min_height": "10'-0\"",
+          "pitch": 6
+        },
+        "notes": "Vaulted ceiling"
+      },
+      {
+        "name": "WIC (Master 1)",
+        "type": "walk_in_closet",
+        "x": 110.0,
+        "y": 40.0,
+        "length": "12'-0\"",
+        "width": "8'-0\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "WIC (Master 2)",
+        "type": "walk_in_closet",
+        "x": 122.0,
+        "y": 40.0,
+        "length": "12'-0\"",
+        "width": "8'-0\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Master Bath",
+        "type": "master_bath",
+        "x": 122.0,
+        "y": 48.0,
+        "length": "12'-0\"",
+        "width": "14'-0\"",
+        "ceiling": "12'-0\""
+      },
+      {
+        "name": "Breakfast Porch",
+        "type": "porch",
+        "x": 64.0,
+        "y": -12.0,
+        "length": "13'-4\"",
+        "width": "12'-4\"",
+        "ceiling": "14'-0\""
+      },
+      {
+        "name": "Outdoor Living",
+        "type": "patio",
+        "x": 78.0,
+        "y": -15.0,
+        "length": "28'-2\"",
+        "width": "15'-4\"",
+        "ceiling": {
+          "type": "vaulted",
+          "min_height": "10'-0\"",
+          "pitch": 6
+        },
+        "notes": "Vaulted ceiling"
+      },
+      {
+        "name": "Master Porch",
+        "type": "porch",
+        "x": 110.0,
+        "y": -10.0,
+        "length": "19'-2\"",
+        "width": "10'-0\"",
+        "ceiling": {
+          "type": "vaulted",
+          "min_height": "10'-0\"",
+          "pitch": 6
+        },
+        "notes": "Vaulted ceiling"
+      },
+      {
+        "name": "Side Porch",
+        "type": "porch",
+        "x": 134.0,
+        "y": 15.0,
+        "length": "10'-0\"",
+        "width": "32'-0\""
+      },
+      {
+        "name": "Front Porch",
+        "type": "porch",
+        "x": 52.0,
+        "y": 70.0,
+        "length": "56'-8\"",
+        "width": "12'-4\"",
+        "ceiling": "12'-8\"",
+        "notes": "12'-8\" ceiling A.F.F."
+      }
+    ],
+  "walls": [
+    {
+      "type": "exterior",
+      "start": { "x": 0.0, "y": 0.0 },
+      "end": { "x": 144.0, "y": 0.0 },
+      "doors": [],
+      "windows": []
+    },
+    {
+      "type": "exterior",
+      "start": { "x": 144.0, "y": 0.0 },
+      "end": { "x": 144.0, "y": 82.0 },
+      "doors": [],
+      "windows": []
+    },
+    {
+      "type": "exterior",
+      "start": { "x": 144.0, "y": 82.0 },
+      "end": { "x": 0.0, "y": 82.0 },
+      "doors": [],
+      "windows": []
+    },
+    {
+      "type": "exterior",
+      "start": { "x": 0.0, "y": 82.0 },
+      "end": { "x": 0.0, "y": 0.0 },
+      "doors": [],
+      "windows": []
+    }
+  ]
+}

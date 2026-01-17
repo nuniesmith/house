@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construction Project Management Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #00ff88;
+            overflow-x: auto;
+        }
+        
+        .dashboard {
+            min-height: 100vh;
+            display: grid;
+            grid-template-areas: 
+                "sidebar header header"
+                "sidebar main main"
+                "sidebar main main";
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 80px 1fr;
+        }
+        
+        .sidebar {
+            grid-area: sidebar;
+            background: #0f0f23;
+            border-right: 2px solid #00ff88;
+            padding: 20px;
+        }
+        
+        .header {
+            grid-area: header;
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #88ff00;
+        }
+        
+        .main-content {
+            grid-area: main;
+            padding: 20px;
+            background: #1a1a2e;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            margin-top: 30px;
+        }
+        
+        .nav-item {
+            margin: 15px 0;
+            padding: 12px 15px;
+            background: #2a2a5a;
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #00ff88;
+            color: #0f0f23;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: #0f0f23;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+        }
+        
+        .card h3 {
+            color: #88ff00;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f0f23;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a5a;
+        }
+        
+        .comparison-table th {
+            background: #00ff88;
+            color: #0f0f23;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .comparison-table tr:hover {
+            background: #2a2a5a;
+        }
+        
+        .progress-container {
+            margin: 15px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #2a2a5a;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #00ff88;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #88ff00);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 15px 0 15px 40px;
+            border-left: 2px solid #00ff88;
+            margin-left: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+        }
+        
+        .timeline-item.completed::before {
+            background: #88ff00;
+        }
+        
+        .timeline-item.current::before {
+            background: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+        }
+        
+        .gantt-chart {
+            width: 100%;
+            overflow-x: auto;
+            background: #0f0f23;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 200px repeat(26, 50px);
+            gap: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 200px repeat(26, 50px);
+            gap: 2px;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+        
+        .gantt-task {
+            background: #2a2a5a;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .gantt-bar {
+            height: 25px;
+            background: linear-gradient(90deg, #00ff88, #88ff00);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            font-size: 10px;
+            color: #0f0f23;
+            font-weight: bold;
+        }
+        
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #2a2a5a;
+            margin: 5px 0;
+            border-radius: 6px;
+            border-left: 4px solid #00ff88;
+        }
+        
+        .budget-category {
+            font-weight: bold;
+        }
+        
+        .budget-amount {
+            color: #88ff00;
+            font-weight: bold;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-on-track { background: #00ff88; }
+        .status-warning { background: #ffff00; }
+        .status-delayed { background: #ff4444; }
+        .status-completed { background: #88ff00; }
+        
+        .metric-box {
+            text-align: center;
+            padding: 20px;
+            background: #2a2a5a;
+            border-radius: 8px;
+            border: 1px solid #00ff88;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #88ff00;
+            text-shadow: 0 0 8px #88ff00;
+        }
+        
+        .metric-label {
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: #00ff88;
+            color: #0f0f23;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #88ff00;
+            box-shadow: 0 0 15px rgba(136, 255, 0, 0.5);
+        }
+        
+        .btn-secondary {
+            background: #2a2a5a;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+        
+        .btn-secondary:hover {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .notification {
+            background: #ff4444;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .notification.success {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .notification.warning {
+            background: #ffff00;
+            color: #0f0f23;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #88ff00;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: #2a2a5a;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #88ff00;
+            box-shadow: 0 0 8px rgba(136, 255, 0, 0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a2a5a;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: #2a2a5a;
+            border: none;
+            cursor: pointer;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 2px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .tab.active {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <div class="logo">🏗️ PROJECT HQ</div>
+            <ul class="nav-menu">
+                <li class="nav-item active" onclick="showPage('overview')">📊 Overview</li>
+                <li class="nav-item" onclick="showPage('compare')">📋 Compare</li>
+                <li class="nav-item" onclick="showPage('timeline')">📅 Timeline</li>
+                <li class="nav-item" onclick="showPage('budget')">💰 Budget</li>
+                <li class="nav-item" onclick="showPage('progress')">📈 Progress</li>
+                <li class="nav-item" onclick="showPage('reports')">📄 Reports</li>
+                <li class="nav-item" onclick="showPage('tools')">🔧 Tools</li>
+            </ul>
+        </nav>
+        
+        <header class="header">
+            <div>
+                <h1>Construction Project Management Dashboard</h1>
+                <p>Manage Bunker, Farmhouse & Cabin Projects</p>
+            </div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <select id="activeProject" onchange="updateActiveProject()" style="padding: 8px; background: #0f0f23; color: #00ff88; border: 2px solid #00ff88; border-radius: 6px;">
+                    <option value="bunker">🏢 Underground Bunker</option>
+                    <option value="farmhouse">🏡 Modern Farmhouse</option>
+                    <option value="cabin">🏘️ Long Creek Cabin</option>
+                </select>
+                <div style="color: #0f0f23; font-weight: bold;" id="currentDate"></div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <!-- Overview Page -->
+            <div id="overview" class="page active">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">📊 PROJECT OVERVIEW</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>🎯 Active Projects</h3>
+                        <div class="metric-box">
+                            <div class="metric-value">3</div>
+                            <div class="metric-label">Total Projects</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Bunker:</span>
+                                <span class="status-indicator status-on-track"></span>
+                                <span>Planning</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Farmhouse:</span>
+                                <span class="status-indicator status-warning"></span>
+                                <span>Design</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Cabin:</span>
+                                <span class="status-indicator status-on-track"></span>
+                                <span>Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>💰 Budget Summary</h3>
+                        <div class="metric-box">
+                            <div class="metric-value">$43.2M</div>
+                            <div class="metric-label">Total Portfolio</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Bunker:</span>
+                                <span>$28.2M</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Farmhouse:</span>
+                                <span>$785K</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Cabin:</span>
+                                <span>$234K</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>⏱️ Timeline Status</h3>
+                        <div class="metric-box">
+                            <div class="metric-value">30</div>
+                            <div class="metric-label">Total Months</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Bunker (16 months)</span>
+                                    <span>15%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 15%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Farmhouse (8 months)</span>
+                                    <span>5%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 5%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Cabin (6 months)</span>
+                                    <span>85%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🏠 Square Footage</h3>
+                        <div class="metric-box">
+                            <div class="metric-value">19.8K</div>
+                            <div class="metric-label">Total Sq Ft</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Bunker:</span>
+                                <span>15,000 sq ft</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Farmhouse:</span>
+                                <span>3,200 sq ft</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Cabin:</span>
+                                <span>1,577 sq ft</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>📢 Recent Activity & Alerts</h3>
+                    <div class="notification success">
+                        ✅ Cabin: Final inspection scheduled for next week
+                    </div>
+                    <div class="notification warning">
+                        ⚠️ Farmhouse: Permit approval delayed by 2 weeks
+                    </div>
+                    <div class="notification">
+                        🚨 Bunker: Steel delivery delayed due to supply chain
+                    </div>
+                    <div class="notification success">
+                        ✅ All projects: Insurance updated and renewed
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Compare Page -->
+            <div id="compare" class="page">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">📋 PROJECT COMPARISON</h2>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Specification</th>
+                            <th>🏢 Underground Bunker</th>
+                            <th>🏡 Modern Farmhouse</th>
+                            <th>🏘️ Long Creek Cabin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Total Square Footage</strong></td>
+                            <td>15,000 sq ft</td>
+                            <td>3,200 sq ft</td>
+                            <td>1,577 sq ft</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Levels/Stories</strong></td>
+                            <td>6 underground levels</td>
+                            <td>1 story + basement</td>
+                            <td>2 stories</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bedrooms</strong></td>
+                            <td>8 bedrooms</td>
+                            <td>4 bedrooms</td>
+                            <td>3 bedrooms</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bathrooms</strong></td>
+                            <td>6 full bathrooms</td>
+                            <td>3 bathrooms</td>
+                            <td>2 bathrooms</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Cost</strong></td>
+                            <td>$28.2 Million</td>
+                            <td>$785,000</td>
+                            <td>$234,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost per Sq Ft</strong></td>
+                            <td>$1,880</td>
+                            <td>$245</td>
+                            <td>$148</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Construction Time</strong></td>
+                            <td>16 months</td>
+                            <td>8 months</td>
+                            <td>6 months</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Foundation Type</strong></td>
+                            <td>Deep reinforced concrete</td>
+                            <td>Basement foundation</td>
+                            <td>Crawl space</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Exterior Materials</strong></td>
+                            <td>ICF walls, waterproof membrane</td>
+                            <td>Board & batten, stone veneer</td>
+                            <td>Cedar clapboard, stone</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Special Features</strong></td>
+                            <td>CBRN protection, self-sufficient</td>
+                            <td>Open concept, modern farmhouse</td>
+                            <td>Rustic charm, efficient design</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Energy Systems</strong></td>
+                            <td>Backup generators, solar, batteries</td>
+                            <td>Heat pump, smart home</td>
+                            <td>Wood stove, mini-splits</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Complexity Level</strong></td>
+                            <td>Extremely Complex</td>
+                            <td>Moderate</td>
+                            <td>Standard</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="cards-grid" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>💰 Cost Analysis</h3>
+                        <canvas id="costChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Size Comparison</h3>
+                        <canvas id="sizeChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timeline Page -->
+            <div id="timeline" class="page">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">📅 PROJECT TIMELINE</h2>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="showTimelineTab('gantt')">Gantt Chart</button>
+                    <button class="tab" onclick="showTimelineTab('milestones')">Milestones</button>
+                    <button class="tab" onclick="showTimelineTab('calendar')">Calendar View</button>
+                </div>
+                
+                <div id="gantt" class="timeline-tab active">
+                    <h3 style="color: #88ff00; margin-bottom: 15px;">📊 Gantt Chart View</h3>
+                    <div class="gantt-chart">
+                        <div class="gantt-header">
+                            <div style="font-weight: bold;">Task</div>
+                            <div style="font-size: 10px; text-align: center;">W1</div>
+                            <div style="font-size: 10px; text-align: center;">W2</div>
+                            <div style="font-size: 10px; text-align: center;">W3</div>
+                            <div style="font-size: 10px; text-align: center;">W4</div>
+                            <div style="font-size: 10px; text-align: center;">W5</div>
+                            <div style="font-size: 10px; text-align: center;">W6</div>
+                            <div style="font-size: 10px; text-align: center;">W7</div>
+                            <div style="font-size: 10px; text-align: center;">W8</div>
+                            <div style="font-size: 10px; text-align: center;">W9</div>
+                            <div style="font-size: 10px; text-align: center;">W10</div>
+                            <div style="font-size: 10px; text-align: center;">W11</div>
+                            <div style="font-size: 10px; text-align: center;">W12</div>
+                            <div style="font-size: 10px; text-align: center;">W13</div>
+                            <div style="font-size: 10px; text-align: center;">W14</div>
+                            <div style="font-size: 10px; text-align: center;">W15</div>
+                            <div style="font-size: 10px; text-align: center;">W16</div>
+                            <div style="font-size: 10px; text-align: center;">W17</div>
+                            <div style="font-size: 10px; text-align: center;">W18</div>
+                            <div style="font-size: 10px; text-align: center;">W19</div>
+                            <div style="font-size: 10px; text-align: center;">W20</div>
+                            <div style="font-size: 10px; text-align: center;">W21</div>
+                            <div style="font-size: 10px; text-align: center;">W22</div>
+                            <div style="font-size: 10px; text-align: center;">W23</div>
+                            <div style="font-size: 10px; text-align: center;">W24</div>
+                            <div style="font-size: 10px; text-align: center;">W25</div>
+                            <div style="font-size: 10px; text-align: center;">W26</div>
+                        </div>
+                        
+                        <div class="gantt-row">
+                            <div class="gantt-task">Site Preparation</div>
+                            <div class="gantt-bar" style="grid-column: 2 / 5;">PREP</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                        </div>
+                        
+                        <div class="gantt-row">
+                            <div class="gantt-task">Foundation</div>
+                            <div></div><div></div><div></div>
+                            <div class="gantt-bar" style="grid-column: 5 / 9;">FOUNDATION</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                        </div>
+                        
+                        <div class="gantt-row">
+                            <div class="gantt-task">Framing</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                            <div class="gantt-bar" style="grid-column: 9 / 13;">FRAMING</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                        </div>
+                        
+                        <div class="gantt-row">
+                            <div class="gantt-task">MEP Rough-in</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                            <div class="gantt-bar" style="grid-column: 13 / 17;">MEP</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                        </div>
+                        
+                        <div class="gantt-row">
+                            <div class="gantt-task">Interior Finishes</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                            <div class="gantt-bar" style="grid-column: 17 / 23;">FINISHES</div>
+                            <div></div><div></div><div></div><div></div>
+                        </div>
+                        
+                        <div class="gantt-row">
+                            <div class="gantt-task">Final Inspection</div>
+                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                            <div class="gantt-bar" style="grid-column: 23 / 25;">FINAL</div>
+                            <div></div><div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="milestones" class="timeline-tab">
+                    <h3 style="color: #88ff00; margin-bottom: 15px;">🎯 Project Milestones</h3>
+                    <div class="timeline">
+                        <div class="timeline-item completed">
+                            <h4>✅ Project Planning Complete</h4>
+                            <p>All blueprints finalized, permits submitted</p>
+                            <small>Completed: March 15, 2025</small>
+                        </div>
+                        <div class="timeline-item completed">
+                            <h4>✅ Site Preparation</h4>
+                            <p>Excavation and site work completed</p>
+                            <small>Completed: April 2, 2025</small>
+                        </div>
+                        <div class="timeline-item current">
+                            <h4>🔄 Foundation Work</h4>
+                            <p>Concrete foundation and waterproofing in progress</p>
+                            <small>In Progress: Expected completion May 15, 2025</small>
+                        </div>
+                        <div class="timeline-item">
+                            <h4>📋 Structural Framing</h4>
+                            <p>Wall and roof framing installation</p>
+                            <small>Scheduled: May 20 - June 30, 2025</small>
+                        </div>
+                        <div class="timeline-item">
+                            <h4>⚡ MEP Installation</h4>
+                            <p>Mechanical, electrical, and plumbing rough-in</p>
+                            <small>Scheduled: July 1 - August 15, 2025</small>
+                        </div>
+                        <div class="timeline-item">
+                            <h4>🎨 Interior Finishes</h4>
+                            <p>Drywall, flooring, and final finishes</p>
+                            <small>Scheduled: August 20 - October 30, 2025</small>
+                        </div>
+                        <div class="timeline-item">
+                            <h4>🏁 Project Completion</h4>
+                            <p>Final inspections and certificate of occupancy</p>
+                            <small>Target: November 15, 2025</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="calendar" class="timeline-tab">
+                    <h3 style="color: #88ff00; margin-bottom: 15px;">📅 Calendar View</h3>
+                    <div class="card">
+                        <h4>Upcoming This Week</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #2a2a5a; margin: 5px 0; border-radius: 6px;">
+                                <span>Monday - Foundation inspection</span>
+                                <span style="color: #88ff00;">Cabin Project</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #2a2a5a; margin: 5px 0; border-radius: 6px;">
+                                <span>Wednesday - Material delivery</span>
+                                <span style="color: #88ff00;">Farmhouse Project</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #2a2a5a; margin: 5px 0; border-radius: 6px;">
+                                <span>Friday - Design review meeting</span>
+                                <span style="color: #88ff00;">Bunker Project</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Budget Page -->
+            <div id="budget" class="page">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">💰 BUDGET MANAGEMENT</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>💼 Current Project Budget</h3>
+                        <div id="currentProjectBudget">
+                            <div class="metric-box">
+                                <div class="metric-value">$28.2M</div>
+                                <div class="metric-label">Underground Bunker</div>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Spent</span>
+                                        <span>$4.2M (15%)</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Committed</span>
+                                        <span>$8.5M (30%)</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Available</span>
+                                        <span>$15.5M (55%)</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 55%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📊 Budget Breakdown</h3>
+                        <div class="budget-item">
+                            <span class="budget-category">Foundation & Structure</span>
+                            <span class="budget-amount">$12.8M</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-category">MEP Systems</span>
+                            <span class="budget-amount">$8.2M</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-category">Security & Safety</span>
+                            <span class="budget-amount">$3.1M</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-category">Interior Finishes</span>
+                            <span class="budget-amount">$2.4M</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-category">Contingency</span>
+                            <span class="budget-amount">$1.7M</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📈 Cost Tracking</h3>
+                        <canvas id="budgetChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>⚠️ Budget Alerts</h3>
+                        <div class="notification warning">
+                            Steel costs 15% over budget due to market conditions
+                        </div>
+                        <div class="notification success">
+                            Electrical work coming in 8% under budget
+                        </div>
+                        <div class="notification">
+                            Concrete costs trending 12% over original estimate
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Page -->
+            <div id="progress" class="page">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">📈 CONSTRUCTION PROGRESS</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>🏗️ Overall Progress</h3>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Bunker Project</span>
+                                <span>15%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Farmhouse Project</span>
+                                <span>5%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 5%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Cabin Project</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📋 Phase Completion</h3>
+                        <div style="display: grid; gap: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Site Preparation</span>
+                                <span class="status-indicator status-completed"></span>
+                                <span>100%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Foundation Work</span>
+                                <span class="status-indicator status-on-track"></span>
+                                <span>60%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Structural Framing</span>
+                                <span class="status-indicator status-warning"></span>
+                                <span>0%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>MEP Rough-in</span>
+                                <span class="status-indicator status-delayed"></span>
+                                <span>0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📸 Photo Progress</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="background: #2a2a5a; padding: 20px; text-align: center; border-radius: 8px;">
+                                <div style="font-size: 2em;">📷</div>
+                                <div>Site Before</div>
+                            </div>
+                            <div style="background: #2a2a5a; padding: 20px; text-align: center; border-radius: 8px;">
+                                <div style="font-size: 2em;">📸</div>
+                                <div>Current Progress</div>
+                            </div>
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 15px;">Upload Progress Photos</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📊 Quality Metrics</h3>
+                        <div class="metric-box">
+                            <div class="metric-value">94%</div>
+                            <div class="metric-label">Quality Score</div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Inspections Passed:</span>
+                                <span>15/16</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Rework Items:</span>
+                                <span>2</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Safety Incidents:</span>
+                                <span>0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reports Page -->
+            <div id="reports" class="page">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">📄 REPORTS & ANALYTICS</h2>
+                
+                <div class="action-buttons">
+                    <button class="btn">Generate Weekly Report</button>
+                    <button class="btn btn-secondary">Export Data</button>
+                    <button class="btn btn-secondary">Print Summary</button>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>📊 Executive Summary</h3>
+                        <div style="margin: 15px 0;">
+                            <h4 style="color: #88ff00;">Key Performance Indicators</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                                <div class="metric-box">
+                                    <div class="metric-value">3</div>
+                                    <div class="metric-label">Active Projects</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-value">92%</div>
+                                    <div class="metric-label">On Schedule</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-value">$43M</div>
+                                    <div class="metric-label">Total Value</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-value">18</div>
+                                    <div class="metric-label">Team Members</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📈 Performance Trends</h3>
+                        <canvas id="performanceChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📋 Risk Assessment</h3>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2a2a5a; margin: 5px 0; border-radius: 6px;">
+                                <span>Weather Delays</span>
+                                <span style="color: #ffff00;">Medium Risk</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2a2a5a; margin: 5px 0; border-radius: 6px;">
+                                <span>Material Shortages</span>
+                                <span style="color: #ff4444;">High Risk</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2a2a5a; margin: 5px 0; border-radius: 6px;">
+                                <span>Budget Overrun</span>
+                                <span style="color: #00ff88;">Low Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📊 Resource Utilization</h3>
+                        <canvas id="resourceChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tools Page -->
+            <div id="tools" class="page">
+                <h2 style="color: #88ff00; margin-bottom: 20px;">🔧 PROJECT TOOLS</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>🧮 Cost Calculator</h3>
+                        <p>Calculate detailed construction costs for any project type</p>
+                        <button class="btn" onclick="window.open('#', '_blank')">Open Calculator</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📐 Blueprint Viewer</h3>
+                        <p>View and manage construction blueprints and plans</p>
+                        <button class="btn" onclick="window.open('#', '_blank')">View Blueprints</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📋 Material Takeoff</h3>
+                        <p>Generate detailed material lists and quantities</p>
+                        <button class="btn">Create Takeoff</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📞 Contact Directory</h3>
+                        <p>Manage contractors, suppliers, and team contacts</p>
+                        <button class="btn">View Directory</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📄 Document Manager</h3>
+                        <p>Store and organize project documents and permits</p>
+                        <button class="btn">Manage Documents</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>⏰ Time Tracker</h3>
+                        <p>Track work hours and project time allocation</p>
+                        <button class="btn">Start Tracking</button>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <h3>⚙️ Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn">Add New Task</button>
+                        <button class="btn btn-secondary">Schedule Meeting</button>
+                        <button class="btn btn-secondary">Request Inspection</button>
+                        <button class="btn btn-secondary">Order Materials</button>
+                        <button class="btn btn-secondary">Update Progress</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Project data for dynamic updates
+        const projectData = {
+            bunker: {
+                name: "Underground Bunker Facility",
+                cost: 28200000,
+                sqft: 15000,
+                progress: 15,
+                status: "Foundation work in progress"
+            },
+            farmhouse: {
+                name: "Modern Farmhouse",
+                cost: 785000,
+                sqft: 3200,
+                progress: 5,
+                status: "Design phase, permits pending"
+            },
+            cabin: {
+                name: "Long Creek Cabin",
+                cost: 234000,
+                sqft: 1577,
+                progress: 85,
+                status: "Final inspections next week"
+            }
+        };
+
+        let currentActiveProject = 'bunker';
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            setInterval(updateCurrentDate, 60000); // Update every minute
+        });
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+        }
+
+        function updateActiveProject() {
+            const selector = document.getElementById('activeProject');
+            currentActiveProject = selector.value;
+            
+            // Update current project budget display
+            const project = projectData[currentActiveProject];
+            const budgetDisplay = document.getElementById('currentProjectBudget');
+            
+            budgetDisplay.innerHTML = `
+                <div class="metric-box">
+                    <div class="metric-value">$${(project.cost / 1000000).toFixed(1)}M</div>
+                    <div class="metric-label">${project.name}</div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Spent</span>
+                            <span>$${(project.cost * project.progress / 100 / 1000000).toFixed(1)}M (${project.progress}%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${project.progress}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Status</span>
+                            <span>${project.status}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showTimelineTab(tabId) {
+            // Hide all timeline tabs
+            document.querySelectorAll('.timeline-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from timeline tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected timeline tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked tab button
+            event.target.classList.add('active');
+        }
+
+        // Placeholder functions for chart rendering
+        // In a real implementation, these would use Chart.js or similar library
+        function renderCharts() {
+            // This would render actual charts with real data
+            console.log('Charts would be rendered here with Chart.js or similar library');
+        }
+
+        // Call chart rendering after page load
+        setTimeout(renderCharts, 1000);
+    </script>
+</body>
+</html>

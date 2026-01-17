@@ -1,0 +1,270 @@
+<!-- 404.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Construction Management Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            max-width: 600px;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 3px solid #00ff88;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .error-code {
+            font-size: 6em;
+            font-weight: bold;
+            color: #88ff00;
+            text-shadow: 0 0 20px #88ff00;
+            margin-bottom: 20px;
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 20px #88ff00; }
+            50% { text-shadow: 0 0 30px #88ff00, 0 0 40px #88ff00; }
+        }
+
+        .error-title {
+            font-size: 2em;
+            color: #00ff88;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .error-message {
+            font-size: 1.2em;
+            color: #88ff00;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+
+        .btn.secondary:hover {
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+        }
+
+        .construction-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="construction-icon">🏗️</div>
+        <div class="error-code">404</div>
+        <div class="error-title">Page Not Found</div>
+        <div class="error-message">
+            The requested page is not available in the Construction Management Suite.
+            It may have been moved, deleted, or you entered an incorrect URL.
+        </div>
+        <div class="error-actions">
+            <a href="/" class="btn">🏠 Return Home</a>
+            <a href="/#dashboard" class="btn secondary">📊 View Dashboard</a>
+            <a href="/#calculator" class="btn secondary">🧮 Calculator</a>
+        </div>
+    </div>
+</body>
+</html>
+
+<!-- 50x.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error | Construction Management Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            max-width: 600px;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 3px solid #ff4444;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
+        }
+
+        .error-code {
+            font-size: 6em;
+            font-weight: bold;
+            color: #ff4444;
+            text-shadow: 0 0 20px #ff4444;
+            margin-bottom: 20px;
+            animation: error-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes error-pulse {
+            0%, 100% { text-shadow: 0 0 20px #ff4444; }
+            50% { text-shadow: 0 0 30px #ff4444, 0 0 40px #ff4444; }
+        }
+
+        .error-title {
+            font-size: 2em;
+            color: #ff4444;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .error-message {
+            font-size: 1.2em;
+            color: #ffaa44;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .btn.retry {
+            background: linear-gradient(135deg, #ff8844 0%, #ffaa44 100%);
+            color: #0f0f23;
+        }
+
+        .btn.retry:hover {
+            background: linear-gradient(135deg, #ffaa44 0%, #ffcc44 100%);
+        }
+
+        .construction-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: shake 2s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="construction-icon">⚠️</div>
+        <div class="error-code">5XX</div>
+        <div class="error-title">Server Error</div>
+        <div class="error-message">
+            We're experiencing technical difficulties with the Construction Management Suite.
+            Our engineers are working to resolve this issue. Please try again in a few moments.
+        </div>
+        <div class="error-actions">
+            <a href="javascript:location.reload()" class="btn retry">🔄 Try Again</a>
+            <a href="/" class="btn">🏠 Return Home</a>
+        </div>
+    </div>
+</body>
+</html>

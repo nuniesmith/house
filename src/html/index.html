@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construction Management Suite - Master Index</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        /* App Shell Styles */
+        .app-shell {
+            display: grid;
+            grid-template-areas: 
+                "sidebar header"
+                "sidebar content";
+            grid-template-columns: 320px 1fr;
+            grid-template-rows: 80px 1fr;
+            min-height: 100vh;
+        }
+
+        .app-sidebar {
+            grid-area: sidebar;
+            background: #0f0f23;
+            border-right: 3px solid #00ff88;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 3px 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .app-header {
+            grid-area: header;
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #88ff00;
+            box-shadow: 0 3px 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .app-content {
+            grid-area: content;
+            position: relative;
+            background: #1a1a2e;
+            overflow: hidden;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #1a1a2e;
+        }
+
+        /* Sidebar Navigation Styles */
+        .logo {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #88ff00;
+            margin-bottom: 25px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #88ff00;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 10px #88ff00; }
+            50% { text-shadow: 0 0 20px #88ff00, 0 0 30px #88ff00; }
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-section-title {
+            color: #88ff00;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            padding: 8px 0;
+            border-bottom: 2px solid #2a2a5a;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 15px;
+            margin: 6px 0;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            color: #00ff88;
+            text-decoration: none;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            border-color: #88ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+            transform: translateX(5px);
+        }
+
+        .nav-item.calculator {
+            background: linear-gradient(135deg, #ff8800 0%, #ffaa00 100%);
+            border-color: #ff8800;
+            color: #0f0f23;
+        }
+
+        .nav-item.calculator:hover {
+            background: linear-gradient(135deg, #ffaa00 0%, #ffcc00 100%);
+            box-shadow: 0 0 15px rgba(255, 136, 0, 0.5);
+        }
+
+        /* Project Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+
+        .status-active { 
+            background: #00ff88; 
+            box-shadow: 0 0 8px #00ff88;
+        }
+        .status-planning { 
+            background: #ffff00; 
+            box-shadow: 0 0 8px #ffff00;
+        }
+        .status-complete { 
+            background: #88ff00; 
+            box-shadow: 0 0 8px #88ff00;
+        }
+
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Project Info Panel */
+        .project-info {
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .project-info-title {
+            color: #88ff00;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .project-stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 0.9em;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .project-stat strong {
+            color: #88ff00;
+            text-shadow: 0 0 3px #88ff00;
+        }
+
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+            margin: 15px auto;
+            position: relative;
+        }
+
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: #2a2a5a;
+            stroke-width: 6;
+        }
+
+        .progress-ring-progress {
+            fill: none;
+            stroke: #00ff88;
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 157;
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #88ff00;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .quick-btn {
+            padding: 10px 12px;
+            background: linear-gradient(135deg, #1a1a3a 0%, #2a2a5a 100%);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-btn:hover {
+            background: linear-gradient(135deg, #88ff00 0%, #00ff88 100%);
+            color: #0f0f23;
+            box-shadow: 0 0 10px rgba(136, 255, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Header Controls */
+        .breadcrumb {
+            font-size: 1.1em;
+            color: #0f0f23;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            background: #2a2a5a;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: #00ff88;
+            color: #0f0f23;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+
+        .btn-primary:hover {
+            background: #88ff00;
+            box-shadow: 0 0 15px rgba(136, 255, 0, 0.5);
+        }
+
+        /* Loading States */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #88ff00;
+            font-size: 1.2em;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid #2a2a5a;
+            border-radius: 50%;
+            border-top-color: #88ff00;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .app-shell {
+                grid-template-areas: 
+                    "header"
+                    "sidebar"
+                    "content";
+                grid-template-columns: 1fr;
+                grid-template-rows: 80px auto 1fr;
+            }
+            
+            .app-sidebar {
+                border-right: none;
+                border-bottom: 3px solid #00ff88;
+                max-height: 250px;
+                padding: 15px;
+            }
+
+            .nav-section {
+                margin-bottom: 15px;
+            }
+
+            .project-info {
+                display: none; /* Hide on mobile to save space */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .control-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            .breadcrumb {
+                font-size: 1em;
+            }
+        }
+
+        /* Welcome Screen Styles */
+        .welcome-screen {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-title {
+            font-size: 3em;
+            color: #00ff88;
+            text-shadow: 0 0 20px #00ff88;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 20px #00ff88; }
+            50% { text-shadow: 0 0 30px #00ff88, 0 0 40px #00ff88, 0 0 50px #00ff88; }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.3em;
+            color: #88ff00;
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .welcome-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .welcome-stat {
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+            border-color: #88ff00;
+        }
+
+        .welcome-stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #88ff00;
+            text-shadow: 0 0 10px #88ff00;
+            margin-bottom: 10px;
+        }
+
+        .welcome-stat-label {
+            color: #00ff88;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .welcome-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .welcome-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .welcome-btn.secondary {
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+
+        .welcome-btn.secondary:hover {
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            font-size: 0.8em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .connection-status.connected {
+            border-color: #88ff00;
+            color: #88ff00;
+        }
+
+        .connection-status.error {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell" id="appShell" style="display: none;">
+        <nav class="app-sidebar">
+            <div class="logo">🏗️ CONSTRUCTION HQ</div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">📊 Dashboard</div>
+                <div class="nav-item" data-view="dashboard" onclick="navigateToView('dashboard')">
+                    📊 Project Overview
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">🏗️ Projects</div>
+                <div class="nav-item" data-view="bunker-blueprint" onclick="navigateToView('bunker-blueprint')">
+                    <span class="status-indicator status-active"></span>
+                    🏢 Bunker Blueprints
+                </div>
+                <div class="nav-item" data-view="bunker-guide" onclick="navigateToView('bunker-guide')">
+                    📋 Bunker Guide
+                </div>
+                <div class="nav-item" data-view="farmhouse-blueprint" onclick="navigateToView('farmhouse-blueprint')">
+                    <span class="status-indicator status-planning"></span>
+                    🏡 Farmhouse Blueprints
+                </div>
+                <div class="nav-item" data-view="farmhouse-guide" onclick="navigateToView('farmhouse-guide')">
+                    📋 Farmhouse Guide
+                </div>
+                <div class="nav-item" data-view="cabin-blueprint" onclick="navigateToView('cabin-blueprint')">
+                    <span class="status-indicator status-complete"></span>
+                    🏘️ Cabin Blueprints
+                </div>
+                <div class="nav-item" data-view="cabin-guide" onclick="navigateToView('cabin-guide')">
+                    📋 Cabin Guide
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">🔧 Tools</div>
+                <div class="nav-item calculator" data-view="calculator" onclick="navigateToView('calculator')">
+                    🧮 Cost Calculator
+                </div>
+                <div class="nav-item" data-view="scheduler" onclick="navigateToView('scheduler')">
+                    📅 Project Scheduler
+                </div>
+            </div>
+            
+            <div class="project-info" id="projectInfo">
+                <div class="project-info-title">Current Project</div>
+                <div class="progress-ring">
+                    <svg>
+                        <circle class="progress-ring-bg" cx="30" cy="30" r="25"></circle>
+                        <circle class="progress-ring-progress" cx="30" cy="30" r="25" id="progressCircle"></circle>
+                    </svg>
+                    <div class="progress-text" id="progressText">15%</div>
+                </div>
+                <div class="project-stat">
+                    <span>Name:</span>
+                    <strong id="currentProjectName">Underground Bunker</strong>
+                </div>
+                <div class="project-stat">
+                    <span>Budget:</span>
+                    <strong id="currentBudget">$28.2M</strong>
+                </div>
+                <div class="project-stat">
+                    <span>Timeline:</span>
+                    <strong id="currentTimeline">16 months</strong>
+                </div>
+                <div class="project-stat">
+                    <span>Size:</span>
+                    <strong id="currentSize">15,000 sq ft</strong>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="quick-btn" onclick="quickCalculator()">
+                        💰 Quick Calculate
+                    </div>
+                    <div class="quick-btn" onclick="quickProgress()">
+                        📈 View Progress
+                    </div>
+                    <div class="quick-btn" onclick="quickExport()">
+                        📤 Export Data
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <header class="app-header">
+            <div class="breadcrumb" id="breadcrumb">
+                🏗️ Construction Management Suite
+            </div>
+            <div class="control-buttons">
+                <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+                <button class="btn" onclick="printContent()">🖨️ Print</button>
+                <button class="btn" onclick="shareContent()">📤 Share</button>
+                <button class="btn btn-primary" onclick="showWelcome()">🏠 Home</button>
+            </div>
+        </header>
+        
+        <main class="app-content">
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <div>Loading content...</div>
+            </div>
+            <iframe class="content-frame" id="contentFrame" src="about:blank"></iframe>
+        </main>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1 class="welcome-title">🏗️ Construction Projects HQ</h1>
+        <p class="welcome-subtitle">
+            Complete Design, Planning & Management Suite for all your construction projects.
+            Professional blueprints, detailed cost calculations, and comprehensive project management tools.
+        </p>
+        
+        <div class="welcome-stats">
+            <div class="welcome-stat">
+                <div class="welcome-stat-value">3</div>
+                <div class="welcome-stat-label">Active Projects</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-value">$43.2M</div>
+                <div class="welcome-stat-label">Total Value</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-value">19.8K</div>
+                <div class="welcome-stat-label">Total Sq Ft</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-value">30</div>
+                <div class="welcome-stat-label">Total Months</div>
+            </div>
+        </div>
+        
+        <div class="welcome-actions">
+            <button class="welcome-btn" onclick="startApp()">
+                🚀 Launch Application
+            </button>
+            <button class="welcome-btn secondary" onclick="navigateToView('calculator')">
+                🧮 Quick Calculator
+            </button>
+            <button class="welcome-btn secondary" onclick="navigateToView('dashboard')">
+                📊 View Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="connection-status" id="connectionStatus">
+        🌐 Initializing...
+    </div>
+
+    <!-- Load JavaScript Modules -->
+    <script src="js/modules/marked.js"></script>
+    <script src="main.js"></script>
+    
+    <script>
+        // Enhanced Navigation and App Integration
+        let isAppMode = false;
+        let currentView = 'welcome';
+        
+        // Initialize the enhanced app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏗️ Initializing Enhanced Construction Management Suite...');
+            
+            // Show welcome screen initially
+            showWelcome();
+            
+            // Update connection status
+            updateConnectionStatus('connected', '✅ System Ready');
+            
+            // Setup global error handling
+            setupErrorHandling();
+            
+            // Check for direct navigation from URL hash
+            checkUrlNavigation();
+            
+            console.log('✅ Enhanced Construction Suite initialized');
+        });
+
+        function startApp() {
+            isAppMode = true;
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('appShell').style.display = 'grid';
+            
+            // Default to dashboard
+            navigateToView('dashboard');
+            
+            // Update connection status
+            updateConnectionStatus('connected', '🔗 App Mode Active');
+        }
+
+        function showWelcome() {
+            isAppMode = false;
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.getElementById('appShell').style.display = 'none';
+            currentView = 'welcome';
+            
+            // Update connection status
+            updateConnectionStatus('connected', '🏠 Welcome Mode');
+        }
+
+        function navigateToView(viewName) {
+            if (!isAppMode) {
+                startApp();
+            }
+            
+            console.log(`🧭 Navigating to: ${viewName}`);
+            
+            currentView = viewName;
+            
+            // Update active navigation
+            updateActiveNavigation(viewName);
+            
+            // Show loading
+            showLoading(true);
+            
+            // Update breadcrumb
+            updateBreadcrumb(viewName);
+            
+            // Load content based on view type
+            if (viewName.includes('-guide')) {
+                loadMarkdownView(viewName);
+            } else {
+                loadHtmlView(viewName);
+            }
+            
+            // Update browser history
+            updateUrlHistory(viewName);
+        }
+
+        function loadHtmlView(viewName) {
+            const fileMap = {
+                'dashboard': './components/dashboard.html',
+                'calculator': './components/calculator.html',
+                'scheduler': './components/scheduler.html',
+                'bunker-blueprint': './projects/bunker/blueprint.html',
+                'farmhouse-blueprint': './projects/farmhouse/blueprint.html',
+                'cabin-blueprint': './projects/cabin/blueprint.html'
+            };
+            
+            const filename = fileMap[viewName];
+            if (filename) {
+                const iframe = document.getElementById('contentFrame');
+                iframe.onload = () => {
+                    showLoading(false);
+                    
+                    // Send initialization data to iframe if it's the calculator
+                    if (viewName === 'calculator') {
+                        setTimeout(() => {
+                            sendCalculatorData(iframe);
+                        }, 1000);
+                    }
+                };
+                
+                iframe.src = filename;
+            } else {
+                showError(`Unknown view: ${viewName}`);
+                showLoading(false);
+            }
+        }
+
+        function loadMarkdownView(viewName) {
+            const fileMap = {
+                'bunker-guide': './projects/bunker/guide.md',
+                'farmhouse-guide': './projects/farmhouse/guide.md',
+                'cabin-guide': './projects/cabin/guide.md'
+            };
+            
+            const filename = fileMap[viewName];
+            if (filename) {
+                fetch(filename)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to load guide');
+                        return response.text();
+                    })
+                    .then(markdown => {
+                        const iframe = document.getElementById('contentFrame');
+                        if (window.ConstructionMarkdownParser) {
+                            ConstructionMarkdownParser.parseAndDisplay(markdown, iframe);
+                        } else {
+                            // Fallback to simple HTML
+                            const html = createSimpleMarkdownPage(markdown, viewName);
+                            iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+                        }
+                        showLoading(false);
+                    })
+                    .catch(error => {
+                        console.error('Error loading markdown:', error);
+                        showError('Failed to load construction guide');
+                        showLoading(false);
+                    });
+            } else {
+                showError(`Unknown guide: ${viewName}`);
+                showLoading(false);
+            }
+        }
+
+        function createSimpleMarkdownPage(markdown, viewName) {
+            const projectName = viewName.replace('-guide', '').replace(/([a-z])([A-Z])/g, '$1 $2');
+            let html = markdown
+                .replace(/^# (.*$)/gim, '<h1 style="color: #88ff00; border-bottom: 3px solid #88ff00; padding-bottom: 10px;">$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2 style="color: #88ff00; border-bottom: 2px solid #88ff00; padding-bottom: 8px;">$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3 style="color: #88ff00; border-bottom: 1px solid #88ff00; padding-bottom: 5px;">$1</h3>')
+                .replace(/\*\*(.*?)\*\*/gim, '<strong style="color: #88ff00;">$1</strong>')
+                .replace(/\*(.*?)\*/gim, '<em style="color: #ffff00;">$1</em>')
+                .replace(/^\* (.*$)/gim, '<li style="margin: 8px 0;">$1</li>')
+                .replace(/\$([0-9,]+(?:\.[0-9]{2})?)/gim, '<span style="color: #ffff00; font-weight: bold; background: rgba(255,255,0,0.1); padding: 2px 6px; border-radius: 4px;">$$$1</span>')
+                .replace(/(\d+(?:\.\d+)?)\s*(sq\s?ft|ft|inches?|in)/gim, '<span style="color: #ff8800; font-weight: bold;">$1 $2</span>')
+                .replace(/\n/gim, '<br>');
+
+            return `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${projectName} Construction Guide</title>
+                    <style>
+                        body { 
+                            font-family: 'Courier New', monospace; 
+                            background: #1a1a2e; 
+                            color: #00ff88; 
+                            padding: 30px; 
+                            line-height: 1.8;
+                            max-width: 1200px;
+                            margin: 0 auto;
+                        }
+                        h1, h2, h3 { 
+                            color: #88ff00; 
+                            margin: 25px 0 15px 0;
+                            text-shadow: 0 0 5px currentColor;
+                        }
+                        h1 { font-size: 2.5em; }
+                        h2 { font-size: 2em; }
+                        h3 { font-size: 1.5em; }
+                        strong { color: #88ff00; }
+                        em { color: #ffff00; }
+                        li { margin: 10px 0; list-style-type: none; }
+                        li::before { content: "🔹 "; color: #00ff88; }
+                        ul { padding-left: 0; }
+                        .header-info {
+                            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+                            border: 2px solid #00ff88;
+                            padding: 20px;
+                            border-radius: 10px;
+                            margin-bottom: 30px;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header-info">
+                        <h1>📋 ${projectName.toUpperCase()} CONSTRUCTION GUIDE</h1>
+                        <p style="color: #88ff00; font-size: 1.2em;">Comprehensive building specifications and guidelines</p>
+                    </div>
+                    ${html}
+                </body>
+                </html>
+            `;
+        }
+
+        function sendCalculatorData(iframe) {
+            // Send project data to calculator for integration
+            if (iframe.contentWindow && window.constructionApp) {
+                const currentProject = window.constructionApp.getCurrentProject();
+                iframe.contentWindow.postMessage({
+                    type: 'loadProjectData',
+                    project: window.constructionApp.currentProject,
+                    data: currentProject
+                }, '*');
+            }
+        }
+
+        function updateActiveNavigation(viewName) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to current view
+            const activeItem = document.querySelector(`[data-view="${viewName}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+        }
+
+        function updateBreadcrumb(viewName) {
+            const titles = {
+                'dashboard': '📊 Project Dashboard',
+                'calculator': '🧮 Universal Cost Calculator',
+                'scheduler': '📅 Project Scheduler',
+                'bunker-blueprint': '🏢 Underground Bunker Blueprints',
+                'bunker-guide': '📋 Bunker Construction Guide',
+                'farmhouse-blueprint': '🏡 Modern Farmhouse Blueprints',
+                'farmhouse-guide': '📋 Farmhouse Construction Guide',
+                'cabin-blueprint': '🏘️ Long Creek Cabin Blueprints',
+                'cabin-guide': '📋 Cabin Construction Guide'
+            };
+            
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.textContent = titles[viewName] || '🏗️ Construction Management Suite';
+        }
+
+        function updateUrlHistory(viewName) {
+            const url = `#${viewName}`;
+            if (history.pushState) {
+                history.pushState({ view: viewName }, '', url);
+            } else {
+                window.location.hash = viewName;
+            }
+        }
+
+        function checkUrlNavigation() {
+            const hash = window.location.hash.substring(1);
+            if (hash && hash !== 'welcome') {
+                navigateToView(hash);
+            }
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            console.error('❌', message);
+            const iframe = document.getElementById('contentFrame');
+            iframe.src = `data:text/html,<html><body style="font-family: 'Courier New', monospace; background: #1a1a2e; color: #ff4444; padding: 50px; text-align: center;"><h1>❌ Error</h1><p>${message}</p><button onclick="window.parent.showWelcome()" style="padding: 10px 20px; background: #00ff88; color: #0f0f23; border: none; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: bold;">🏠 Return Home</button></body></html>`;
+        }
+
+        function updateConnectionStatus(status, message) {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.textContent = message;
+            statusEl.className = `connection-status ${status}`;
+            
+            // Auto-hide after 3 seconds if connected
+            if (status === 'connected') {
+                setTimeout(() => {
+                    statusEl.style.opacity = '0.7';
+                }, 3000);
+            }
+        }
+
+        function setupErrorHandling() {
+            window.addEventListener('error', function(event) {
+                console.error('Global error:', event.error);
+                updateConnectionStatus('error', '⚠️ Error Detected');
+            });
+            
+            window.addEventListener('unhandledrejection', function(event) {
+                console.error('Unhandled promise rejection:', event.reason);
+                updateConnectionStatus('error', '⚠️ Network Error');
+            });
+        }
+
+        // Quick action functions
+        function quickCalculator() {
+            navigateToView('calculator');
+        }
+
+        function quickProgress() {
+            navigateToView('dashboard');
+        }
+
+        function quickExport() {
+            if (window.constructionApp) {
+                window.constructionApp.exportProjectData();
+            } else {
+                alert('Export functionality requires the full app mode');
+            }
+        }
+
+        // Control button functions
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function printContent() {
+            const iframe = document.getElementById('contentFrame');
+            if (iframe.contentWindow) {
+                iframe.contentWindow.print();
+            }
+        }
+
+        function shareContent() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Construction Management Suite',
+                    text: 'Check out this comprehensive construction management platform',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    updateConnectionStatus('connected', '📋 Link Copied!');
+                    setTimeout(() => updateConnectionStatus('connected', '✅ System Ready'), 2000);
+                });
+            }
+        }
+
+        // Handle browser navigation
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.view) {
+                navigateToView(event.state.view);
+            } else {
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    navigateToView(hash);
+                } else {
+                    showWelcome();
+                }
+            }
+        });
+
+        // Update project info when data changes
+        function updateProjectInfo(projectData) {
+            if (!projectData) return;
+            
+            document.getElementById('currentProjectName').textContent = projectData.name;
+            document.getElementById('currentBudget').textContent = '$' + (projectData.budget / 1000000).toFixed(1) + 'M';
+            document.getElementById('currentTimeline').textContent = projectData.months + ' months';
+            document.getElementById('currentSize').textContent = projectData.sqft.toLocaleString() + ' sq ft';
+            document.getElementById('progressText').textContent = projectData.progress + '%';
+            
+            // Update progress ring
+            const progressCircle = document.getElementById('progressCircle');
+            const circumference = 157; // 2 * π * 25
+            const offset = circumference - (projectData.progress / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+
+        // Listen for messages from child frames
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type) {
+                switch (event.data.type) {
+                    case 'projectChanged':
+                        if (window.constructionApp) {
+                            window.constructionApp.switchProject(event.data.project);
+                            updateProjectInfo(window.constructionApp.getCurrentProject());
+                        }
+                        break;
+                    case 'costUpdated':
+                        if (window.constructionApp) {
+                            window.constructionApp.updateProjectCost(event.data.project, event.data.cost);
+                            updateProjectInfo(window.constructionApp.getCurrentProject());
+                        }
+                        break;
+                }
+            }
+        });
+
+        console.log('🏗️ Enhanced Construction Management Suite loaded successfully!');
+    </script>
+</body>
+</html>
