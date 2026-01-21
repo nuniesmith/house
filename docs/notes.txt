@@ -1,0 +1,629 @@
+Yes, there are several programming languages and tools that allow you to define floor plans in code (or a textual format) and generate images from them. This is often done through general-purpose languages with drawing libraries, or more specialized domain-specific languages (DSLs) tailored for architectural or layout tasks. I'll outline some practical options below, including examples where possible.
+
+### Python with Matplotlib (Simple and Accessible)
+
+Python is a popular choice because it's easy to learn, and libraries like Matplotlib let you define rooms, walls, and other elements as shapes (e.g., rectangles, lines) and export them as image files (PNG, SVG, etc.). You can describe the floor plan programmatically—specify dimensions, positions, labels—and generate a visual output.
+
+Here's a basic example code snippet to generate a simple house floor plan image:
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+# Create a figure and axis
+fig, ax = plt.subplots(figsize=(10, 8))
+ax.set_xlim(0, 20)  # Set the bounds for the floor plan (width)
+ax.set_ylim(0, 15)  # Height
+ax.set_aspect('equal')  # Keep proportions square
+ax.grid(True)  # Optional grid for reference
+
+# Define rooms as rectangles (x, y, width, height)
+# Living room
+ax.add_patch(patches.Rectangle((0, 0), 10, 8, edgecolor='black', facecolor='lightblue', label='Living Room'))
+# Kitchen
+ax.add_patch(patches.Rectangle((10, 0), 5, 6, edgecolor='black', facecolor='lightgreen', label='Kitchen'))
+# Bedroom
+ax.add_patch(patches.Rectangle((0, 8), 7, 7, edgecolor='black', facecolor='lightyellow', label='Bedroom'))
+# Bathroom
+ax.add_patch(patches.Rectangle((7, 8), 3, 4, edgecolor='black', facecolor='lightgray', label='Bathroom'))
+
+# Add doors (as lines or small rectangles)
+ax.add_patch(patches.Rectangle((9.5, 0), 1, 1, edgecolor='brown', facecolor='brown', label='Door'))  # Example door
+
+# Add labels
+ax.text(5, 4, 'Living Room', fontsize=10, ha='center')
+ax.text(12.5, 3, 'Kitchen', fontsize=10, ha='center')
+ax.text(3.5, 11.5, 'Bedroom', fontsize=10, ha='center')
+ax.text(8.5, 10, 'Bathroom', fontsize=10, ha='center')
+
+# Remove axes for a clean look
+ax.axis('off')
+
+# Save as image
+plt.savefig('my_house_floorplan.png', dpi=300)
+plt.close()  # Or plt.show() to display interactively
+
+```
+
+This code defines a basic layout with rooms and a door, then saves it as `my_house_floorplan.png`. You can run it in any Python environment (e.g., Jupyter Notebook or a script). Customize it by adding more shapes for furniture, walls, or dimensions. For more complex geometry (e.g., irregular shapes or intersections), pair it with libraries like Shapely or Pillow.
+
+### JavaScript with Canvas or SVG
+
+If you prefer web-based output, JavaScript can define floor plans using the HTML Canvas API or SVG elements. Libraries like D3.js or Fabric.js make it easier to create interactive diagrams and export them as images.
+
+For example, with plain Canvas:
+
+```jsx
+const canvas = document.createElement('canvas');
+canvas.width = 800;
+canvas.height = 600;
+const ctx = canvas.getContext('2d');
+
+// Draw rooms (similar to Python example)
+ctx.fillStyle = 'lightblue';
+ctx.fillRect(0, 0, 400, 300);  // Living room
+ctx.fillStyle = 'lightgreen';
+ctx.fillRect(400, 0, 200, 250);  // Kitchen
+// Add more shapes, text, etc.
+
+// Export as image
+const link = document.createElement('a');
+link.download = 'floorplan.png';
+link.href = canvas.toDataURL('image/png');
+link.click();
+
+```
+
+This generates a downloadable PNG. For house floor plans, you could extend it with user input for dimensions.
+
+### Specialized DSLs for Floor Plans
+
+Based on academic and open-source work, there are DSLs specifically for this purpose:
+
+- A DSL described in a 2021 paper titled "Domain Specific Language for Generating Floor Plans" transforms textual instructions (e.g., "add room kitchen 5x4 at position 10,0") into 2D building layouts and generates images or vector outputs. It's designed for architectural automation but may not be publicly available as open-source code—it's more of a research prototype.
+- PDDL (Planning Domain Definition Language) is an AI planning language that can be adapted for generating floor plans by defining "actions" like placing rooms or optimizing layouts. It's not visual by default, but tools like planners can output graphs or integrate with image generators.
+- In architectural software like Rhino/Grasshopper, Python scripts act like a DSL for procedural generation. For instance, you can code random or optimized floor layouts, then export as images or PDFs. Example use: Define walls as lines, rooms as polygons, and use libraries to render.
+
+If you're looking for something more advanced (e.g., 3D or AI-assisted), check out libraries like Rhino's Python API or even LLM-based tools that convert text to vector floor plans. Start with Python if you're new, as it's flexible and has tons of tutorials for custom extensions.
+
+Yes, you can absolutely design a system like a Domain-Specific Language (DSL) in Rust. Rust's macro system makes it particularly well-suited for creating embedded DSLs—mini-languages that feel specialized but expand into valid Rust code at compile time. This is ideal for something like defining floor plans textually and generating images or other outputs from them.
+
+### Why Rust for DSLs?
+
+- **Embedded DSLs**: Use Rust's `macro_rules!` for simple syntax or procedural macros (proc macros) for more advanced parsing. This keeps everything type-safe and integrated with Rust's ecosystem.
+- **External DSLs**: If you need a standalone language (e.g., parsed from files), you could build a parser with crates like `nom` or `pest`, then interpret or compile it to generate images.
+- Performance and safety: Rust ensures your DSL is efficient and free from common errors, which is great for generating complex outputs like floor plan images.
+
+For your floor plan use case, an embedded DSL could let you write concise "code" that describes rooms, walls, etc., and expands into Rust code using a drawing library like `plotters` (for vector graphics) or `image` (for raster images). This way, you define the plan in a readable format and output an image file.
+
+### Simple Example: A Basic Floor Plan DSL
+
+Here's a starter example using `macro_rules!` to create an embedded DSL. It parses a simple syntax for rooms (e.g., name, position, size) and generates code to draw a basic floor plan as an SVG file using the `plotters` crate (add it to your `Cargo.toml`: `plotters = "0.3"`).
+
+```rust
+use plotters::prelude::*;
+
+// Define the DSL macro
+macro_rules! floor_plan {
+    (
+        canvas: $width:expr, $height:expr;
+        rooms: $($room_name:ident ($x:expr, $y:expr, $w:expr, $h:expr);)*
+    ) => {
+        {
+            let root = SVGBackend::new("floor_plan.svg", ($width, $height)).into_drawing_area();
+            root.fill(&WHITE).unwrap();
+
+            // Draw each room as a rectangle
+            $(
+                let rect = Rectangle::new([($x, $y), ($x + $w, $y + $h)], ShapeStyle::from(&BLUE).filled());
+                root.draw(&rect).unwrap();
+                root.draw_text(stringify!($room_name), &("sans-serif", 12).into_font(), ($x + $w / 2, $y + $h / 2)).unwrap();
+            )*
+
+            root.present().unwrap();
+            println!("Floor plan generated as floor_plan.svg");
+        }
+    };
+}
+
+fn main() {
+    // Use the DSL to define a floor plan
+    floor_plan! {
+        canvas: 800, 600;
+        rooms:
+            living_room (0, 0, 400, 300);
+            kitchen (400, 0, 200, 250);
+            bedroom (0, 300, 300, 300);
+            bathroom (300, 300, 100, 150);
+    }
+}
+
+```
+
+- **How it works**: The macro takes a canvas size and a list of rooms (name, x/y position, width/height). It expands into `plotters` code to draw rectangles and labels, saving an SVG.
+- **Customization**: Add more features like doors (as lines), furniture, or colors by extending the macro syntax. For raster images (PNG), swap to the `image` crate.
+- **Running it**: Create a new Rust project (`cargo new floor_plan_dsl`), add the dependency, paste this code, and run `cargo run`. It'll output `floor_plan.svg`.
+
+### Advanced Options
+
+- **Proc Macros**: For more complex syntax (e.g., parsing strings or files), use a proc macro crate like `syn` and `quote`. This is great for error handling or validating floor plan rules (e.g., no overlapping rooms).
+- **External Parser**: If you want a separate file format (e.g., `.floorplan` files), use `pest` for grammar-based parsing, then generate images.
+- **Examples in the Wild**: Check out projects like Hypershell (a shell-scripting DSL) or Rhai (a scripting DSL) for inspiration on modular designs. For TUI styling, there's a CSS-like DSL example that could adapt to visual layouts.
+
+Start with the macro example above—it's straightforward and expandable. If you share more details (e.g., specific features for your floor plan system), I can refine this further!
+
+Rust has a robust ecosystem for image generation and manipulation, ranging from low-level pixel handling to high-level drawing and processing. These libraries are often used for procedural generation (e.g., creating images from code like fractals or floor plans), encoding/decoding formats, and applying effects. Below, I'll highlight some popular ones based on their features, with examples of how they might be used. Most are available on [crates.io](http://crates.io/) and can be added to your `Cargo.toml`.
+
+### Key Libraries
+
+- **image**: A foundational crate for native Rust implementations of image encoding, decoding, and basic manipulation. It's great for generating images from scratch, like creating buffers, setting pixels, and saving to formats (PNG, JPEG, etc.). For procedural generation, you can create an `ImageBuffer` and manipulate pixels directly. Example use: Procedural fractals or basic shapes.
+- **imageproc**: An advanced image processing library built on top of `image`, providing operations like drawing shapes (lines, rectangles), text rendering (via rusttype), filtering, and geometry transformations. Ideal for generating structured images like diagrams or floor plans by rasterizing elements. It includes canvas-like features for building complex visuals.
+- **ril (Rust Imaging Library)**: A performant, high-level crate focused on image processing with benchmarks showing speed advantages. It supports generating and manipulating images with operations like resizing, effects, and text overlays. Good for web or native apps needing efficient generation.
+- **image-builder**: A convenience wrapper around `image` for generating PNG images with simpler APIs. It's designed for high-level tasks like composing elements without diving into low-level details.
+- **photon-rs**: A high-performance library (compilable to WebAssembly) for image effects and generation, including filters, text addition, and procedural tweaks. It's optimized for speed and works well in web or cross-platform contexts.
+- **raster**: A simple API for image manipulation and generation, emphasizing ease of use for basic tasks like pixel setting and saving files. Useful for quick prototypes or when you need something lightweight.
+
+Other notable mentions include:
+
+- **png**: Pure Rust for PNG encoding/decoding, often used in conjunction with others for output.
+- **rgb**: A struct for pixel sharing across crates, with convenience methods for color ops—handy for generation pipelines.
+- Bindings to external libs like **cairo-rs** (for vector graphics) or **opencv-rust** (for advanced CV, though it requires C++ deps).
+
+### Comparison Table
+
+| Library | Focus | Key Features | Dependencies | Use Case Example |
+| --- | --- | --- | --- | --- |
+| image | Core encoding/decoding | Pixel buffers, format support | Minimal | Procedural pixel art or base for DSLs |
+| imageproc | Advanced processing | Drawing, filters, text | image, rusttype | Floor plan rendering with shapes |
+| ril | High-level performant | Effects, resizing, benchmarks | Varies | Fast web image generation |
+| image-builder | Simplified PNG generation | Composition helpers | image | Quick PNG exports |
+| photon-rs | Performance/WASM | Filters, text, effects | Minimal | Cross-platform procedural images |
+| raster | Simple manipulation | Easy pixel ops | Minimal | Basic prototypes |
+
+For text addition (e.g., labeling rooms in a floor plan), crates like `rusttype` or `fontdue` pair well with these. If you're building on your DSL from earlier, start with `image` + `imageproc` for raster output or integrate `plotters` (another strong option for vector plots and diagrams, though not strictly image-focused). Check the GitHub repos for examples and benchmarks to choose based on your needs.
+
+Rust has a growing ecosystem for vector graphics libraries, which are useful for creating, manipulating, and rendering scalable graphics (e.g., SVG, paths, shapes) in applications like GUIs, games, data visualization, or pen-plotting. These often leverage Rust's performance and safety for tasks like tessellation, GPU acceleration, or file handling. Below, I'll highlight some prominent ones based on popularity, features, and community discussions, drawing from [crates.io](http://crates.io/) and GitHub projects.
+
+### Key Libraries
+
+- **femtovg**: An antialiased 2D vector drawing library ported from NanoVG, using OpenGL (ES) 3.0+ for rendering. It's suitable for GPU-accelerated drawing of paths, shapes, and text. Includes demos and is actively maintained. Example use: UI elements or canvas-based apps.
+- **lyon**: A 2D graphics library focused on GPU tessellation for rendering vector paths efficiently. It handles geometry like curves and polygons, making it ideal for complex shapes without rasterization artifacts. Often used in conjunction with other crates for full rendering pipelines.
+- **piet**: Provides an abstraction layer for 2D graphics, supporting vector primitives like paths, brushes, and text layout. It's designed for cross-platform use and integrates with backends like Cairo or Direct2D. Great for GUI frameworks or apps needing consistent rendering.
+- **vsvg**: A library for manipulating vector graphics, with a focus on SVG files and pen-plotter applications. Inspired by tools like vpype, it handles loading, transforming, and optimizing SVGs. Useful for generative art or plotting.
+- **footile**: A simple 2D vector graphics library that rasterizes paths into pixel images using the `pix` crate. It supports basic operations like filling and stroking paths. Best for lightweight raster output from vectors.
+- **forma-render**: An efficient vector-graphics renderer emphasizing performance for complex scenes. It handles layering and composition.
+- **nanovg**: Idiomatic Rust bindings to the NanoVG C library for antialiased vector graphics via OpenGL. It's a lower-level option for direct drawing calls.
+- **Vello**: A high-performance 2D vector graphics renderer using wgpu (WebGPU-based) for GPU shaders. It's experimental but targets advanced use cases like UI or browser rendering, with support for declarative graphics. Integrates with frameworks like Xilem for reactive UIs.
+
+Other mentions include bindings like **cairo-rs** for vector backends and math-focused crates like **nalgebra** or **glam** for vector/matrix operations in graphics contexts. For broader graphics, **wgpu** provides low-level access for custom vector rendering pipelines.
+
+### Comparison Table
+
+| Library | Focus | Key Features | Dependencies | Use Case Example |
+| --- | --- | --- | --- | --- |
+| femtovg | Antialiased drawing | GPU paths, shapes, text | OpenGL | UI canvases, games |
+| lyon | Tessellation | Path geometry, GPU rendering | Minimal | Complex shapes, optimization |
+| piet | Abstraction | Cross-platform 2D primitives | Varies | GUI toolkits |
+| vsvg | Manipulation | SVG handling, transformations | Minimal | Plotters, art generation |
+| footile | Rasterization | Path to pixel conversion | pix | Simple vector-to-raster |
+| Vello | High-performance rendering | GPU shaders, declarative | wgpu | Advanced UIs, browsers |
+
+For a full list, check [crates.io](http://crates.io/)'s graphics category, which includes over 100 related crates. Start with femtovg or lyon if you're building from scratch, as they're popular for pure vector work. If your project involves GUIs or games, pair these with engines like Bevy or Druid.
+
+### Review of the Floor Plans
+
+I've analyzed the two uploaded images of your floor plans. Here's a quick review based on the layouts, flow, and features visible in each:
+
+### Main Level (Image ID: 0)
+
+This appears to be a professionally drafted single-story floor plan for a large home, likely around 4-5 bedrooms. Key observations:
+
+- **Overall Layout**: It's an expansive, somewhat U-shaped design with a central family/kitchen area, bedrooms clustered on one side, and utility/entertainment spaces on the other. The total footprint seems substantial (e.g., garage is 32' wide), with good separation between public (living/dining) and private (bedrooms) areas.
+- **Rooms and Features**:
+    - Garage (top-left, 32'x something, 2-car with flex space).
+    - Bedrooms: 2, 3 (top-right, around 12'x13' each with baths and closets), and a master suite (bottom-right, large with vaulted porch, bath, and WIC).
+    - Kitchen/Pantry/Butler (central, open to family room).
+    - Dining Room, Lounge (with fireplace), Family Room (vaulted, open to outdoor living).
+    - Office (bottom, separate entrance), Mud Room, Laundry.
+    - Outdoor: Front Porch, Breakfast Porch, Vaulted Outdoor Living.
+- **Strengths**: Excellent open-concept flow in the living areas, plenty of natural light potential from porches, and practical utility spaces. The master is secluded.
+- **Suggestions**: Ensure plumbing stacks align with basement if applicable. The lounge and dining might benefit from more defined separation if privacy is needed.
+- **Approximate Scale**: Rooms have labeled dimensions (e.g., 13'-4" x 14'-6"), so it's to scale, but I'll approximate in the script for simplicity.
+
+### Basement Level (Image ID: 1)
+
+This is a hand-sketched plan, more conceptual and less detailed, focused on recreation and utilities. It looks like a full basement under the main floor.
+
+- **Overall Layout**: Rectangular with a long horizontal span (100' noted), divided into entertainment zones on the right and utilities/storage on the left/bottom. It's entertainment-heavy, with open spaces for leisure.
+- **Rooms and Features**:
+    - Home Theater (left, with false wall, tiered seating?).
+    - Pool/Spa/Hot Tub (central-left, with S. shower, 251 ceilings? Maybe a typo for 12' ceilings).
+    - Gaming/Studio (top-right, large open area).
+    - Bath (top, 30' long? Possibly including storage/closet).
+    - Storage Closets, Bookshelves (multiple, with labels like "Books").
+    - Pool Utilities (bottom-center).
+    - Mechanical: HVAC, Gas Furnace, Power + Internet (left-bottom).
+    - Other: Sink, Coffee, DN (dining? down?), Chairs, Couch, Hammock.
+- **Strengths**: Fun, recreational focus—great for a family or entertaining. Ample storage and dedicated utility space.
+- **Suggestions**: Verify structural support for pool (weight/load). Add emergency exits/lighting for safety. The sketch is rough, so precise measurements would help in final design.
+- **Approximate Scale**: Dimensions like 100' length, 40' sections, 30' bath—I'll scale down proportionally in the script.
+
+Both plans complement each other: Main for daily living, basement for fun/mechanicals. They seem well-thought-out, but consult an architect for codes/structural integrity.
+
+### Simple Python Script to Generate the Floor Plans
+
+Here's a basic Python script using Matplotlib to approximate these 2D floor plans. It draws rooms as rectangles, adds labels, and saves two PNG images: `main_floor.png` and `basement_floor.png`. I've estimated coordinates and scales based on the images (e.g., assuming a grid where 1 unit = ~5 feet for simplicity; adjust as needed). It's not pixel-perfect but captures the essence.
+
+Install Matplotlib if needed: `pip install matplotlib`.
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+def draw_floor_plan(rooms, title, filename, xlim, ylim):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_xlim(0, xlim)
+    ax.set_ylim(0, ylim)
+    ax.set_aspect('equal')
+    ax.set_title(title)
+
+    for room in rooms:
+        rect = patches.Rectangle(room['pos'], room['width'], room['height'],
+                                 edgecolor='black', facecolor=room.get('color', 'lightgray'), linewidth=1)
+        ax.add_patch(rect)
+        ax.text(room['pos'][0] + room['width']/2, room['pos'][1] + room['height']/2,
+                room['label'], ha='center', va='center', fontsize=8)
+
+    ax.axis('off')
+    plt.savefig(filename)
+    plt.close()
+
+# Main Floor Rooms (approximate positions/sizes based on image)
+main_rooms = [
+    {'label': 'Garage\\n32x?', 'pos': (0, 60), 'width': 32, 'height': 25, 'color': 'lightblue'},
+    {'label': 'Mud Room', 'pos': (32, 60), 'width': 10, 'height': 10},
+    {'label': 'Bedroom 3\\n12x13', 'pos': (50, 70), 'width': 12, 'height': 13},
+    {'label': 'Bath 3', 'pos': (62, 70), 'width': 8, 'height': 10},
+    {'label': 'Bedroom 2\\n13x14', 'pos': (70, 70), 'width': 13, 'height': 14},
+    {'label': 'Bath 2', 'pos': (83, 70), 'width': 8, 'height': 10},
+    {'label': 'Laundry', 'pos': (50, 60), 'width': 10, 'height': 10},
+    {'label': 'Pantry', 'pos': (60, 50), 'width': 5, 'height': 5},
+    {'label': 'Kitchen', 'pos': (50, 40), 'width': 20, 'height': 15},
+    {'label': 'Breakfast Nook', 'pos': (70, 40), 'width': 15, 'height': 10},
+    {'label': 'Breakfast Porch', 'pos': (85, 40), 'width': 15, 'height': 10},
+    {'label': 'Dining Room\\n15x16', 'pos': (20, 40), 'width': 15, 'height': 16},
+    {'label': 'Butler', 'pos': (35, 40), 'width': 5, 'height': 5},
+    {'label': 'Front Porch', 'pos': (0, 30), 'width': 20, 'height': 10},
+    {'label': 'Foyer', 'pos': (20, 30), 'width': 10, 'height': 10},
+    {'label': 'Front Hall', 'pos': (30, 30), 'width': 10, 'height': 10},
+    {'label': 'Lounge\\n22x15', 'pos': (0, 10), 'width': 22, 'height': 15, 'color': 'lightgreen'},
+    {'label': 'Fire Place', 'pos': (22, 10), 'width': 5, 'height': 5},
+    {'label': 'Office\\n10x12', 'pos': (0, 0), 'width': 10, 'height': 12},
+    {'label': 'Office Porch', 'pos': (10, 0), 'width': 10, 'height': 10},
+    {'label': 'Master Bath', 'pos': (70, 0), 'width': 15, 'height': 15},
+    {'label': 'Master Clg', 'pos': (85, 0), 'width': 10, 'height': 10},
+    {'label': 'Master Bedroom\\n17x15', 'pos': (95, 0), 'width': 17, 'height': 15},
+    {'label': 'Master Porch', 'pos': (112, 0), 'width': 10, 'height': 10},
+    {'label': 'Family Room\\n18x20', 'pos': (40, 20), 'width': 18, 'height': 20},
+    {'label': 'Vaulted Outdoor Living\\n32x19', 'pos': (58, 20), 'width': 32, 'height': 19, 'color': 'lightyellow'},
+]
+
+draw_floor_plan(main_rooms, 'Main Floor Plan', 'main_floor.png', 130, 90)
+
+# Basement Rooms (approximate positions/sizes based on sketch)
+basement_rooms = [
+    {'label': 'False Wall', 'pos': (0, 0), 'width': 5, 'height': 30},
+    {'label': 'Home Theater', 'pos': (5, 0), 'width': 25, 'height': 30, 'color': 'lightblue'},
+    {'label': 'Pool', 'pos': (30, 0), 'width': 40, 'height': 20},
+    {'label': 'Spa + Hot Tub', 'pos': (30, 20), 'width': 20, 'height': 10},
+    {'label': 'S. Shower', 'pos': (50, 20), 'width': 10, 'height': 10},
+    {'label': 'Pool Utilities', 'pos': (70, 0), 'width': 30, 'height': 20, 'color': 'lightgray'},
+    {'label': 'Gaming/Studio', 'pos': (70, 50), 'width': 30, 'height': 40, 'color': 'lightgreen'},
+    {'label': 'Bath 30\\'', 'pos': (0, 70), 'width': 30, 'height': 20},
+    {'label': 'Storage Closet', 'pos': (30, 70), 'width': 10, 'height': 10},
+    {'label': 'Books', 'pos': (40, 70), 'width': 5, 'height': 5},
+    {'label': 'Sink', 'pos': (45, 70), 'width': 5, 'height': 5},
+    {'label': 'Coffee', 'pos': (50, 70), 'width': 5, 'height': 5},
+    {'label': 'DN', 'pos': (55, 70), 'width': 5, 'height': 5},
+    {'label': 'Chairs', 'pos': (30, 60), 'width': 10, 'height': 10},
+    {'label': 'Couch', 'pos': (40, 60), 'width': 10, 'height': 10},
+    {'label': 'Hammock', 'pos': (70, 30), 'width': 10, 'height': 10},
+    {'label': 'Books', 'pos': (80, 30), 'width': 5, 'height': 5},
+    {'label': 'HVAC', 'pos': (0, 30), 'width': 10, 'height': 20},
+    {'label': 'Gas Furnace', 'pos': (10, 30), 'width': 10, 'height': 10},
+    {'label': 'Power + Internet', 'pos': (0, 50), 'width': 10, 'height': 20},
+]
+
+draw_floor_plan(basement_rooms, 'Basement Floor Plan', 'basement_floor.png', 110, 100)
+
+print("Floor plans generated as 'main_floor.png' and 'basement_floor.png'")
+
+```
+
+Run this script in Python—it'll output two images. Customize positions, sizes, or add details like doors (use lines) or furniture (more patches). If you provide exact coordinates or a grid, I can refine it!
+
+Add doors and walls
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+def draw_floor_plan(rooms, doors, walls, title, filename, xlim, ylim):
+    fig, ax = plt.subplots(figsize=(14, 10))
+    ax.set_xlim(0, xlim)
+    ax.set_ylim(0, ylim)
+    ax.set_aspect('equal')
+    ax.set_title(title)
+
+    # Draw rooms
+    for room in rooms:
+        rect = patches.Rectangle(room['pos'], room['width'], room['height'],
+                                 edgecolor='black', facecolor=room.get('color', 'lightgray'), linewidth=1.5)
+        ax.add_patch(rect)
+        ax.text(room['pos'][0] + room['width']/2, room['pos'][1] + room['height']/2,
+                room['label'], ha='center', va='center', fontsize=8)
+
+    # Draw additional walls (as lines for interior divisions)
+    for wall in walls:
+        ax.plot([wall['start'][0], wall['end'][0]], [wall['start'][1], wall['end'][1]],
+                color='black', linewidth=2)
+
+    # Draw doors (as small white rectangles for openings or arcs for swinging doors)
+    for door in doors:
+        if door['type'] == 'rect':  # Simple opening
+            rect = patches.Rectangle(door['pos'], door['width'], door['height'],
+                                     edgecolor='none', facecolor='white')
+            ax.add_patch(rect)
+        elif door['type'] == 'arc':  # Swinging door symbol
+            arc = patches.Arc(door['pos'], door['width'], door['height'],
+                              angle=0, theta1=0, theta2=90, edgecolor='black', linewidth=1.5)
+            ax.add_patch(arc)
+            # Add door line
+            ax.plot([door['pos'][0], door['pos'][0] + door['width']/2],
+                    [door['pos'][1], door['pos'][1]], color='black', linewidth=1.5)
+
+    ax.axis('off')
+    plt.savefig(filename)
+    plt.close()
+
+# Main Floor Rooms (same as before)
+main_rooms = [
+    {'label': 'Garage\\n32x?', 'pos': (0, 60), 'width': 32, 'height': 25, 'color': 'lightblue'},
+    {'label': 'Mud Room', 'pos': (32, 60), 'width': 10, 'height': 10},
+    {'label': 'Bedroom 3\\n12x13', 'pos': (50, 70), 'width': 12, 'height': 13},
+    {'label': 'Bath 3', 'pos': (62, 70), 'width': 8, 'height': 10},
+    {'label': 'Bedroom 2\\n13x14', 'pos': (70, 70), 'width': 13, 'height': 14},
+    {'label': 'Bath 2', 'pos': (83, 70), 'width': 8, 'height': 10},
+    {'label': 'Laundry', 'pos': (50, 60), 'width': 10, 'height': 10},
+    {'label': 'Pantry', 'pos': (60, 50), 'width': 5, 'height': 5},
+    {'label': 'Kitchen', 'pos': (50, 40), 'width': 20, 'height': 15},
+    {'label': 'Breakfast Nook', 'pos': (70, 40), 'width': 15, 'height': 10},
+    {'label': 'Breakfast Porch', 'pos': (85, 40), 'width': 15, 'height': 10},
+    {'label': 'Dining Room\\n15x16', 'pos': (20, 40), 'width': 15, 'height': 16},
+    {'label': 'Butler', 'pos': (35, 40), 'width': 5, 'height': 5},
+    {'label': 'Front Porch', 'pos': (0, 30), 'width': 20, 'height': 10},
+    {'label': 'Foyer', 'pos': (20, 30), 'width': 10, 'height': 10},
+    {'label': 'Front Hall', 'pos': (30, 30), 'width': 10, 'height': 10},
+    {'label': 'Lounge\\n22x15', 'pos': (0, 10), 'width': 22, 'height': 15, 'color': 'lightgreen'},
+    {'label': 'Fire Place', 'pos': (22, 10), 'width': 5, 'height': 5},
+    {'label': 'Office\\n10x12', 'pos': (0, 0), 'width': 10, 'height': 12},
+    {'label': 'Office Porch', 'pos': (10, 0), 'width': 10, 'height': 10},
+    {'label': 'Master Bath', 'pos': (70, 0), 'width': 15, 'height': 15},
+    {'label': 'Master Clg', 'pos': (85, 0), 'width': 10, 'height': 10},
+    {'label': 'Master Bedroom\\n17x15', 'pos': (95, 0), 'width': 17, 'height': 15},
+    {'label': 'Master Porch', 'pos': (112, 0), 'width': 10, 'height': 10},
+    {'label': 'Family Room\\n18x20', 'pos': (40, 20), 'width': 18, 'height': 20},
+    {'label': 'Vaulted Outdoor Living\\n32x19', 'pos': (58, 20), 'width': 32, 'height': 19, 'color': 'lightyellow'},
+]
+
+# Example doors for main floor (positions approximated; adjust as needed)
+main_doors = [
+    {'type': 'arc', 'pos': (20, 30), 'width': 4, 'height': 4},  # Front door in foyer
+    {'type': 'rect', 'pos': (32, 65), 'width': 3, 'height': 2},  # Door from garage to mud room
+    {'type': 'arc', 'pos': (50, 70), 'width': 3, 'height': 3},  # Door to bedroom 3
+    {'type': 'arc', 'pos': (70, 70), 'width': 3, 'height': 3},  # Door to bedroom 2
+    {'type': 'rect', 'pos': (0, 5), 'width': 3, 'height': 2},  # Door to office
+    {'type': 'arc', 'pos': (95, 10), 'width': 4, 'height': 4},  # Door to master bedroom
+]
+
+# Example additional walls for main floor (interior walls not covered by room edges)
+main_walls = [
+    {'start': (40, 60), 'end': (40, 70)},  # Wall between mud and laundry
+    {'start': (60, 60), 'end': (60, 70)},  # Wall near baths
+    {'start': (40, 30), 'end': (40, 40)},  # Hallway wall
+]
+
+draw_floor_plan(main_rooms, main_doors, main_walls, 'Main Floor Plan with Doors and Walls', 'main_floor_updated.png', 130, 90)
+
+# Basement Rooms (same as before)
+basement_rooms = [
+    {'label': 'False Wall', 'pos': (0, 0), 'width': 5, 'height': 30},
+    {'label': 'Home Theater', 'pos': (5, 0), 'width': 25, 'height': 30, 'color': 'lightblue'},
+    {'label': 'Pool', 'pos': (30, 0), 'width': 40, 'height': 20},
+    {'label': 'Spa + Hot Tub', 'pos': (30, 20), 'width': 20, 'height': 10},
+    {'label': 'S. Shower', 'pos': (50, 20), 'width': 10, 'height': 10},
+    {'label': 'Pool Utilities', 'pos': (70, 0), 'width': 30, 'height': 20, 'color': 'lightgray'},
+    {'label': 'Gaming/Studio', 'pos': (70, 50), 'width': 30, 'height': 40, 'color': 'lightgreen'},
+    {'label': 'Bath 30\\'', 'pos': (0, 70), 'width': 30, 'height': 20},
+    {'label': 'Storage Closet', 'pos': (30, 70), 'width': 10, 'height': 10},
+    {'label': 'Books', 'pos': (40, 70), 'width': 5, 'height': 5},
+    {'label': 'Sink', 'pos': (45, 70), 'width': 5, 'height': 5},
+    {'label': 'Coffee', 'pos': (50, 70), 'width': 5, 'height': 5},
+    {'label': 'DN', 'pos': (55, 70), 'width': 5, 'height': 5},
+    {'label': 'Chairs', 'pos': (30, 60), 'width': 10, 'height': 10},
+    {'label': 'Couch', 'pos': (40, 60), 'width': 10, 'height': 10},
+    {'label': 'Hammock', 'pos': (70, 30), 'width': 10, 'height': 10},
+    {'label': 'Books', 'pos': (80, 30), 'width': 5, 'height': 5},
+    {'label': 'HVAC', 'pos': (0, 30), 'width': 10, 'height': 20},
+    {'label': 'Gas Furnace', 'pos': (10, 30), 'width': 10, 'height': 10},
+    {'label': 'Power + Internet', 'pos': (0, 50), 'width': 10, 'height': 20},
+]
+
+# Example doors for basement (approximated)
+basement_doors = [
+    {'type': 'arc', 'pos': (5, 25), 'width': 4, 'height': 4},  # Door to home theater
+    {'type': 'rect', 'pos': (30, 15), 'width': 3, 'height': 2},  # Entry to pool
+    {'type': 'arc', 'pos': (70, 80), 'width': 4, 'height': 4},  # Door to gaming studio
+    {'type': 'rect', 'pos': (0, 80), 'width': 3, 'height': 2},  # Door to bath
+]
+
+# Example additional walls for basement
+basement_walls = [
+    {'start': (30, 0), 'end': (30, 30)},  # Wall between theater and pool
+    {'start': (70, 20), 'end': (70, 50)},  # Wall near utilities
+    {'start': (0, 70), 'end': (100, 70)},  # Horizontal wall above utilities
+]
+
+draw_floor_plan(basement_rooms, basement_doors, basement_walls, 'Basement Floor Plan with Doors and Walls', 'basement_floor_updated.png', 110, 100)
+
+print("Updated floor plans generated as 'main_floor_updated.png' and 'basement_floor_updated.png'")
+
+```
+
+more accurate doors
+
+```python
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+def draw_floor_plan(rooms, doors, walls, title, filename, xlim, ylim):
+    fig, ax = plt.subplots(figsize=(14, 10))
+    ax.set_xlim(0, xlim)
+    ax.set_ylim(0, ylim)
+    ax.set_aspect('equal')
+    ax.set_title(title)
+
+    # Draw rooms
+    for room in rooms:
+        rect = patches.Rectangle(room['pos'], room['width'], room['height'],
+                                 edgecolor='black', facecolor=room.get('color', 'lightgray'), linewidth=1.5)
+        ax.add_patch(rect)
+        ax.text(room['pos'][0] + room['width']/2, room['pos'][1] + room['height']/2,
+                room['label'], ha='center', va='center', fontsize=8)
+
+    # Draw additional walls (as lines for interior divisions)
+    for wall in walls:
+        ax.plot([wall['start'][0], wall['end'][0]], [wall['start'][1], wall['end'][1]],
+                color='black', linewidth=2)
+
+    # Draw doors (as small white rectangles for openings or arcs for swinging doors)
+    for door in doors:
+        if door['type'] == 'rect':  # Simple opening
+            rect = patches.Rectangle(door['pos'], door['width'], door['height'],
+                                     edgecolor='none', facecolor='white')
+            ax.add_patch(rect)
+        elif door['type'] == 'arc':  # Swinging door symbol
+            arc = patches.Arc(door['pos'], door['width'], door['height'],
+                              angle=door.get('angle', 0), theta1=door.get('theta1', 0), theta2=door.get('theta2', 90),
+                              edgecolor='black', linewidth=1.5)
+            ax.add_patch(arc)
+            # Add door line
+            dx = door['width']/2 * (1 if door.get('direction', 'right') == 'right' else -1)
+            ax.plot([door['pos'][0] + dx, door['pos'][0] + dx],
+                    [door['pos'][1], door['pos'][1] + door['height']/2], color='black', linewidth=1.5)
+
+# Main Floor Rooms (same as before)
+main_rooms = [
+    {'label': 'Garage\\n32x?', 'pos': (0, 60), 'width': 32, 'height': 25, 'color': 'lightblue'},
+    {'label': 'Mud Room', 'pos': (32, 60), 'width': 10, 'height': 10},
+    {'label': 'Bedroom 3\\n12x13', 'pos': (50, 70), 'width': 12, 'height': 13},
+    {'label': 'Bath 3', 'pos': (62, 70), 'width': 8, 'height': 10},
+    {'label': 'Bedroom 2\\n13x14', 'pos': (70, 70), 'width': 13, 'height': 14},
+    {'label': 'Bath 2', 'pos': (83, 70), 'width': 8, 'height': 10},
+    {'label': 'Laundry', 'pos': (50, 60), 'width': 10, 'height': 10},
+    {'label': 'Pantry', 'pos': (60, 50), 'width': 5, 'height': 5},
+    {'label': 'Kitchen', 'pos': (50, 40), 'width': 20, 'height': 15},
+    {'label': 'Breakfast Nook', 'pos': (70, 40), 'width': 15, 'height': 10},
+    {'label': 'Breakfast Porch', 'pos': (85, 40), 'width': 15, 'height': 10},
+    {'label': 'Dining Room\\n15x16', 'pos': (20, 40), 'width': 15, 'height': 16},
+    {'label': 'Butler', 'pos': (35, 40), 'width': 5, 'height': 5},
+    {'label': 'Front Porch', 'pos': (0, 30), 'width': 20, 'height': 10},
+    {'label': 'Foyer', 'pos': (20, 30), 'width': 10, 'height': 10},
+    {'label': 'Front Hall', 'pos': (30, 30), 'width': 10, 'height': 10},
+    {'label': 'Lounge\\n22x15', 'pos': (0, 10), 'width': 22, 'height': 15, 'color': 'lightgreen'},
+    {'label': 'Fire Place', 'pos': (22, 10), 'width': 5, 'height': 5},
+    {'label': 'Office\\n10x12', 'pos': (0, 0), 'width': 10, 'height': 12},
+    {'label': 'Office Porch', 'pos': (10, 0), 'width': 10, 'height': 10},
+    {'label': 'Master Bath', 'pos': (70, 0), 'width': 15, 'height': 15},
+    {'label': 'Master Clg', 'pos': (85, 0), 'width': 10, 'height': 10},
+    {'label': 'Master Bedroom\\n17x15', 'pos': (95, 0), 'width': 17, 'height': 15},
+    {'label': 'Master Porch', 'pos': (112, 0), 'width': 10, 'height': 10},
+    {'label': 'Family Room\\n18x20', 'pos': (40, 20), 'width': 18, 'height': 20},
+    {'label': 'Vaulted Outdoor Living\\n32x19', 'pos': (58, 20), 'width': 32, 'height': 19, 'color': 'lightyellow'},
+]
+
+# More accurate doors for main floor (based on image analysis: added more swinging doors with directions)
+main_doors = [
+    {'type': 'arc', 'pos': (15, 30), 'width': 4, 'height': 4, 'theta2': 90, 'direction': 'right'},  # Front door to foyer
+    {'type': 'rect', 'pos': (30, 65), 'width': 3, 'height': 2},  # Garage to mud room
+    {'type': 'arc', 'pos': (52, 70), 'width': 3, 'height': 3, 'theta1': 90, 'theta2': 180, 'direction': 'left'},  # Bedroom 3 door
+    {'type': 'arc', 'pos': (72, 70), 'width': 3, 'height': 3, 'direction': 'right'},  # Bedroom 2 door
+    {'type': 'arc', 'pos': (2, 0), 'width': 3, 'height': 3, 'direction': 'right'},  # Office door
+    {'type': 'arc', 'pos': (97, 0), 'width': 4, 'height': 4, 'theta1': 180, 'theta2': 270, 'direction': 'left'},  # Master bedroom door
+    {'type': 'arc', 'pos': (62, 70), 'width': 3, 'height': 3, 'direction': 'right'},  # Bath 3 door
+    {'type': 'arc', 'pos': (83, 70), 'width': 3, 'height': 3, 'direction': 'right'},  # Bath 2 door
+    {'type': 'rect', 'pos': (50, 55), 'width': 2, 'height': 3},  # Laundry door
+    {'type': 'arc', 'pos': (20, 40), 'width': 4, 'height': 4, 'direction': 'left'},  # Dining room door
+    {'type': 'rect', 'pos': (10, 5), 'width': 3, 'height': 2},  # Office porch door
+    {'type': 'arc', 'pos': (112, 5), 'width': 3, 'height': 3, 'direction': 'right'},  # Master porch door
+    {'type': 'rect', 'pos': (85, 45), 'width': 3, 'height': 2},  # Breakfast porch door
+    # Add more as needed, e.g., closet doors if desired
+]
+
+# Example additional walls for main floor (expanded slightly)
+main_walls = [
+    {'start': (40, 60), 'end': (40, 70)},  # Wall between mud and laundry
+    {'start': (60, 60), 'end': (60, 70)},  # Wall near baths
+    {'start': (40, 30), 'end': (40, 40)},  # Hallway wall
+    {'start': (0, 30), 'end': (40, 30)},  # Front area division
+]
+
+draw_floor_plan(main_rooms, main_doors, main_walls, 'Main Floor Plan with Accurate Doors', 'main_floor_accurate.png', 130, 90)
+
+# Basement Rooms (same as before)
+basement_rooms = [
+    {'label': 'False Wall', 'pos': (0, 0), 'width': 5, 'height': 30},
+    {'label': 'Home Theater', 'pos': (5, 0), 'width': 25, 'height': 30, 'color': 'lightblue'},
+    {'label': 'Pool', 'pos': (30, 0), 'width': 40, 'height': 20},
+    {'label': 'Spa + Hot Tub', 'pos': (30, 20), 'width': 20, 'height': 10},
+    {'label': 'S. Shower', 'pos': (50, 20), 'width': 10, 'height': 10},
+    {'label': 'Pool Utilities', 'pos': (70, 0), 'width': 30, 'height': 20, 'color': 'lightgray'},
+    {'label': 'Gaming/Studio', 'pos': (70, 50), 'width': 30, 'height': 40, 'color': 'lightgreen'},
+    {'label': 'Bath 30\\'', 'pos': (0, 70), 'width': 30, 'height': 20},
+    {'label': 'Storage Closet', 'pos': (30, 70), 'width': 10, 'height': 10},
+    {'label': 'Books', 'pos': (40, 70), 'width': 5, 'height': 5},
+    {'label': 'Sink', 'pos': (45, 70), 'width': 5, 'height': 5},
+    {'label': 'Coffee', 'pos': (50, 70), 'width': 5, 'height': 5},
+    {'label': 'DN', 'pos': (55, 70), 'width': 5, 'height': 5},
+    {'label': 'Chairs', 'pos': (30, 60), 'width': 10, 'height': 10},
+    {'label': 'Couch', 'pos': (40, 60), 'width': 10, 'height': 10},
+    {'label': 'Hammock', 'pos': (70, 30), 'width': 10, 'height': 10},
+    {'label': 'Books', 'pos': (80, 30), 'width': 5, 'height': 5},
+    {'label': 'HVAC', 'pos': (0, 30), 'width': 10, 'height': 20},
+    {'label': 'Gas Furnace', 'pos': (10, 30), 'width': 10, 'height': 10},
+    {'label': 'Power + Internet', 'pos': (0, 50), 'width': 10, 'height': 20},
+]
+
+# More accurate doors for basement (based on sketch: added potential entries where lines suggest openings)
+basement_doors = [
+    {'type': 'arc', 'pos': (5, 20), 'width': 4, 'height': 4, 'direction': 'right'},  # Entry to home theater
+    {'type': 'rect', 'pos': (30, 10), 'width': 3, 'height': 2},  # Pool access
+    {'type': 'arc', 'pos': (70, 70), 'width': 4, 'height': 4, 'theta1': 90, 'theta2': 180, 'direction': 'left'},  # Gaming studio door
+    {'type': 'rect', 'pos': (0, 75), 'width': 3, 'height': 2},  # Bath door
+    {'type': 'arc', 'pos': (30, 70), 'width': 3, 'height': 3, 'direction': 'right'},  # Storage closet door
+    {'type': 'rect', 'pos': (70, 20), 'width': 2, 'height': 3},  # Pool utilities door
+]
+
+# Example additional walls for basement
+basement_walls = [
+    {'start': (30, 0), 'end': (30, 30)},  # Wall between theater and pool
+    {'start': (70, 20), 'end': (70, 50)},  # Wall near utilities
+    {'start': (0, 70), 'end': (100, 70)},  # Horizontal wall above utilities
+    {'start': (0, 30), 'end': (30, 30)},  # Wall above HVAC
+]
+
+draw_floor_plan(basement_rooms, basement_doors, basement_walls, 'Basement Floor Plan with Accurate Doors', 'basement_floor_accurate.png', 110, 100)
+
+print("Updated floor plans with more accurate doors generated as 'main_floor_accurate.png' and 'basement_floor_accurate.png'")
+
+```
