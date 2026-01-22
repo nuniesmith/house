@@ -1,3 +1,7 @@
 # Floor Plan Generator Dependencies
 matplotlib
 PyYAML
+
+# Testing Dependencies
+pytest
+pytest-cov

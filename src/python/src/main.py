@@ -37,7 +37,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import from our modular packages (must be after path modification)
-from src.generators import (  # noqa: E402
+from generators import (  # noqa: E402
     OUTPUT_DIR,
     apply_config_settings,
     generate_all_svg,
@@ -46,7 +46,7 @@ from src.generators import (  # noqa: E402
     generate_main_floor,
     load_config,
 )
-from src.utilities import (  # noqa: E402
+from utilities import (  # noqa: E402
     get_auto_dimensions,
     get_debug_mode,
     get_grid_spacing,

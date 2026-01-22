@@ -58,8 +58,8 @@ from utilities import (
 
 logger = logging.getLogger(__name__)
 
-# Output directory
-OUTPUT_DIR = Path(__file__).parent.parent / "output"
+# Output directory (navigate from src/generators/ -> src/ -> python/ -> python/output)
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "output"
 
 
 # =============================================================================
