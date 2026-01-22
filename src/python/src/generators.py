@@ -3,6 +3,9 @@ Floor plan generation functions.
 
 This module contains functions for loading configuration,
 generating floor plans, and exporting to various formats.
+
+NOTE: A YAML configuration file is REQUIRED. There are no built-in defaults.
+Use the --config flag with run.sh or main.py to specify your config file.
 """
 
 import logging
@@ -11,20 +14,8 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import yaml
-from defaults import (
-    BASEMENT_DOORS_DEFAULT,
-    BASEMENT_FURNITURE_DEFAULT,
-    BASEMENT_POOL_DEFAULT,
-    BASEMENT_ROOMS_DEFAULT,
-    BASEMENT_STAIRS_DEFAULT,
-    BASEMENT_TEXT_ANNOTATIONS_DEFAULT,
-    BASEMENT_THEATER_DEFAULT,
-    MAIN_FLOOR_DOORS_DEFAULT,
-    MAIN_FLOOR_FIREPLACES_DEFAULT,
-    MAIN_FLOOR_ROOMS_DEFAULT,
-    MAIN_FLOOR_STAIRS_DEFAULT,
-    MAIN_FLOOR_WINDOWS_DEFAULT,
-)
+from matplotlib.backends.backend_pdf import PdfPages
+
 from drawing import (
     add_dimension_arrow,
     add_line_annotation,
@@ -41,7 +32,6 @@ from drawing import (
     draw_text_annotations_from_data,
     draw_windows_from_data,
 )
-from matplotlib.backends.backend_pdf import PdfPages
 from models import FloorPlanSettings, LineAnnotation, PoolConfig, TheaterSeating
 from utilities import (
     COLORS,
@@ -52,14 +42,16 @@ from utilities import (
     set_debug_mode,
     set_grid_spacing,
     set_scale,
+    set_wall_thick,
     update_colors,
+    update_drawing_styles,
     validate_config,
 )
 
 logger = logging.getLogger(__name__)
 
 # Output directory (navigate from src/generators/ -> src/ -> python/ -> python/output)
-OUTPUT_DIR = Path(__file__).parent.parent.parent / "output"
+OUTPUT_DIR = Path(__file__).parent.parent / "output"
 
 
 # =============================================================================
@@ -67,44 +59,50 @@ OUTPUT_DIR = Path(__file__).parent.parent.parent / "output"
 # =============================================================================
 
 
-def load_config(
-    config_path: str | Path | None = None, validate: bool = True
-) -> dict[str, Any]:
+def load_config(config_path: str | Path | None = None, validate: bool = True) -> dict[str, Any]:
     """
     Load configuration from YAML file.
 
+    A valid YAML configuration file is REQUIRED. This function will raise
+    an error if no config file is found or if the file cannot be parsed.
+
     Args:
-        config_path: Path to YAML config file. If None, uses default location.
+        config_path: Path to YAML config file. REQUIRED - must be provided.
         validate: If True, validates config and logs warnings.
 
     Returns:
         Configuration dictionary
 
     Raises:
-        FileNotFoundError: If config file doesn't exist and no fallback available
+        FileNotFoundError: If config file doesn't exist
+        ValueError: If config_path is None or config file is empty
         yaml.YAMLError: If YAML parsing fails
     """
     if config_path is None:
-        config_path = Path(__file__).parent.parent / "config" / "floor_plan_config.yaml"
-    else:
-        config_path = Path(config_path)
+        raise ValueError(
+            "A YAML configuration file is required. "
+            "Use --config <path> to specify your config file."
+        )
+
+    config_path = Path(config_path)
 
     if not config_path.exists():
-        logger.warning(f"Config file not found: {config_path}")
-        logger.info("Using built-in default configuration.")
-        return get_default_config()
+        raise FileNotFoundError(
+            f"Config file not found: {config_path}\n"
+            "A valid YAML configuration file is required to run the floor plan generator."
+        )
 
     try:
-        with open(config_path) as f:
+        with config_path.open() as f:
             config = yaml.safe_load(f)
     except yaml.YAMLError as e:
-        logger.error(f"Error parsing YAML config: {e}")
-        logger.info("Using built-in default configuration.")
-        return get_default_config()
+        raise yaml.YAMLError(f"Error parsing YAML config '{config_path}': {e}") from e
 
     if config is None:
-        logger.warning("Empty config file, using defaults")
-        return get_default_config()
+        raise ValueError(
+            f"Config file is empty: {config_path}\n"
+            "The configuration file must contain valid YAML data."
+        )
 
     # Validate configuration
     if validate:
@@ -146,15 +144,31 @@ def apply_config_settings(config: dict[str, Any]) -> FloorPlanSettings:
     set_grid_spacing(floor_settings.grid_spacing)
     set_auto_dimensions(floor_settings.auto_dimensions)
 
+    # Apply wall thickness from config
+    wall_thick = settings.get("wall_thick", 2)
+    set_wall_thick(wall_thick)
+
     # Update colors from config
     if "colors" in config:
         update_colors(config["colors"])
+
+    # Update drawing styles from config
+    if "drawing_styles" in config:
+        update_drawing_styles(config["drawing_styles"])
 
     return floor_settings
 
 
 def get_default_config() -> dict[str, Any]:
-    """Return default configuration when YAML is not available."""
+    """
+    Return minimal default configuration structure.
+
+    NOTE: This returns only the basic structure with empty/minimal values.
+    A proper YAML configuration file should be used for actual floor plan generation.
+    This function exists primarily for testing purposes.
+
+    For production use, always provide a complete YAML config file via --config.
+    """
     return {
         "settings": {
             "scale": 1.0,
@@ -178,11 +192,11 @@ def get_default_config() -> dict[str, Any]:
                 "width_label": "~70'",
                 "height_label": "~110'",
             },
-            "rooms": MAIN_FLOOR_ROOMS_DEFAULT,
-            "doors": MAIN_FLOOR_DOORS_DEFAULT,
-            "windows": MAIN_FLOOR_WINDOWS_DEFAULT,
-            "fireplaces": MAIN_FLOOR_FIREPLACES_DEFAULT,
-            "stairs": MAIN_FLOOR_STAIRS_DEFAULT,
+            "rooms": [],
+            "doors": [],
+            "windows": [],
+            "fireplaces": [],
+            "stairs": [],
         },
         "basement": {
             "figure": {
@@ -203,13 +217,13 @@ def get_default_config() -> dict[str, Any]:
                 "x": 30,
                 "y": 102,
             },
-            "rooms": BASEMENT_ROOMS_DEFAULT,
-            "theater": BASEMENT_THEATER_DEFAULT,
-            "pool": BASEMENT_POOL_DEFAULT,
-            "doors": BASEMENT_DOORS_DEFAULT,
-            "stairs": BASEMENT_STAIRS_DEFAULT,
-            "furniture": BASEMENT_FURNITURE_DEFAULT,
-            "text_annotations": BASEMENT_TEXT_ANNOTATIONS_DEFAULT,
+            "rooms": [],
+            "theater": {},
+            "pool": {},
+            "doors": [],
+            "stairs": [],
+            "furniture": [],
+            "text_annotations": [],
         },
     }
 
@@ -237,23 +251,23 @@ def draw_main_floor(ax, config: dict[str, Any]) -> None:
         )
 
     # Draw all rooms from data
-    rooms = main_config.get("rooms", MAIN_FLOOR_ROOMS_DEFAULT)
+    rooms = main_config.get("rooms", [])
     draw_rooms_from_data(ax, rooms)
 
     # Draw all doors from data
-    doors = main_config.get("doors", MAIN_FLOOR_DOORS_DEFAULT)
+    doors = main_config.get("doors", [])
     draw_doors_from_data(ax, doors)
 
     # Draw all windows from data
-    windows = main_config.get("windows", MAIN_FLOOR_WINDOWS_DEFAULT)
+    windows = main_config.get("windows", [])
     draw_windows_from_data(ax, windows)
 
     # Add fireplaces
-    fireplaces = main_config.get("fireplaces", MAIN_FLOOR_FIREPLACES_DEFAULT)
+    fireplaces = main_config.get("fireplaces", [])
     draw_fireplaces_from_data(ax, fireplaces)
 
     # Add stairs
-    stairs = main_config.get("stairs", MAIN_FLOOR_STAIRS_DEFAULT)
+    stairs = main_config.get("stairs", [])
     draw_stairs_from_data(ax, stairs)
 
     # Add dimension annotations
@@ -302,11 +316,11 @@ def draw_basement(ax, config: dict[str, Any]) -> None:
         )
 
     # Draw rooms from data
-    rooms = basement_config.get("rooms", BASEMENT_ROOMS_DEFAULT)
+    rooms = basement_config.get("rooms", [])
     draw_rooms_from_data(ax, rooms)
 
     # ===== Home Theater =====
-    theater_config = basement_config.get("theater", BASEMENT_THEATER_DEFAULT)
+    theater_config = basement_config.get("theater", {})
     theater_room = theater_config.get("room", {})
 
     # Draw theater room
@@ -363,7 +377,7 @@ def draw_basement(ax, config: dict[str, Any]) -> None:
     )
 
     # ===== Pool Area =====
-    pool_config = basement_config.get("pool", BASEMENT_POOL_DEFAULT)
+    pool_config = basement_config.get("pool", {})
     area = pool_config.get("area", {})
     pool = pool_config.get("pool", {})
     hot_tub = pool_config.get("hot_tub", {})
@@ -394,21 +408,19 @@ def draw_basement(ax, config: dict[str, Any]) -> None:
     add_pool_area(ax, pool_data)
 
     # Draw doors from data
-    doors = basement_config.get("doors", BASEMENT_DOORS_DEFAULT)
+    doors = basement_config.get("doors", [])
     draw_doors_from_data(ax, doors)
 
     # ===== Stairs =====
-    stairs = basement_config.get("stairs", BASEMENT_STAIRS_DEFAULT)
+    stairs = basement_config.get("stairs", [])
     draw_stairs_from_data(ax, stairs)
 
     # ===== Furniture =====
-    furniture = basement_config.get("furniture", BASEMENT_FURNITURE_DEFAULT)
+    furniture = basement_config.get("furniture", [])
     draw_furniture_from_data(ax, furniture)
 
     # ===== Text Annotations =====
-    annotations = basement_config.get(
-        "text_annotations", BASEMENT_TEXT_ANNOTATIONS_DEFAULT
-    )
+    annotations = basement_config.get("text_annotations", [])
     draw_text_annotations_from_data(ax, annotations)
 
     # Add dimension annotations
@@ -472,16 +484,12 @@ def generate_main_floor(config: dict[str, Any] | None = None) -> Path:
     main_config = config.get("main_floor", {})
     fig_config = main_config.get("figure", {})
 
-    fig, ax = plt.subplots(
-        figsize=(fig_config.get("width", 16), fig_config.get("height", 20))
-    )
+    _fig, ax = plt.subplots(figsize=(fig_config.get("width", 16), fig_config.get("height", 20)))
 
     ax.set_xlim(scale(fig_config.get("x_min", -32)), scale(fig_config.get("x_max", 85)))
     ax.set_ylim(scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 120)))
     ax.set_aspect("equal")
-    ax.set_title(
-        fig_config.get("title", "Main Floor Plan"), fontsize=16, fontweight="bold"
-    )
+    ax.set_title(fig_config.get("title", "Main Floor Plan"), fontsize=16, fontweight="bold")
 
     # Draw the floor plan
     draw_main_floor(ax, config)
@@ -516,9 +524,7 @@ def generate_basement(config: dict[str, Any] | None = None) -> Path:
     basement_config = config.get("basement", {})
     fig_config = basement_config.get("figure", {})
 
-    fig, ax = plt.subplots(
-        figsize=(fig_config.get("width", 12), fig_config.get("height", 18))
-    )
+    _fig, ax = plt.subplots(figsize=(fig_config.get("width", 12), fig_config.get("height", 18)))
 
     ax.set_xlim(scale(fig_config.get("x_min", -5)), scale(fig_config.get("x_max", 65)))
     ax.set_ylim(scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 105)))
@@ -587,12 +593,31 @@ def generate_svg(floor: str = "main", config: dict[str, Any] | None = None) -> P
         draw_func = draw_basement
         default_title = "Basement Floor Plan (12' Ceilings)"
 
-    fig, ax = plt.subplots(
-        figsize=(fig_config.get("width", 16), fig_config.get("height", 20))
+    # Use floor-specific defaults based on which floor we're generating
+    if floor == "main":
+        default_width, default_height = 20, 16
+        default_x_min, default_x_max = -5, 125
+        default_y_min, default_y_max = -18, 75
+    else:
+        default_width, default_height = 12, 18
+        default_x_min, default_x_max = -5, 105
+        default_y_min, default_y_max = -5, 65
+
+    _fig, ax = plt.subplots(
+        figsize=(
+            fig_config.get("width", default_width),
+            fig_config.get("height", default_height),
+        )
     )
 
-    ax.set_xlim(scale(fig_config.get("x_min", -32)), scale(fig_config.get("x_max", 85)))
-    ax.set_ylim(scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 120)))
+    ax.set_xlim(
+        scale(fig_config.get("x_min", default_x_min)),
+        scale(fig_config.get("x_max", default_x_max)),
+    )
+    ax.set_ylim(
+        scale(fig_config.get("y_min", default_y_min)),
+        scale(fig_config.get("y_max", default_y_max)),
+    )
     ax.set_aspect("equal")
     ax.set_title(fig_config.get("title", default_title), fontsize=16, fontweight="bold")
 
@@ -651,19 +676,11 @@ def generate_combined_pdf(
         main_config = config.get("main_floor", {})
         fig_config = main_config.get("figure", {})
 
-        fig, ax = plt.subplots(
-            figsize=(fig_config.get("width", 16), fig_config.get("height", 20))
-        )
-        ax.set_xlim(
-            scale(fig_config.get("x_min", -32)), scale(fig_config.get("x_max", 85))
-        )
-        ax.set_ylim(
-            scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 120))
-        )
+        fig, ax = plt.subplots(figsize=(fig_config.get("width", 16), fig_config.get("height", 20)))
+        ax.set_xlim(scale(fig_config.get("x_min", -32)), scale(fig_config.get("x_max", 85)))
+        ax.set_ylim(scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 120)))
         ax.set_aspect("equal")
-        ax.set_title(
-            fig_config.get("title", "Main Floor Plan"), fontsize=16, fontweight="bold"
-        )
+        ax.set_title(fig_config.get("title", "Main Floor Plan"), fontsize=16, fontweight="bold")
 
         draw_main_floor(ax, config)
         if not get_debug_mode():
@@ -677,15 +694,9 @@ def generate_combined_pdf(
         basement_config = config.get("basement", {})
         fig_config = basement_config.get("figure", {})
 
-        fig, ax = plt.subplots(
-            figsize=(fig_config.get("width", 12), fig_config.get("height", 18))
-        )
-        ax.set_xlim(
-            scale(fig_config.get("x_min", -5)), scale(fig_config.get("x_max", 65))
-        )
-        ax.set_ylim(
-            scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 105))
-        )
+        fig, ax = plt.subplots(figsize=(fig_config.get("width", 12), fig_config.get("height", 18)))
+        ax.set_xlim(scale(fig_config.get("x_min", -5)), scale(fig_config.get("x_max", 65)))
+        ax.set_ylim(scale(fig_config.get("y_min", -5)), scale(fig_config.get("y_max", 105)))
         ax.set_aspect("equal")
         ax.set_title(
             fig_config.get("title", "Basement Floor Plan (12' Ceilings)"),
@@ -705,21 +716,17 @@ def generate_combined_pdf(
     return output_path
 
 
-# Export all public functions
+# Export all public functions (sorted alphabetically)
 __all__ = [
-    # Config loading
-    "load_config",
-    "apply_config_settings",
-    "get_default_config",
-    # Drawing functions
-    "draw_main_floor",
-    "draw_basement",
-    # Generation functions
-    "generate_main_floor",
-    "generate_basement",
-    "generate_svg",
-    "generate_all_svg",
-    "generate_combined_pdf",
-    # Constants
     "OUTPUT_DIR",
+    "apply_config_settings",
+    "draw_basement",
+    "draw_main_floor",
+    "generate_all_svg",
+    "generate_basement",
+    "generate_combined_pdf",
+    "generate_main_floor",
+    "generate_svg",
+    "get_default_config",
+    "load_config",
 ]

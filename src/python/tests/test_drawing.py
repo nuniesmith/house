@@ -14,8 +14,18 @@ This module tests all drawing functions including:
 - Batch drawing functions
 """
 
+import sys
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import pytest
+from matplotlib.patches import Circle, Rectangle
+
+# Add the src directory to the path for imports
+src_path = Path(__file__).parent.parent / "src"
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
+
 from drawing import (
     add_dimension_arrow,
     add_door,
@@ -45,7 +55,6 @@ from drawing import (
     draw_text_annotations_from_data,
     draw_windows_from_data,
 )
-from matplotlib.patches import Circle, Rectangle
 from models import (
     Door,
     Fireplace,
@@ -113,9 +122,7 @@ class TestAddRoom:
 
     def test_add_room_with_color(self, clean_axes):
         """Test add_room with a specific color."""
-        room = Room(
-            x=0, y=0, width=10, height=10, label="Colored Room", color="#ff0000"
-        )
+        room = Room(x=0, y=0, width=10, height=10, label="Colored Room", color="#ff0000")
         add_room(clean_axes, room)
         patches = [p for p in clean_axes.patches if isinstance(p, Rectangle)]
         assert len(patches) >= 1
@@ -259,17 +266,13 @@ class TestAddStairs:
 
     def test_add_stairs_horizontal(self, clean_axes):
         """Test add_stairs with horizontal orientation."""
-        stairs = Stairs(
-            x=0, y=0, width=4, height=10, num_steps=8, orientation="horizontal"
-        )
+        stairs = Stairs(x=0, y=0, width=4, height=10, num_steps=8, orientation="horizontal")
         add_stairs(clean_axes, stairs)
         assert True
 
     def test_add_stairs_vertical(self, clean_axes):
         """Test add_stairs with vertical orientation."""
-        stairs = Stairs(
-            x=0, y=0, width=10, height=4, num_steps=8, orientation="vertical"
-        )
+        stairs = Stairs(x=0, y=0, width=10, height=4, num_steps=8, orientation="vertical")
         add_stairs(clean_axes, stairs)
         assert True
 
@@ -408,9 +411,7 @@ class TestAddTextAnnotation:
 
     def test_add_text_annotation(self, clean_axes):
         """Test that add_text_annotation adds text."""
-        annotation = TextAnnotation(
-            x=50, y=50, text="Test Annotation", fontsize=10, color="black"
-        )
+        annotation = TextAnnotation(x=50, y=50, text="Test Annotation", fontsize=10, color="black")
         add_text_annotation(clean_axes, annotation)
         assert len(clean_axes.texts) >= 1
 
@@ -442,9 +443,7 @@ class TestAddLineAnnotation:
 
     def test_add_line_annotation_dashed(self, clean_axes):
         """Test add_line_annotation with dashed style."""
-        line = LineAnnotation(
-            x1=0, y1=0, x2=100, y2=100, color="gray", linewidth=1, linestyle="--"
-        )
+        line = LineAnnotation(x1=0, y1=0, x2=100, y2=100, color="gray", linewidth=1, linestyle="--")
         add_line_annotation(clean_axes, line)
         assert len(clean_axes.lines) >= 1
 
@@ -700,7 +699,5 @@ class TestDrawingEdgeCases:
 
     def test_special_characters_in_label(self, clean_axes):
         """Test room with special characters in label."""
-        add_room_simple(
-            clean_axes, x=0, y=0, width=10, height=10, label="Room 1\n(Master)"
-        )
+        add_room_simple(clean_axes, x=0, y=0, width=10, height=10, label="Room 1\n(Master)")
         assert True

@@ -43,18 +43,18 @@ for arg in "$@"; do
             echo "  --help, -h      Show this help message"
             echo ""
             echo "Program Arguments (passed to main.py):"
+            echo "  --config FILE   Path to YAML config file (REQUIRED)"
             echo "  --png-only      Only generate PNG files"
             echo "  --svg-only      Only generate SVG files"
             echo "  --pdf-only      Only generate combined PDF"
             echo "  --debug         Enable debug mode with grid overlay"
             echo "  --validate      Only validate config, don't generate"
-            echo "  --config FILE   Path to custom config file"
             echo ""
             echo "Examples:"
-            echo "  ./run.sh                    # Run tests then generate all formats"
-            echo "  ./run.sh --skip-tests       # Skip tests, generate all formats"
-            echo "  ./run.sh --svg-only         # Run tests then generate SVG only"
-            echo "  ./run.sh --skip-tests --debug  # Skip tests, generate with debug grid"
+            echo "  ./run.sh --config config.yaml              # Run tests then generate PNGs"
+            echo "  ./run.sh --skip-tests --config config.yaml # Skip tests, generate PNGs"
+            echo "  ./run.sh --config config.yaml --svg-only   # Run tests then generate SVG only"
+            echo "  ./run.sh --skip-tests --config config.yaml --debug  # Skip tests, debug grid"
             exit 0
             ;;
         *)
@@ -71,7 +71,7 @@ if [ "$SKIP_TESTS" = false ]; then
     echo "========================================"
     echo ""
 
-    $PYTHON -m pytest src/tests/ -v --tb=short
+    $PYTHON -m pytest tests/ -v --tb=short
     TEST_EXIT_CODE=$?
 
     if [ $TEST_EXIT_CODE -ne 0 ]; then
@@ -88,6 +88,34 @@ if [ "$SKIP_TESTS" = false ]; then
     echo "All tests passed!"
     echo "========================================"
     echo ""
+fi
+
+# Check if --config was provided in PROGRAM_ARGS
+CONFIG_PROVIDED=false
+for arg in "${PROGRAM_ARGS[@]}"; do
+    if [ "$arg" = "--config" ]; then
+        CONFIG_PROVIDED=true
+        break
+    fi
+done
+
+# If no --config provided, use default config.yaml in current directory
+if [ "$CONFIG_PROVIDED" = false ]; then
+    if [ -f "config.yaml" ]; then
+        echo "Using default config file: config.yaml"
+        PROGRAM_ARGS=("--config" "config.yaml" "${PROGRAM_ARGS[@]}")
+    else
+        echo "========================================"
+        echo "ERROR: No config file specified and config.yaml not found."
+        echo ""
+        echo "A YAML configuration file is required. Either:"
+        echo "  1. Create a config.yaml file in this directory, or"
+        echo "  2. Use --config <path> to specify your config file"
+        echo ""
+        echo "Example: ./run.sh --config /path/to/your/config.yaml"
+        echo "========================================"
+        exit 1
+    fi
 fi
 
 # Run the floor plan generator

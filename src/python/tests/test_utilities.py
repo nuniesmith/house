@@ -11,6 +11,14 @@ This module tests all utility functions including:
 - Global state management
 """
 
+import sys
+from pathlib import Path
+
+# Add the src directory to the path for imports
+src_path = Path(__file__).parent.parent / "src"
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
+
 from utilities import (
     COLORS,
     calculate_area,
@@ -364,9 +372,7 @@ class TestValidateConfig:
         config = {
             "settings": {},
             "main_floor": {
-                "rooms": [
-                    {"x": 0, "y": 0, "width": -10, "height": 10, "label": "Bad width"}
-                ]
+                "rooms": [{"x": 0, "y": 0, "width": -10, "height": 10, "label": "Bad width"}]
             },
             "basement": {"rooms": []},
         }

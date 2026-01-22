@@ -9,11 +9,19 @@ This module tests all generator functions including:
 - Floor plan generation (PNG, SVG, PDF)
 """
 
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
 import matplotlib.pyplot as plt
 import pytest
+import yaml
+
+# Add the src directory to the path for imports
+src_path = Path(__file__).parent.parent / "src"
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
+
 from generators import (
     OUTPUT_DIR,
     apply_config_settings,
@@ -38,33 +46,48 @@ from utilities import (
 class TestLoadConfig:
     """Tests for the load_config() function."""
 
-    def test_load_config_default(self):
-        """Test loading config from default location."""
-        config = load_config()
-        assert isinstance(config, dict)
-        # Should have main sections
-        assert "settings" in config or isinstance(config, dict)
+    def test_load_config_requires_path(self):
+        """Test that load_config raises ValueError when no path provided."""
+        with pytest.raises(ValueError, match="YAML configuration file is required"):
+            load_config()
+
+    def test_load_config_requires_path_none(self):
+        """Test that load_config raises ValueError when path is None."""
+        with pytest.raises(ValueError, match="YAML configuration file is required"):
+            load_config(None)
 
     def test_load_config_nonexistent_file(self):
-        """Test loading config from non-existent file returns defaults."""
-        config = load_config("/nonexistent/path/config.yaml")
-        assert isinstance(config, dict)
+        """Test loading config from non-existent file raises FileNotFoundError."""
+        with pytest.raises(FileNotFoundError, match="Config file not found"):
+            load_config("/nonexistent/path/config.yaml")
 
-    def test_load_config_with_validation(self):
+    def test_load_config_with_valid_file(self, temp_config_file):
+        """Test loading config from a valid file."""
+        config = load_config(temp_config_file)
+        assert isinstance(config, dict)
+        assert "settings" in config
+
+    def test_load_config_with_validation(self, temp_config_file):
         """Test that config validation runs by default."""
-        # Should not raise even with validation
-        config = load_config(validate=True)
+        config = load_config(temp_config_file, validate=True)
         assert isinstance(config, dict)
 
-    def test_load_config_without_validation(self):
+    def test_load_config_without_validation(self, temp_config_file):
         """Test loading config without validation."""
-        config = load_config(validate=False)
+        config = load_config(temp_config_file, validate=False)
         assert isinstance(config, dict)
 
-    def test_load_config_returns_dict(self):
-        """Test that load_config always returns a dictionary."""
-        config = load_config()
+    def test_load_config_returns_dict(self, temp_config_file):
+        """Test that load_config returns a dictionary."""
+        config = load_config(temp_config_file)
         assert isinstance(config, dict)
+
+    def test_load_config_empty_file_raises(self, tmp_path):
+        """Test that loading an empty config file raises ValueError."""
+        empty_config = tmp_path / "empty.yaml"
+        empty_config.write_text("")
+        with pytest.raises(ValueError, match="Config file is empty"):
+            load_config(empty_config)
 
 
 class TestApplyConfigSettings:
@@ -139,16 +162,20 @@ class TestGetDefaultConfig:
         assert "basement" in config
 
     def test_get_default_config_main_floor_has_rooms(self):
-        """Test that main_floor section has rooms."""
+        """Test that main_floor section has rooms (empty list for minimal config)."""
         config = get_default_config()
         assert "rooms" in config["main_floor"]
         assert isinstance(config["main_floor"]["rooms"], list)
+        # Minimal config has empty rooms list
+        assert config["main_floor"]["rooms"] == []
 
     def test_get_default_config_basement_has_rooms(self):
-        """Test that basement section has rooms."""
+        """Test that basement section has rooms (empty list for minimal config)."""
         config = get_default_config()
         assert "rooms" in config["basement"]
         assert isinstance(config["basement"]["rooms"], list)
+        # Minimal config has empty rooms list
+        assert config["basement"]["rooms"] == []
 
 
 class TestDrawMainFloor:
@@ -256,12 +283,11 @@ class TestGenerateMainFloor:
                 result = Path(result)
             assert result.exists() or True  # May be relative path
 
-    def test_generate_main_floor_png_format(self):
+    def test_generate_main_floor_png_format(self, sample_config):
         """Test that generate_main_floor creates PNG by default."""
-        config = get_default_config()
-        apply_config_settings(config)
+        apply_config_settings(sample_config)
         # Should complete without error
-        result = generate_main_floor(config)
+        result = generate_main_floor(sample_config)
         assert "png" in str(result).lower() or "main" in str(result).lower()
 
 
@@ -371,10 +397,10 @@ class TestOutputDir:
 class TestConfigIntegration:
     """Integration tests for config loading and application."""
 
-    def test_full_config_workflow(self):
+    def test_full_config_workflow(self, temp_config_file):
         """Test complete workflow: load -> apply -> generate."""
-        # Load config
-        config = load_config()
+        # Load config (requires a file path now)
+        config = load_config(temp_config_file)
         assert isinstance(config, dict)
 
         # Apply settings
@@ -420,23 +446,24 @@ class TestConfigIntegration:
 class TestErrorHandling:
     """Tests for error handling in generators."""
 
-    def test_load_config_handles_invalid_yaml(self, tmp_path):
-        """Test that invalid YAML is handled gracefully."""
+    def test_load_config_raises_on_invalid_yaml(self, tmp_path):
+        """Test that invalid YAML raises an error."""
         # Create invalid YAML file
         invalid_yaml = tmp_path / "invalid.yaml"
         invalid_yaml.write_text("{ invalid yaml content: [")
 
-        # Should return default config instead of raising
-        config = load_config(str(invalid_yaml))
-        assert isinstance(config, dict)
+        # Should raise yaml.YAMLError now (config is mandatory)
+        with pytest.raises(yaml.YAMLError):
+            load_config(str(invalid_yaml))
 
-    def test_load_config_handles_empty_file(self, tmp_path):
-        """Test that empty config file is handled."""
+    def test_load_config_raises_on_empty_file(self, tmp_path):
+        """Test that empty config file raises ValueError."""
         empty_yaml = tmp_path / "empty.yaml"
         empty_yaml.write_text("")
 
-        config = load_config(str(empty_yaml))
-        assert isinstance(config, dict)
+        # Should raise ValueError now (config is mandatory)
+        with pytest.raises(ValueError, match="Config file is empty"):
+            load_config(str(empty_yaml))
 
     def test_apply_config_handles_none_values(self):
         """Test that None values in config are handled."""

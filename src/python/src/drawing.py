@@ -10,6 +10,7 @@ from typing import Any, Literal
 
 from matplotlib.axes import Axes
 from matplotlib.patches import Arc, Circle, Ellipse, Rectangle
+
 from models import (
     Door,
     Fireplace,
@@ -22,7 +23,13 @@ from models import (
     TheaterSeating,
     Window,
 )
-from utilities import get_auto_dimensions, resolve_color, scale
+from utilities import (
+    get_auto_dimensions,
+    get_drawing_style,
+    get_wall_thick,
+    resolve_color,
+    scale,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -72,9 +79,7 @@ def add_room(ax: Axes, room: Room) -> None:
     x, y, w, h = scale(room.x), scale(room.y), scale(room.width), scale(room.height)
     color = resolve_color(room.color)
 
-    rect = Rectangle(
-        (x, y), w, h, linewidth=room.linewidth, edgecolor="black", facecolor=color
-    )
+    rect = Rectangle((x, y), w, h, linewidth=room.linewidth, edgecolor="black", facecolor=color)
     ax.add_patch(rect)
 
     # Build label text
@@ -150,10 +155,24 @@ def add_door(ax: Axes, door: Door) -> None:
     direction, swing = door.direction, door.swing
 
     # Draw the door opening (white gap in wall)
+    # Use wall_thick + 1 to ensure the gap fully covers the wall
+    door_gap_linewidth = get_wall_thick() + 1
     if direction in ("right", "left"):
-        ax.plot([x, x + width], [y, y], color="white", linewidth=4, zorder=5)
+        ax.plot(
+            [x, x + width],
+            [y, y],
+            color="white",
+            linewidth=door_gap_linewidth,
+            zorder=5,
+        )
     else:  # up or down
-        ax.plot([x, x], [y, y + width], color="white", linewidth=4, zorder=5)
+        ax.plot(
+            [x, x],
+            [y, y + width],
+            color="white",
+            linewidth=door_gap_linewidth,
+            zorder=5,
+        )
 
     # Door swing arc configurations
     # Each config: (arc_center, theta1, theta2, door_line_coords)
@@ -169,6 +188,8 @@ def add_door(ax: Axes, door: Door) -> None:
     }
 
     config = arc_configs.get((direction, swing))
+    arc_linewidth = get_drawing_style("door_arc_linewidth", 1.5)
+    panel_linewidth = get_drawing_style("door_panel_linewidth", 1.5)
     if config:
         arc_center, theta1, theta2, line_coords = config
         arc = Arc(
@@ -179,11 +200,17 @@ def add_door(ax: Axes, door: Door) -> None:
             theta1=theta1,
             theta2=theta2,
             color="black",
-            linewidth=1.5,
+            linewidth=arc_linewidth,
             zorder=6,
         )
         ax.add_patch(arc)
-        ax.plot(line_coords[0], line_coords[1], color="black", linewidth=1.5, zorder=6)
+        ax.plot(
+            line_coords[0],
+            line_coords[1],
+            color="black",
+            linewidth=panel_linewidth,
+            zorder=6,
+        )
     else:
         # Fallback: simple arc
         arc = Arc(
@@ -194,7 +221,7 @@ def add_door(ax: Axes, door: Door) -> None:
             theta1=0,
             theta2=90,
             color="black",
-            linewidth=1.5,
+            linewidth=arc_linewidth,
             zorder=6,
         )
         ax.add_patch(arc)
@@ -227,36 +254,41 @@ def add_window(ax: Axes, window: Window) -> None:
     x, y, width = scale(window.x), scale(window.y), scale(window.width)
     window_color = resolve_color("window")
 
+    # Get configurable style parameters
+    window_thickness = get_drawing_style("window_thickness", 0.8)
+    window_linewidth = get_drawing_style("window_linewidth", 1.5)
+    center_linewidth = get_drawing_style("window_center_linewidth", 0.5)
+
     if window.orientation == "horizontal":
         # Horizontal window (on top/bottom walls)
-        thickness = scale(0.8)
+        thickness = scale(window_thickness)
         rect = Rectangle(
             (x, y - thickness / 2),
             width,
             thickness,
-            linewidth=1.5,
+            linewidth=window_linewidth,
             edgecolor="black",
             facecolor=window_color,
             zorder=7,
         )
         ax.add_patch(rect)
         # Center line
-        ax.plot([x, x + width], [y, y], color="black", linewidth=0.5, zorder=8)
+        ax.plot([x, x + width], [y, y], color="black", linewidth=center_linewidth, zorder=8)
     else:
         # Vertical window (on left/right walls)
-        thickness = scale(0.8)
+        thickness = scale(window_thickness)
         rect = Rectangle(
             (x - thickness / 2, y),
             thickness,
             width,
-            linewidth=1.5,
+            linewidth=window_linewidth,
             edgecolor="black",
             facecolor=window_color,
             zorder=7,
         )
         ax.add_patch(rect)
         # Center line
-        ax.plot([x, x], [y, y + width], color="black", linewidth=0.5, zorder=8)
+        ax.plot([x, x], [y, y + width], color="black", linewidth=center_linewidth, zorder=8)
 
 
 def add_window_simple(
@@ -281,8 +313,19 @@ def add_stairs(ax: Axes, stairs: Stairs) -> None:
     x, y = scale(stairs.x), scale(stairs.y)
     width, height = scale(stairs.width), scale(stairs.height)
 
+    # Get configurable style parameters
+    stairs_linewidth = get_drawing_style("stairs_linewidth", 1)
+    step_linewidth = get_drawing_style("stairs_step_linewidth", 0.5)
+    stairs_facecolor = get_drawing_style("stairs_facecolor", "lightgray")
+    label_fontsize = get_drawing_style("stairs_label_fontsize", 7)
+
     rect = Rectangle(
-        (x, y), width, height, linewidth=1, edgecolor="black", facecolor="lightgray"
+        (x, y),
+        width,
+        height,
+        linewidth=stairs_linewidth,
+        edgecolor="black",
+        facecolor=stairs_facecolor,
     )
     ax.add_patch(rect)
 
@@ -293,7 +336,7 @@ def add_stairs(ax: Axes, stairs: Stairs) -> None:
                 [x + i * step_width, x + i * step_width],
                 [y, y + height],
                 color="black",
-                linewidth=0.5,
+                linewidth=step_linewidth,
             )
     else:
         step_height = height / stairs.num_steps
@@ -302,7 +345,7 @@ def add_stairs(ax: Axes, stairs: Stairs) -> None:
                 [x, x + width],
                 [y + i * step_height, y + i * step_height],
                 color="black",
-                linewidth=0.5,
+                linewidth=step_linewidth,
             )
 
     if stairs.label:
@@ -310,7 +353,7 @@ def add_stairs(ax: Axes, stairs: Stairs) -> None:
             x + width / 2,
             y + height / 2,
             stairs.label,
-            fontsize=7,
+            fontsize=label_fontsize,
             ha="center",
             va="center",
         )
@@ -341,8 +384,19 @@ def add_fireplace(ax: Axes, fireplace: Fireplace) -> None:
     x, y = scale(fireplace.x), scale(fireplace.y)
     width, height = scale(fireplace.width), scale(fireplace.height)
 
+    # Get configurable style parameters
+    fp_linewidth = get_drawing_style("fireplace_linewidth", 1)
+    fp_facecolor = get_drawing_style("fireplace_facecolor", "darkgray")
+    fp_inner_color = get_drawing_style("fireplace_inner_color", "black")
+    label_fontsize = get_drawing_style("fireplace_label_fontsize", 6)
+
     rect = Rectangle(
-        (x, y), width, height, linewidth=1, edgecolor="black", facecolor="darkgray"
+        (x, y),
+        width,
+        height,
+        linewidth=fp_linewidth,
+        edgecolor="black",
+        facecolor=fp_facecolor,
     )
     ax.add_patch(rect)
 
@@ -351,9 +405,9 @@ def add_fireplace(ax: Axes, fireplace: Fireplace) -> None:
         (x + width * 0.2, y),
         width * 0.6,
         height * 0.7,
-        linewidth=1,
+        linewidth=fp_linewidth,
         edgecolor="black",
-        facecolor="black",
+        facecolor=fp_inner_color,
     )
     ax.add_patch(inner)
 
@@ -362,7 +416,7 @@ def add_fireplace(ax: Axes, fireplace: Fireplace) -> None:
             x + width / 2,
             y + height + scale(1),
             fireplace.label,
-            fontsize=6,
+            fontsize=label_fontsize,
             ha="center",
         )
 
@@ -509,16 +563,26 @@ def add_dimension_arrow(
     rotation: float = 0,
 ) -> None:
     """Add a dimension arrow with label."""
+    # Get configurable style parameters
+    dim_fontsize = get_drawing_style("dimension_fontsize", 10)
+    dim_color = get_drawing_style("dimension_color", "gray")
+
     ax.annotate(
         "",
         xy=start,
         xytext=end,
-        arrowprops=dict(arrowstyle="<->", color="gray"),
+        arrowprops={"arrowstyle": "<->", "color": dim_color},
     )
     mid_x = (start[0] + end[0]) / 2 + offset
     mid_y = (start[1] + end[1]) / 2 + offset
     ax.text(
-        mid_x, mid_y, label, ha="center", fontsize=10, color="gray", rotation=rotation
+        mid_x,
+        mid_y,
+        label,
+        ha="center",
+        fontsize=dim_fontsize,
+        color=dim_color,
+        rotation=rotation,
     )
 
 
@@ -527,16 +591,21 @@ def add_north_arrow(ax: Axes, x: float, y: float, size: float = 5) -> None:
     cx, cy = scale(x), scale(y)
     arrow_size = scale(size)
 
+    # Get configurable style parameters
+    arrow_linewidth = get_drawing_style("north_arrow_linewidth", 2)
+    arrow_fontsize = get_drawing_style("north_arrow_fontsize", 12)
+    circle_radius = get_drawing_style("north_arrow_circle_radius", 0.8)
+
     # Draw the arrow pointing up (north)
     ax.annotate(
         "",
         xy=(cx, cy + arrow_size),
         xytext=(cx, cy),
-        arrowprops=dict(
-            arrowstyle="->",
-            color="black",
-            lw=2,
-        ),
+        arrowprops={
+            "arrowstyle": "->",
+            "color": "black",
+            "lw": arrow_linewidth,
+        },
     )
 
     # Draw "N" label above the arrow
@@ -544,7 +613,7 @@ def add_north_arrow(ax: Axes, x: float, y: float, size: float = 5) -> None:
         cx,
         cy + arrow_size + scale(1.5),
         "N",
-        fontsize=12,
+        fontsize=arrow_fontsize,
         fontweight="bold",
         ha="center",
         va="bottom",
@@ -554,7 +623,7 @@ def add_north_arrow(ax: Axes, x: float, y: float, size: float = 5) -> None:
     # Draw a small circle at the base
     base_circle = Circle(
         (cx, cy),
-        scale(0.8),
+        scale(circle_radius),
         facecolor="white",
         edgecolor="black",
         linewidth=1.5,
@@ -573,6 +642,9 @@ def add_theater_seating(ax: Axes, seating: TheaterSeating) -> None:
     chair_color = resolve_color(seating.chair_color)
     edge_color = resolve_color(seating.edge_color)
 
+    # Get configurable style parameters
+    chair_linewidth = get_drawing_style("theater_chair_linewidth", 1)
+
     for row in range(seating.rows):
         x_pos = scale(seating.start_x + row * seating.row_spacing)
         for seat in range(seating.seats_per_row):
@@ -581,7 +653,7 @@ def add_theater_seating(ax: Axes, seating: TheaterSeating) -> None:
                 (x_pos, y_pos),
                 scale(seating.chair_width),
                 scale(seating.chair_height),
-                linewidth=1,
+                linewidth=chair_linewidth,
                 edgecolor=edge_color,
                 facecolor=chair_color,
             )
@@ -594,12 +666,20 @@ def add_pool_area(ax: Axes, pool_config: PoolConfig) -> None:
     pool_color = resolve_color(pool_config.pool_color)
     hot_tub_color = resolve_color(pool_config.hot_tub_color)
 
+    # Get configurable style parameters
+    pool_area_linewidth = get_drawing_style("pool_area_linewidth", 3)
+    pool_linewidth = get_drawing_style("pool_linewidth", 2)
+    pool_label_fontsize = get_drawing_style("pool_label_fontsize", 10)
+    pool_area_label_fontsize = get_drawing_style("pool_area_label_fontsize", 12)
+    hot_tub_label_fontsize = get_drawing_style("hot_tub_label_fontsize", 7)
+    spa_label_fontsize = get_drawing_style("spa_label_fontsize", 8)
+
     # Pool area background
     pool_area = Rectangle(
         (scale(pool_config.area_x), scale(pool_config.area_y)),
         scale(pool_config.area_width),
         scale(pool_config.area_height),
-        linewidth=3,
+        linewidth=pool_area_linewidth,
         edgecolor="black",
         facecolor=area_color,
     )
@@ -608,7 +688,7 @@ def add_pool_area(ax: Axes, pool_config: PoolConfig) -> None:
         scale(pool_config.area_x + pool_config.area_width / 2),
         scale(pool_config.area_y + pool_config.area_height - 3),
         pool_config.area_label,
-        fontsize=12,
+        fontsize=pool_area_label_fontsize,
         ha="center",
         fontweight="bold",
     )
@@ -618,7 +698,7 @@ def add_pool_area(ax: Axes, pool_config: PoolConfig) -> None:
         (scale(pool_config.pool_x), scale(pool_config.pool_y)),
         scale(pool_config.pool_width),
         scale(pool_config.pool_height),
-        linewidth=2,
+        linewidth=pool_linewidth,
         edgecolor=pool_config.pool_edge_color,
         facecolor=pool_color,
     )
@@ -627,7 +707,7 @@ def add_pool_area(ax: Axes, pool_config: PoolConfig) -> None:
         scale(pool_config.pool_x + pool_config.pool_width / 2),
         scale(pool_config.pool_y + pool_config.pool_height / 2),
         pool_config.pool_label,
-        fontsize=10,
+        fontsize=pool_label_fontsize,
         ha="center",
         color="white",
         fontweight="bold",
@@ -640,14 +720,14 @@ def add_pool_area(ax: Axes, pool_config: PoolConfig) -> None:
             scale(pool_config.hot_tub_radius),
             color=hot_tub_color,
             ec=pool_config.pool_edge_color,
-            linewidth=2,
+            linewidth=pool_linewidth,
         )
         ax.add_patch(hot_tub)
         ax.text(
             scale(pool_config.hot_tub_x),
             scale(pool_config.hot_tub_y),
             pool_config.hot_tub_label,
-            fontsize=7,
+            fontsize=hot_tub_label_fontsize,
             ha="center",
         )
         # Spa label
@@ -656,7 +736,7 @@ def add_pool_area(ax: Axes, pool_config: PoolConfig) -> None:
                 scale(pool_config.spa_label_x),
                 scale(pool_config.spa_label_y),
                 "Spa",
-                fontsize=8,
+                fontsize=spa_label_fontsize,
                 ha="center",
             )
 
@@ -681,13 +761,13 @@ def draw_rooms_from_data(ax: Axes, rooms_data: list[dict[str, Any]]) -> int:
     for i, room_data in enumerate(rooms_data):
         try:
             # Resolve color name to hex
-            if "color" in room_data:
-                room_data = room_data.copy()
-                room_data["color"] = resolve_color(room_data["color"])
+            room_dict = room_data.copy()
+            if "color" in room_dict:
+                room_dict["color"] = resolve_color(room_dict["color"])
 
             # Filter out any unexpected keys
             valid_keys = {f.name for f in Room.__dataclass_fields__.values()}
-            filtered_data = {k: v for k, v in room_data.items() if k in valid_keys}
+            filtered_data = {k: v for k, v in room_dict.items() if k in valid_keys}
 
             room = Room(**filtered_data)
             add_room(ax, room)
@@ -759,13 +839,13 @@ def draw_furniture_from_data(ax: Axes, furniture_data: list[dict[str, Any]]) -> 
     drawn = 0
     for i, item_data in enumerate(furniture_data):
         try:
-            item_data = item_data.copy()
+            item_dict = item_data.copy()
             # Map 'type' to 'furniture_type' if needed (YAML uses 'type' for cleaner syntax)
-            if "type" in item_data and "furniture_type" not in item_data:
-                item_data["furniture_type"] = item_data.pop("type")
+            if "type" in item_dict and "furniture_type" not in item_dict:
+                item_dict["furniture_type"] = item_dict.pop("type")
 
             valid_keys = {f.name for f in Furniture.__dataclass_fields__.values()}
-            filtered_data = {k: v for k, v in item_data.items() if k in valid_keys}
+            filtered_data = {k: v for k, v in item_dict.items() if k in valid_keys}
 
             furniture = Furniture(**filtered_data)
             add_furniture(ax, furniture)
@@ -823,9 +903,7 @@ def draw_fireplaces_from_data(ax: Axes, fireplaces_data: list[dict[str, Any]]) -
     return drawn
 
 
-def draw_text_annotations_from_data(
-    ax: Axes, annotations_data: list[dict[str, Any]]
-) -> int:
+def draw_text_annotations_from_data(ax: Axes, annotations_data: list[dict[str, Any]]) -> int:
     """
     Draw multiple text annotations from a list of annotation data dictionaries.
 
@@ -840,9 +918,7 @@ def draw_text_annotations_from_data(
     for i, annotation_data in enumerate(annotations_data):
         try:
             valid_keys = {f.name for f in TextAnnotation.__dataclass_fields__.values()}
-            filtered_data = {
-                k: v for k, v in annotation_data.items() if k in valid_keys
-            }
+            filtered_data = {k: v for k, v in annotation_data.items() if k in valid_keys}
             annotation = TextAnnotation(**filtered_data)
             add_text_annotation(ax, annotation)
             drawn += 1
@@ -875,43 +951,33 @@ def draw_lines_from_data(ax: Axes, lines_data: list[dict[str, Any]]) -> int:
     return drawn
 
 
-# Export all drawing functions
+# Export all drawing functions (sorted alphabetically)
 __all__ = [
-    # Debug
-    "draw_debug_grid",
-    # Room drawing
-    "add_room",
-    "add_room_simple",
-    # Door drawing
+    "add_dimension_arrow",
     "add_door",
     "add_door_simple",
-    # Window drawing
-    "add_window",
-    "add_window_simple",
-    # Stairs drawing
-    "add_stairs",
-    "add_stairs_simple",
-    # Fireplace drawing
     "add_fireplace",
     "add_fireplace_simple",
-    # Furniture drawing
     "add_furniture",
     "add_furniture_simple",
-    # Annotation drawing
-    "add_text_annotation",
     "add_line_annotation",
-    "add_dimension_arrow",
     "add_north_arrow",
-    # Special elements
-    "add_theater_seating",
     "add_pool_area",
-    # Batch drawing
-    "draw_rooms_from_data",
+    "add_room",
+    "add_room_simple",
+    "add_stairs",
+    "add_stairs_simple",
+    "add_text_annotation",
+    "add_theater_seating",
+    "add_window",
+    "add_window_simple",
+    "draw_debug_grid",
     "draw_doors_from_data",
-    "draw_windows_from_data",
-    "draw_furniture_from_data",
-    "draw_stairs_from_data",
     "draw_fireplaces_from_data",
-    "draw_text_annotations_from_data",
+    "draw_furniture_from_data",
     "draw_lines_from_data",
+    "draw_rooms_from_data",
+    "draw_stairs_from_data",
+    "draw_text_annotations_from_data",
+    "draw_windows_from_data",
 ]

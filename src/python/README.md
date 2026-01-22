@@ -20,7 +20,7 @@ A Python-based floor plan generator using matplotlib that creates professional a
 src/python/
 ├── main.py                 # Entry point - run this to generate floor plans
 ├── config/
-│   └── floor_plan_config.yaml  # YAML configuration file
+│   └── config.yaml  # YAML configuration file
 ├── models/
 │   └── __init__.py         # Data classes (Room, Door, Window, etc.)
 ├── utilities/
@@ -89,7 +89,7 @@ python main.py --config my.yaml # Use custom config file
 
 ### Configuration
 
-All floor plan data is stored in `config/floor_plan_config.yaml`. Edit this file to modify:
+All floor plan data is stored in `config/config.yaml`. Edit this file to modify:
 
 #### Global Settings
 
@@ -207,7 +207,7 @@ fireplaces:
 
 Enable debug mode to show a grid overlay for easier positioning:
 
-1. Edit `config/floor_plan_config.yaml`:
+1. Edit `config/config.yaml`:
    ```yaml
    settings:
      debug_mode: true
@@ -240,7 +240,7 @@ from generators import (
 )
 
 # Load configuration
-config = load_config("config/floor_plan_config.yaml")
+config = load_config("config/config.yaml")
 apply_config_settings(config)
 
 # Generate individual floor plans

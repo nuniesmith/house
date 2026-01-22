@@ -1,7 +1,30 @@
-# Floor Plan Generator Dependencies
-matplotlib
-PyYAML
+# =============================================================================
+# Floor Plan Generator - Python Dependencies
+# =============================================================================
+# Install with: pip install -r requirements.txt
+# For development: pip install -r requirements.txt -r requirements-dev.txt
+# =============================================================================
 
-# Testing Dependencies
-pytest
-pytest-cov
+# Core dependencies
+matplotlib>=3.7.0,<4.0.0
+PyYAML>=6.0,<7.0
+
+# =============================================================================
+# Development Dependencies (uncomment for development)
+# =============================================================================
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Type checking
+mypy>=1.5.0
+
+# Linting and formatting
+ruff>=0.1.0
+black>=23.9.0
+isort>=5.12.0
+
+# Pre-commit hooks
+pre-commit>=3.4.0

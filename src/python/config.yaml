@@ -1,0 +1,1271 @@
+# =============================================================================
+# Floor Plan Configuration - Updated to Match Reference Images
+# =============================================================================
+# This YAML file contains all configuration data for the floor plan generator.
+# Edit this file to modify room layouts, colors, dimensions, and other settings
+# without changing the Python code.
+#
+# UNITS: All coordinates and dimensions are in FEET
+# COORDINATE SYSTEM: Origin (0,0) is at bottom-left of each floor plan
+#   - X increases to the right
+#   - Y increases upward
+#
+# DIMENSION TEXT FORMAT: Use consistent format like "14'-6" x 12'-0""
+#   - Single quote (') for feet
+#   - Double quote (") for inches
+#   - Use 'x' between width and height
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Global Settings
+# -----------------------------------------------------------------------------
+settings:
+    scale: 1.0
+    debug_mode: false
+    grid_spacing: 10
+    auto_dimensions: true
+    output_dpi: 300
+    output_format: "png"
+    show_north_arrow: true
+    wall_thick: 3
+
+# -----------------------------------------------------------------------------
+# Drawing Styles - Centralized style parameters (no hardcoded values in code)
+# -----------------------------------------------------------------------------
+drawing_styles:
+    # Door drawing parameters
+    door_arc_linewidth: 1.5
+    door_panel_linewidth: 1.5
+
+    # Window drawing parameters
+    window_thickness: 0.8
+    window_linewidth: 1.5
+    window_center_linewidth: 0.5
+
+    # Stairs drawing parameters
+    stairs_linewidth: 1
+    stairs_step_linewidth: 0.5
+    stairs_facecolor: "lightgray"
+    stairs_label_fontsize: 7
+
+    # Fireplace drawing parameters
+    fireplace_linewidth: 1
+    fireplace_facecolor: "darkgray"
+    fireplace_inner_color: "black"
+    fireplace_label_fontsize: 6
+
+    # North arrow parameters
+    north_arrow_linewidth: 2
+    north_arrow_fontsize: 12
+    north_arrow_circle_radius: 0.8
+
+    # Dimension arrow parameters
+    dimension_fontsize: 10
+    dimension_color: "gray"
+
+    # Pool area parameters
+    pool_area_linewidth: 3
+    pool_linewidth: 2
+    pool_label_fontsize: 10
+    pool_area_label_fontsize: 12
+    hot_tub_label_fontsize: 7
+    spa_label_fontsize: 8
+
+    # Theater seating parameters
+    theater_chair_linewidth: 1
+
+# -----------------------------------------------------------------------------
+# Color Scheme
+# -----------------------------------------------------------------------------
+colors:
+    # Main floor colors - Matching reference image (yellow interior, blue porches)
+    garage: "#f5f5f5" # Light gray for garage
+    bedroom: "#fffde7" # Light yellow/cream for bedrooms
+    bathroom: "#fffde7" # Light yellow/cream for bathrooms
+    kitchen: "#fffde7" # Light yellow/cream for kitchen
+    living: "#fffde7" # Light yellow/cream for living areas
+    dining: "#fffde7" # Light yellow/cream for dining
+    office: "#fffde7" # Light yellow/cream for office
+    utility: "#fffde7" # Light yellow/cream for utility rooms
+    porch: "#b3e5fc" # Light blue for porches (matches reference)
+    closet: "#fffde7" # Light yellow/cream for closets
+    hall: "#fffde7" # Light yellow/cream for halls
+    powder: "#fffde7" # Light yellow/cream for powder room
+    # Basement colors
+    theater: "#1a1a2e"
+    gaming: "#4a5568"
+    pool: "#63b3ed"
+    pool_area: "#e0f7fa"
+    spa: "#81e6d9"
+    bar: "#c4b5fd"
+    storage: "#d1d5db"
+    bath: "#e6f3ff"
+    books: "#8b4513"
+    pool_utilities: "#e8e8e8"
+    # Furniture colors
+    wood: "#8b4513"
+    leather: "#6b5b4f"
+    chair: "#4a4a4a"
+    hammock: "#deb887"
+    # Window color
+    window: "#87CEEB"
+    # Fixture colors
+    fixture: "#ffffff"
+    tub: "#e6f3ff"
+    toilet: "#ffffff"
+    sink: "#ffffff"
+    # Wall/edge colors for thick black walls
+    wall: "#000000"
+
+# =============================================================================
+# MAIN FLOOR PLAN - Matching Reference Image
+# =============================================================================
+# Reference dimensions: 124'-2" total width (ultra-precise)
+# Three main sections: Left wing, Center, Right wing
+# All coordinates calculated to 0.01' precision for exact grid alignment
+# =============================================================================
+main_floor:
+    figure:
+        width: 20
+        height: 16
+        title: "Main Floor Plan"
+        x_min: -5
+        x_max: 125
+        y_min: -18
+        y_max: 75
+
+    dimensions:
+        width_label: "~124'"
+        height_label: "~70'"
+        width_arrow_y: -15
+        height_arrow_x: -3
+
+    north_arrow:
+        x: 118
+        y: 68
+        size: 6
+
+    # =========================================================================
+    # ROOMS - Ultra-Precise Coordinates (0.01' tolerance)
+    # Coordinate system: Origin at garage bottom-left, Y increases upward
+    # All dimensions converted: feet + inches to decimal (e.g., 25'-2" = 25.17)
+    # All rooms have thick black walls (linewidth: 3)
+    # =========================================================================
+    rooms:
+        # =======================================================================
+        # FRONT PORCH - Bottom center (56'-8" x 12'-4")
+        # =======================================================================
+        - x: 13.75
+          y: -12.33
+          width: 56.67
+          height: 12.33
+          label: "FRONT PORCH"
+          color: porch
+          label_fontsize: 10
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '56''-8" x 12''-4"'
+          notes: '12''-8" CLG. A.F.F.'
+
+        # =======================================================================
+        # LEFT WING - Garage, Mud Room, Bedrooms, Baths (Ultra-Precise)
+        # =======================================================================
+
+        # 2 Car Garage (25'-2" x 31'-9" = 25.17 x 31.75)
+        - x: 0.00
+          y: 0.00
+          width: 25.17
+          height: 31.75
+          label: "2 CAR GARAGE"
+          color: garage
+          label_fontsize: 9
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '25''-2" x 31''-9"'
+          notes: '1''-8" CLG. A.F.F.'
+
+        # Mud Room (11'-4" x 7'-5" = 11.33 x 7.42)
+        - x: 0.00
+          y: 31.75
+          width: 11.33
+          height: 7.42
+          label: "MUD ROOM"
+          color: utility
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '11''-4" x 7''-5"'
+          notes: '12''-0" CLG.'
+
+        # Laundry (adjacent to mud room)
+        - x: 11.33
+          y: 31.75
+          width: 8.67
+          height: 7.42
+          label: "LAUN."
+          color: utility
+          label_fontsize: 7
+          linewidth: 3
+          notes: '12''-0" CLG.'
+
+        # Bedroom 4 (18'-4" x 13'-11" = 18.33 x 13.92)
+        - x: 0.00
+          y: 39.17
+          width: 18.33
+          height: 13.92
+          label: "BEDROOM 4"
+          color: bedroom
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '18''-4" x 13''-11"'
+          notes: '12''-0" CLG.'
+
+        # Bath 4 / WIC area
+        - x: 18.33
+          y: 39.17
+          width: 6.00
+          height: 7.00
+          label: "BATH 4"
+          color: bathroom
+          label_fontsize: 6
+          linewidth: 3
+          notes: '12''-0" CLG.'
+
+        # WIC for Bedroom 4
+        - x: 18.33
+          y: 46.17
+          width: 6.00
+          height: 6.92
+          label: "WIC"
+          color: closet
+          label_fontsize: 6
+          linewidth: 3
+
+        # Bedroom 3 (17'-3" x 13'-4" = 17.25 x 13.33)
+        - x: 0.00
+          y: 53.09
+          width: 17.25
+          height: 13.33
+          label: "BEDROOM 3"
+          color: bedroom
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '17''-3" x 13''-4"'
+          notes: '12''-0" CLG.'
+
+        # Bath 3 / WIC for Bedroom 3
+        - x: 0.00
+          y: 66.42
+          width: 8.00
+          height: 6.00
+          label: "BATH 3"
+          color: bathroom
+          label_fontsize: 6
+          linewidth: 3
+
+        # WIC for Bedroom 3
+        - x: 8.00
+          y: 66.42
+          width: 6.00
+          height: 6.00
+          label: "WIC"
+          color: closet
+          label_fontsize: 6
+          linewidth: 3
+
+        # Bedroom 2 (14'-2" x 14'-5" = 14.17 x 14.42)
+        - x: 17.25
+          y: 53.09
+          width: 14.17
+          height: 14.42
+          label: "BEDROOM 2"
+          color: bedroom
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '14''-2" x 14''-5"'
+          notes: '12''-0" CLG.'
+
+        # Bath 2
+        - x: 31.42
+          y: 53.09
+          width: 5.00
+          height: 7.00
+          label: "BATH 2"
+          color: bathroom
+          label_fontsize: 6
+          linewidth: 3
+
+        # WIC for Bedroom 2
+        - x: 31.42
+          y: 60.09
+          width: 5.00
+          height: 7.42
+          label: "WIC"
+          color: closet
+          label_fontsize: 6
+          linewidth: 3
+
+        # Powder Room (near laundry)
+        - x: 20.00
+          y: 31.75
+          width: 5.17
+          height: 5.00
+          label: "PWDR."
+          color: powder
+          label_fontsize: 6
+          linewidth: 3
+
+        # =======================================================================
+        # BREAKFAST / KITCHEN AREA (Upper center-left, Ultra-Precise)
+        # =======================================================================
+
+        # Breakfast Nook (14'-1" x 14'-9" = 14.08 x 14.75)
+        - x: 50.00
+          y: 45.17
+          width: 14.08
+          height: 14.75
+          label: "BREAKFAST\nNOOK"
+          color: kitchen
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '14''-1" x 14''-9"'
+          notes: '14''-0" CLG. A.F.F.'
+
+        # Kitchen (KIT.)
+        - x: 36.42
+          y: 45.17
+          width: 13.58
+          height: 14.75
+          label: "KIT."
+          color: kitchen
+          label_fontsize: 8
+          linewidth: 3
+
+        # Pantry (PAN.)
+        - x: 36.42
+          y: 36.75
+          width: 8.00
+          height: 8.42
+          label: "PAN."
+          color: utility
+          label_fontsize: 7
+          linewidth: 3
+
+        # =======================================================================
+        # CENTER SECTION - Entry, Halls, Butler's Pantry (Ultra-Precise)
+        # =======================================================================
+
+        # Dining Room (18'-4" x 14'-6" = 18.33 x 14.50)
+        - x: 25.17
+          y: 0.00
+          width: 18.33
+          height: 14.50
+          label: "DINING\nROOM"
+          color: dining
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '18''-4" x 14''-6"'
+          notes: '14''-0" CLG.'
+
+        # Foyer (11'-4" x 13'-4" = 11.33 x 13.33)
+        - x: 43.50
+          y: 0.00
+          width: 11.33
+          height: 13.33
+          label: "FOYER"
+          color: hall
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '11''-4" x 13''-4"'
+          notes: '14''-0" CLG.'
+
+        # Butler's Pantry (13'-10" x 9'-0" = 13.83 x 9.00)
+        - x: 38.83
+          y: 14.50
+          width: 13.83
+          height: 9.00
+          label: "BUTLER'S\nPANTRY"
+          color: utility
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '13''-10" x 9''-0"'
+
+        # Front Hall (10'-2" x 12'-5" = 10.17 x 12.42)
+        - x: 43.50
+          y: 13.33
+          width: 10.17
+          height: 10.17
+          label: "FRONT\nHALL"
+          color: hall
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '10''-2" x 12''-5"'
+          notes: '14''-0" CLG.'
+
+        # =======================================================================
+        # FAMILY ROOM / OUTDOOR LIVING (Center-right, Ultra-Precise)
+        # =======================================================================
+
+        # Family Room (16'-6" x 15'-2" = 16.50 x 15.17)
+        - x: 50.00
+          y: 29.67
+          width: 16.50
+          height: 15.50
+          label: "FAMILY ROOM"
+          color: living
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '16''-6" x 15''-2"'
+          notes: "7/12 VAULTED CLG."
+
+        # Breakfast Porch (13'-4" x 12'-4" = 13.33 x 12.33)
+        - x: 64.08
+          y: 45.17
+          width: 13.33
+          height: 12.33
+          label: "BREAKFAST\nPORCH"
+          color: porch
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '13''-4" x 12''-4"'
+          notes: '12''-8" CLG. A.F.F.'
+
+        # Outdoor Living (28'-2" x 15'-4" = 28.17 x 15.33, vaulted)
+        - x: 66.50
+          y: 29.67
+          width: 28.17
+          height: 15.50
+          label: "OUTDOOR\nLIVING"
+          color: porch
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '28''-2" x 15''-4"'
+          notes: "VAULTED CLG."
+
+        # =======================================================================
+        # RIGHT SIDE - Lounge, Bar, Office (Ultra-Precise)
+        # =======================================================================
+
+        # Lounge (14'-2" x 12'-2" = 14.17 x 12.17)
+        - x: 54.83
+          y: 0.00
+          width: 14.17
+          height: 12.17
+          label: "LOUNGE"
+          color: living
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '14''-2" x 12''-2"'
+          notes: '14''-0" CLG.'
+
+        # Bar (13'-6" x 9'-0" = 13.50 x 9.00)
+        - x: 69.00
+          y: 0.00
+          width: 13.50
+          height: 9.00
+          label: "BAR"
+          color: living
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '13''-6" x 9''-0"'
+          notes: '14''-0" CLG.'
+
+        # Office (12'-0" x 12'-0" = 12.00 x 12.00)
+        - x: 77.41
+          y: 45.17
+          width: 12.00
+          height: 12.00
+          label: "OFFICE"
+          color: office
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '12''-0" x 12''-0"'
+          notes: '14''-0" CLG.'
+
+        # Office Porch (11'-4" x 10'-8" = 11.33 x 10.67)
+        - x: 89.41
+          y: 45.17
+          width: 11.33
+          height: 10.67
+          label: "OFFICE\nPORCH"
+          color: porch
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '11''-4" x 10''-8"'
+          notes: '14''-0" CLG.'
+
+        # =======================================================================
+        # MASTER SUITE WING (Right side, Ultra-Precise)
+        # =======================================================================
+
+        # Master Suite (17'-8" x 22'-8" = 17.67 x 22.67)
+        - x: 82.00
+          y: 14.50
+          width: 17.67
+          height: 22.67
+          label: "MASTER\nSUITE"
+          color: bedroom
+          label_fontsize: 9
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '17''-8" x 22''-8"'
+          notes: "VAULTED CLG."
+
+        # Master Porch (19'-2" x 10'-0" = 19.17 x 10.00)
+        - x: 99.67
+          y: 24.50
+          width: 19.17
+          height: 10.00
+          label: "MASTER\nPORCH"
+          color: porch
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '19''-2" x 10''-0"'
+          notes: "VAULTED CLG."
+
+        # Side Porch (10'-0" x 32'-0" = 10.00 x 32.00)
+        - x: 112.84
+          y: 0.00
+          width: 10.00
+          height: 32.00
+          label: "SIDE\nPORCH"
+          color: porch
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '10''-0" x 32''-0"'
+
+        # WIC 1 (Master closet)
+        - x: 82.00
+          y: 0.00
+          width: 6.50
+          height: 8.00
+          label: "WIC"
+          color: closet
+          label_fontsize: 7
+          linewidth: 3
+          notes: '12''-0" CLG.'
+
+        # WIC 2 (Master closet)
+        - x: 88.50
+          y: 0.00
+          width: 6.50
+          height: 8.00
+          label: "WIC"
+          color: closet
+          label_fontsize: 7
+          linewidth: 3
+          notes: '12''-0" CLG.'
+
+        # Master Bath (12'-0" x 12'-0" = 12.00 x 12.00)
+        - x: 95.00
+          y: 0.00
+          width: 12.00
+          height: 14.50
+          label: "MASTER\nBATH"
+          color: bathroom
+          label_fontsize: 8
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: '12''-0"'
+          notes: '12''-0" CLG.'
+    # =========================================================================
+    # DOORS - With proper swing arcs (Ultra-Precise positions)
+    # =========================================================================
+    doors:
+        # Front porch main entry (double door)
+        - x: 48.00
+          y: 0.00
+          width: 5
+          direction: up
+          swing: right
+        # Foyer to Front Hall
+        - x: 48.00
+          y: 13.33
+          width: 3
+          direction: up
+          swing: left
+        # Foyer to Lounge
+        - x: 54.83
+          y: 6.00
+          width: 3
+          direction: right
+          swing: up
+        # Foyer to Dining
+        - x: 43.50
+          y: 6.00
+          width: 3
+          direction: left
+          swing: up
+        # Dining to Butler's Pantry
+        - x: 32.00
+          y: 14.50
+          width: 3
+          direction: up
+          swing: left
+        # Butler's Pantry to Kitchen
+        - x: 44.00
+          y: 23.50
+          width: 3
+          direction: right
+          swing: down
+        # Kitchen to Breakfast Nook
+        - x: 50.00
+          y: 52.00
+          width: 3
+          direction: up
+          swing: left
+        # Breakfast Nook to Breakfast Porch
+        - x: 64.08
+          y: 52.00
+          width: 4
+          direction: right
+          swing: down
+        # Family Room to Outdoor Living
+        - x: 64
+          y: 55
+          width: 4
+          direction: up
+          swing: left
+        # Front Hall to Family Room
+        # Family to Outdoor Living
+        - x: 66.50
+          y: 37.00
+          width: 4
+          direction: right
+          swing: up
+        # Front Hall to Bar
+        - x: 53.67
+          y: 23.50
+          width: 3
+          direction: right
+          swing: up
+        # Bar to Lounge
+        - x: 69.00
+          y: 9.00
+          width: 3
+          direction: down
+          swing: left
+        # Lounge to Side Porch
+        - x: 69.00
+          y: 6.00
+          width: 3
+          direction: right
+          swing: up
+        # Office to Office Porch
+        - x: 89.41
+          y: 51.00
+          width: 3
+          direction: right
+          swing: up
+        # Office to Family Room
+        - x: 77.41
+          y: 45.17
+          width: 3
+          direction: down
+          swing: right
+        # Master Suite to Master Porch
+        - x: 99.67
+          y: 30.00
+          width: 4
+          direction: right
+          swing: up
+        # Master Suite to WIC 1
+        - x: 85.00
+          y: 8.00
+          width: 3
+          direction: up
+          swing: left
+        # Master Suite to WIC 2
+        - x: 91.00
+          y: 8.00
+          width: 3
+          direction: up
+          swing: right
+        # Master Suite to Master Bath
+        - x: 95.00
+          y: 14.50
+          width: 3
+          direction: down
+          swing: right
+        # Side Porch to Master Bath
+        - x: 107.00
+          y: 6.00
+          width: 3
+          direction: right
+          swing: up
+        # Garage to Mud Room
+        - x: 12.00
+          y: 31.75
+          width: 3
+          direction: up
+          swing: right
+        # Mud Room to interior
+        - x: 11.33
+          y: 35.00
+          width: 3
+          direction: right
+          swing: up
+        # Bedroom 4 door
+        - x: 10.00
+          y: 53.09
+          width: 3
+          direction: up
+          swing: left
+        # Bedroom 3 door
+        - x: 10.00
+          y: 66.42
+          width: 3
+          direction: up
+          swing: left
+        # Bedroom 2 door
+        - x: 24.00
+          y: 67.51
+          width: 3
+          direction: up
+          swing: right
+        # Laundry door
+        - x: 16.00
+          y: 31.75
+          width: 3
+          direction: up
+          swing: right
+        # Powder room door
+        - x: 22.00
+          y: 31.75
+          width: 2.5
+          direction: up
+          swing: left
+
+    # =========================================================================
+    # WINDOWS - Ultra-Precise positions matching grid
+    # =========================================================================
+    windows:
+        # Front facade windows - Dining Room
+        - x: 30.00
+          y: 0.00
+          width: 6
+          orientation: horizontal
+        - x: 38.00
+          y: 0.00
+          width: 5
+          orientation: horizontal
+        # Front facade - Lounge
+        - x: 58.00
+          y: 0.00
+          width: 6
+          orientation: horizontal
+        - x: 66.00
+          y: 0.00
+          width: 4
+          orientation: horizontal
+        # Garage windows
+        - x: 5.00
+          y: 0.00
+          width: 8
+          orientation: horizontal
+        - x: 15.00
+          y: 0.00
+          width: 6
+          orientation: horizontal
+        # Master Suite windows (right side)
+        - x: 99.67
+          y: 20.00
+          width: 5
+          orientation: vertical
+        - x: 99.67
+          y: 28.00
+          width: 4
+          orientation: vertical
+        # Master Bath window
+        - x: 107.00
+          y: 4.00
+          width: 4
+          orientation: vertical
+        # Side Porch windows
+        - x: 122.84
+          y: 8.00
+          width: 6
+          orientation: vertical
+        - x: 122.84
+          y: 18.00
+          width: 6
+          orientation: vertical
+        # Master Porch windows
+        - x: 118.84
+          y: 28.00
+          width: 5
+          orientation: vertical
+        # Office windows
+        - x: 80.00
+          y: 57.17
+          width: 5
+          orientation: horizontal
+        # Office Porch windows
+        - x: 100.74
+          y: 50.00
+          width: 5
+          orientation: vertical
+        # Outdoor Living (open/covered)
+        - x: 72.00
+          y: 45.17
+          width: 8
+          orientation: horizontal
+        - x: 85.00
+          y: 45.17
+          width: 6
+          orientation: horizontal
+        # Family Room windows
+        - x: 50.00
+          y: 45.17
+          width: 5
+          orientation: horizontal
+        - x: 58.00
+          y: 45.17
+          width: 4
+          orientation: horizontal
+        # Breakfast Porch windows
+        - x: 68.00
+          y: 57.50
+          width: 6
+          orientation: horizontal
+        # Bedroom 3 windows (left side)
+        - x: 0.00
+          y: 56.00
+          width: 6
+          orientation: vertical
+        - x: 0.00
+          y: 64.00
+          width: 4
+          orientation: vertical
+        # Bedroom 2 windows
+        - x: 22.00
+          y: 67.51
+          width: 6
+          orientation: horizontal
+        # Bedroom 4 windows
+        - x: 0.00
+          y: 42.00
+          width: 6
+          orientation: vertical
+        - x: 0.00
+          y: 50.00
+          width: 4
+          orientation: vertical
+        # Kitchen windows
+        - x: 40.00
+          y: 59.92
+          width: 5
+          orientation: horizontal
+
+    # =========================================================================
+    # FIREPLACES - Red markers in reference image (Ultra-Precise)
+    # =========================================================================
+    fireplaces:
+        # Lounge fireplace (red dot in reference)
+        - x: 62.00
+          y: 4.00
+          width: 3
+          height: 2
+          label: ""
+        # Family Room fireplace (red dot in reference)
+        - x: 50.00
+          y: 37.00
+          width: 3
+          height: 2
+          label: ""
+
+    # =========================================================================
+    # STAIRS - Basement access (Ultra-Precise position)
+    # =========================================================================
+    stairs:
+        - x: 53.67
+          y: 23.50
+          width: 8
+          height: 6
+          num_steps: 12
+          orientation: vertical
+          label: "Stairs\nDown"
+          label_offset_x: -1
+
+    # =========================================================================
+    # FURNITURE / FIXTURES (Bathroom fixtures to match reference)
+    # =========================================================================
+    # Furniture section removed for clean architectural floor plan
+    # (walls-and-frame focus - NBC/OBC compliant layout)
+    furniture: []
+
+# =============================================================================
+# BASEMENT FLOOR PLAN - Ultra-Precise (100' x 60' ICF Foundation)
+# =============================================================================
+# Layout from hand-drawn sketch with precise decimal coordinates:
+# - Total: 100.00' wide x 60.00' tall
+# - Left column: Pool/Hot Tub (51' wide x 25' tall), Home Theater (30' x 25')
+# - Center: Utilities (40' wide), 16' corridor, Bar/Coffee/Sink
+# - Right: Stairs Up (15' x 15'), Recreation (20' x 30'), Exit Stairs
+# - Water Treatment Room for rural well system
+# - 12' Ceilings throughout, ICF Foundation
+# =============================================================================
+basement:
+    figure:
+        width: 20
+        height: 14
+        title: "Basement Floor Plan - Phase 1 Rough-In (12' Ceilings - ICF Foundation)"
+        x_min: -5
+        x_max: 108
+        y_min: -12
+        y_max: 68
+
+    dimensions:
+        width_label: "100'"
+        height_label: "60'"
+        width_arrow_y: -8
+        height_arrow_x: -3
+
+    ceiling_note:
+        text: "12' Ceilings Throughout - ICF Foundation - Rural Well System - PHASE 1: ROUGH-IN ONLY (No Furniture/Fixtures)"
+        x: 50
+        y: 65
+        fontsize: 9
+        style: italic
+        color: gray
+
+    north_arrow:
+        x: 100
+        y: 62
+        size: 6
+
+    # =========================================================================
+    # ROOMS - Ultra-Precise Coordinates (100' x 60')
+    # =========================================================================
+    rooms:
+        # =======================================================================
+        # LEFT SECTION - Pool/Spa and Home Theater (stacked)
+        # =======================================================================
+
+        # Salt Water Pool / Hot Tub / Spa (51' wide x 25' tall per sketch)
+        - x: 0.00
+          y: 0.00
+          width: 51.00
+          height: 25.00
+          label: "Pool /\nHot Tub"
+          color: pool_area
+          label_fontsize: 11
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: "51' x 25'"
+          notes: "Phase 1: Floor Drains; Dehumidifier/ERV Rough-In; Plumbing Stubs; No Pool/Fixtures"
+
+        # Home Theater (30' wide x 25' tall per sketch)
+        - x: 0.00
+          y: 25.00
+          width: 30.00
+          height: 25.00
+          label: "Home\nTheater"
+          color: theater
+          label_fontsize: 12
+          label_color: white
+          fontweight: bold
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: "30' x 25'"
+          notes: "Phase 1: Acoustic Isolation Framing; AV Pre-Wire; No Seating/Equipment"
+
+        # =======================================================================
+        # CENTER SECTION - Utilities, Corridor, Bar, Water Treatment
+        # =======================================================================
+
+        # Access Corridor (16' wide per sketch, between theater and center)
+        - x: 30.00
+          y: 25.00
+          width: 16.00
+          height: 10.00
+          label: ""
+          color: hall
+          label_fontsize: 8
+          linewidth: 2
+
+        # Utilities / Mechanical (40' wide x 15' tall per sketch)
+        - x: 20.00
+          y: 45.00
+          width: 40.00
+          height: 15.00
+          label: "Utilities / Mechanical"
+          color: utility
+          label_fontsize: 10
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: "40'"
+
+        # Bar / Coffee / Sink - moved up to upper row, right of utilities
+        - x: 60.00
+          y: 45.00
+          width: 15.00
+          height: 15.00
+          label: "Bar\nCoffee\nSink"
+          color: bar
+          label_fontsize: 8
+          linewidth: 3
+
+        # =======================================================================
+        # RIGHT SECTION - Stairs Up, Recreation, Exit Stairs
+        # =======================================================================
+
+        # Stairs Up to Main (15' x 15' per sketch)
+        - x: 75.00
+          y: 45.00
+          width: 15.00
+          height: 15.00
+          label: "Stairs Up\nto Main"
+          color: utility
+          label_fontsize: 9
+          linewidth: 3
+
+        # Recreation / Gaming / Studio (20' wide x 30' tall per sketch)
+        - x: 80.00
+          y: 0.00
+          width: 20.00
+          height: 30.00
+          label: "Recreation\nGaming\nStudio\n20' x 30'"
+          color: gaming
+          label_fontsize: 10
+          label_color: white
+          fontweight: bold
+          linewidth: 3
+
+        # Upper right open area (connects to stairs and recreation)
+        - x: 61.00
+          y: 25.00
+          width: 14.00
+          height: 15.00
+          label: ""
+          color: hall
+          label_fontsize: 8
+          linewidth: 2
+
+        # Exit Stairs Outside (right edge, 30' tall per sketch)
+        - x: 95.00
+          y: 0.00
+          width: 5.00
+          height: 30.00
+          label: "Stairs\nExit\nOutside"
+          color: porch
+          label_fontsize: 7
+          linewidth: 3
+          auto_dimension: true
+          dimension_text: "30'"
+
+    # =========================================================================
+    # THEATER CONFIGURATION - Ultra-Precise (30' x 25')
+    # =========================================================================
+    theater:
+        room:
+            x: 0.00
+            y: 25.00
+            width: 30.00
+            height: 25.00
+            label: "Home Theater"
+            color: theater
+            label_fontsize: 12
+            label_color: white
+            fontweight: bold
+            auto_dimension: true
+            dimension_text: "30' x 25'"
+        # Seating removed for clean architectural floor plan
+        seating:
+            start_x: 3
+            start_y: 30
+            rows: 0
+            seats_per_row: 0
+            chair_width: 4
+            chair_height: 3
+            row_spacing: 6
+            seat_spacing: 5
+            chair_color: chair
+            edge_color: gray
+        # false_wall removed to match hand-drawn sketch
+
+    # =========================================================================
+    # POOL CONFIGURATION (51' x 25' area per hand-drawn sketch)
+    # =========================================================================
+    pool:
+        area:
+            x: 0.00
+            y: 0.00
+            width: 51.00
+            height: 25.00
+            color: pool_area
+            label: ""
+        # Inner pool removed - rough-in only per hand-drawn sketch
+        hot_tub:
+            x: 10.00
+            y: 12.00
+            radius: 6
+            color: spa
+            edge_color: "#0288d1"
+            label: "Hot Tub"
+        spa_label:
+            x: 10.00
+            y: 12.00
+            text: ""
+
+    # =========================================================================
+    # DOORS - Ultra-Precise positions matching sketch "door" markers
+    # =========================================================================
+    doors:
+        # Theater entry from corridor (marked "door" in sketch)
+        - x: 30.00
+          y: 32.00
+          width: 4
+          direction: right
+          swing: down
+        # Pool area to corridor door (marked "door" in sketch)
+        - x: 46.00
+          y: 20.00
+          width: 4
+          direction: up
+          swing: right
+        # Utilities door (marked "door" in sketch)
+        - x: 60.00
+          y: 52.00
+          width: 3
+          direction: right
+          swing: down
+        # Stairs Up area door (marked "door" in sketch)
+        - x: 75.00
+          y: 52.00
+          width: 3
+          direction: left
+          swing: down
+        # Recreation entry door (marked "door" in sketch)
+        - x: 80.00
+          y: 15.00
+          width: 4
+          direction: left
+          swing: up
+        # Exit stairs outside door (marked "door" in sketch, upper right)
+        - x: 95.00
+          y: 25.00
+          width: 3
+          direction: right
+          swing: up
+        # Bar area door
+        - x: 51.00
+          y: 30.00
+          width: 3
+          direction: up
+          swing: left
+        # Water Treatment room door
+        - x: 60.00
+          y: 45.00
+          width: 3
+          direction: up
+          swing: right
+
+    # =========================================================================
+    # STAIRS - Ultra-Precise positions matching sketch
+    # =========================================================================
+    stairs:
+        # Main stairs up to main floor (top right area per sketch)
+        - x: 75.00
+          y: 45.00
+          width: 15.00
+          height: 15.00
+          num_steps: 14
+          orientation: vertical
+          label: "Stairs\nUp"
+        # Exit stairs outside (right edge, 30' tall per sketch)
+        - x: 95.00
+          y: 0.00
+          width: 5.00
+          height: 30.00
+          num_steps: 20
+          orientation: vertical
+          label: "Exit\nOutside"
+
+    # =========================================================================
+    # FURNITURE - Removed for clean architectural floor plan
+    # =========================================================================
+    # All furniture removed for walls-and-frame focus
+    # Suitable for NBC/OBC compliant construction drawings
+    furniture: []
+
+    # =========================================================================
+    # TEXT ANNOTATIONS - Matching hand-drawn sketch labels
+    # =========================================================================
+    text_annotations:
+        # Dimension labels from sketch (bottom edge)
+        - x: 25.50
+          y: -3
+          text: "51'"
+          fontsize: 9
+          ha: center
+        - x: 90.00
+          y: -3
+          text: "20'"
+          fontsize: 9
+          ha: center
+        # Dimension labels (left edge)
+        - x: -3
+          y: 12.50
+          text: "25'"
+          fontsize: 9
+          ha: center
+          rotation: 90
+        - x: -3
+          y: 37.50
+          text: "25'"
+          fontsize: 9
+          ha: center
+          rotation: 90
+        # Dimension labels (top edge)
+        - x: 15.00
+          y: 62
+          text: "30'"
+          fontsize: 9
+          ha: center
+        - x: 40.00
+          y: 62
+          text: "40'"
+          fontsize: 9
+          ha: center
+        - x: 82.50
+          y: 62
+          text: "15'"
+          fontsize: 9
+          ha: center
+        # Right edge dimension
+        - x: 102
+          y: 15.00
+          text: "30'"
+          fontsize: 9
+          ha: center
+          rotation: 90
+        # Total width label
+        - x: 50.00
+          y: -8
+          text: "100 foot"
+          fontsize: 11
+          ha: center
+          fontweight: bold
+
+    # =========================================================================
+    # LINE ANNOTATIONS
+    # =========================================================================
+    line_annotations: []
