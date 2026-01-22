@@ -939,7 +939,7 @@ basement:
         # TOP ROW - Theater, Utilities, Bath
         # =======================================================================
 
-        # Home Theater - Top Left (30' x 25' per reference)
+        # Home Theater - Top Left (30' x 25' per rough sketch)
         - x: 0
           y: 20
           width: 30
@@ -948,21 +948,23 @@ basement:
           color: theater
           label_fontsize: 11
 
-        # Utilities - Top Center (40' x 10' per reference)
+        # Utilities - Top Center (40' wide per rough sketch - prominent mechanical zone)
         - x: 30
-          y: 35
+          y: 30
           width: 40
-          height: 10
+          height: 15
           label: "Utilities"
           color: utility
           label_fontsize: 10
           notes: "Power | Internet | Gas | Furnace | Water Treatment"
+          auto_dimension: true
+          dimension_text: "40'"
 
-        # Full Bath - Top Right (30' x 10' per reference)
+        # Full Bath - Top Right (10' x 15' per rough sketch)
         - x: 70
-          y: 35
+          y: 30
           width: 30
-          height: 10
+          height: 15
           label: "Bath"
           color: bath
           label_fontsize: 10
@@ -973,59 +975,61 @@ basement:
         # BOTTOM ROW - Pool, Bar, Gaming
         # =======================================================================
 
-        # Pool Area - Bottom Left (35' x 25' per reference shows 25' height)
+        # Pool/Spa Area - Bottom Left (45' wide per rough sketch)
         - x: 0
           y: 0
-          width: 35
+          width: 45
           height: 20
           label: ""
           color: pool_area
           label_fontsize: 10
+          auto_dimension: true
+          dimension_text: "45'"
 
-        # Pool Utilities - Bottom strip (5' per reference)
+        # Pool Utilities - Bottom strip (5' per rough sketch)
         - x: 0
           y: -5
-          width: 35
+          width: 45
           height: 5
           label: "Pool Utilities"
           color: pool_utilities
           label_fontsize: 7
 
         # Bar Area - Center (connected to pool and gaming)
-        - x: 35
+        - x: 45
           y: 0
-          width: 30
-          height: 35
+          width: 35
+          height: 30
           label: ""
           color: bar
           label_fontsize: 10
 
-        # Gaming / Studio - Bottom Right (40' x 20' per reference)
-        - x: 65
+        # Gaming / Studio - Bottom Right (20' wide per rough sketch)
+        - x: 80
           y: 0
-          width: 35
+          width: 20
           height: 20
           label: "Gaming / Studio"
           color: gaming
-          label_fontsize: 11
+          label_fontsize: 10
           label_color: white
           auto_dimension: true
-          dimension_text: "40' x 20'"
+          dimension_text: "20' x 20'"
 
         # Storage Under Stairs - Right side
-        - x: 75
+        - x: 80
           y: 20
           width: 10
-          height: 15
+          height: 10
           label: "Storage\nUnder\nStairs"
           color: storage
           label_fontsize: 7
 
         # Stair landing area
-        - x: 85
+        - x: 90
           y: 20
-          width: 15
-          height: 15
+          width: 10
+          height: 10
           label: ""
           color: storage
           label_fontsize: 6
@@ -1070,34 +1074,34 @@ basement:
             label_y: 18
 
     # =========================================================================
-    # POOL CONFIGURATION (35' x 25' area per reference)
+    # POOL CONFIGURATION (45' x 25' area per rough sketch)
     # =========================================================================
     pool:
         area:
             x: 0
             y: 0
-            width: 35
+            width: 45
             height: 20
             color: pool_area
             label: ""
         pool:
             x: 3
             y: 3
-            width: 20
+            width: 25
             height: 12
             color: pool
             edge_color: "#0288d1"
             label: "Salt Water Pool"
         hot_tub:
-            x: 28
+            x: 35
             y: 4
-            radius: 5
+            radius: 6
             color: spa
             edge_color: "#0288d1"
             label: "Hot Tub"
         spa_label:
-            x: 28
-            y: 12
+            x: 35
+            y: 14
             text: "Spa"
 
     # =========================================================================
@@ -1106,37 +1110,37 @@ basement:
     doors:
         # Theater entry from bar
         - x: 30
-          y: 30
+          y: 25
           width: 4
           direction: left
           swing: down
         # Pool entry from bar
-        - x: 35
+        - x: 45
           y: 10
           width: 4
           direction: left
           swing: up
         # Gaming entry from bar
-        - x: 65
+        - x: 80
           y: 10
           width: 4
           direction: right
           swing: up
         # Bath entry
         - x: 70
-          y: 40
+          y: 35
           width: 3
           direction: left
           swing: down
         # Utilities entry
         - x: 50
-          y: 35
+          y: 30
           width: 3
           direction: down
           swing: left
         # Storage entry
-        - x: 75
-          y: 28
+        - x: 80
+          y: 25
           width: 3
           direction: left
           swing: down
@@ -1146,18 +1150,18 @@ basement:
     # =========================================================================
     stairs:
         # Main stairs from upper floor
-        - x: 88
+        - x: 92
           y: 22
-          width: 8
-          height: 12
+          width: 6
+          height: 8
           num_steps: 14
           orientation: vertical
           label: "Stairs\nto Main"
         # Exit stairs
-        - x: 95
+        - x: 92
           y: 5
-          width: 5
-          height: 12
+          width: 6
+          height: 10
           num_steps: 10
           orientation: vertical
           label: "Exit\nStairs"
@@ -1168,8 +1172,8 @@ basement:
     furniture:
         # Bar / Coffee Station (main bar counter)
         - type: rectangle
-          x: 42
-          y: 22
+          x: 52
+          y: 20
           width: 16
           height: 4
           color: wood
@@ -1182,8 +1186,8 @@ basement:
 
         # Sink/DW label area
         - type: rectangle
-          x: 45
-          y: 27
+          x: 55
+          y: 25
           width: 10
           height: 2
           color: "#666666"
@@ -1195,7 +1199,7 @@ basement:
 
         # Sectional Couch (L-shaped)
         - type: rectangle
-          x: 40
+          x: 50
           y: 5
           width: 12
           height: 4
@@ -1208,7 +1212,7 @@ basement:
 
         # Couch back piece (L-shape)
         - type: rectangle
-          x: 38
+          x: 48
           y: 5
           width: 3
           height: 8
@@ -1219,21 +1223,47 @@ basement:
           label_color: white
           linewidth: 2
 
-        # Coffee table
+        # Round table (central seating area per rough sketch)
         - type: circle
-          x: 50
+          x: 62
           y: 12
-          width: 4
+          width: 6
           color: wood
           edge_color: black
-          label: ""
+          label: "Table"
           linewidth: 1
 
-        # Chair 1
+        # Chair 1 - top of table
         - type: rectangle
-          x: 43
-          y: 12
+          x: 60
+          y: 17
           width: 4
+          height: 3
+          color: chair
+          edge_color: black
+          label: "Chair"
+          label_fontsize: 5
+          label_color: white
+          linewidth: 1
+
+        # Chair 2 - bottom of table
+        - type: rectangle
+          x: 60
+          y: 6
+          width: 4
+          height: 3
+          color: chair
+          edge_color: black
+          label: "Chair"
+          label_fontsize: 5
+          label_color: white
+          linewidth: 1
+
+        # Chair 3 - left of table
+        - type: rectangle
+          x: 54
+          y: 11
+          width: 3
           height: 4
           color: chair
           edge_color: black
@@ -1242,12 +1272,25 @@ basement:
           label_color: white
           linewidth: 1
 
-        # Chair 2
+        # Chair 4 - right of table
         - type: rectangle
-          x: 55
-          y: 12
-          width: 4
+          x: 68
+          y: 11
+          width: 3
           height: 4
+          color: chair
+          edge_color: black
+          label: "Chair"
+          label_fontsize: 5
+          label_color: white
+          linewidth: 1
+
+        # Chair 5 - extra seating per rough sketch
+        - type: rectangle
+          x: 72
+          y: 6
+          width: 4
+          height: 3
           color: chair
           edge_color: black
           label: "Chair"
@@ -1257,9 +1300,9 @@ basement:
 
         # Hammock in gaming area
         - type: ellipse
-          x: 82
-          y: 6
-          width: 12
+          x: 88
+          y: 8
+          width: 10
           height: 4
           color: hammock
           edge_color: "#8b4513"
@@ -1270,14 +1313,14 @@ basement:
 
         # Gaming desk
         - type: rectangle
-          x: 68
+          x: 82
           y: 3
-          width: 10
+          width: 8
           height: 4
           color: wood
           edge_color: black
           label: "Gaming Desk"
-          label_fontsize: 6
+          label_fontsize: 5
           label_color: white
           linewidth: 1
 
@@ -1294,7 +1337,7 @@ basement:
           label_color: white
           linewidth: 1
 
-        # Pool lounge chairs (4 spread out)
+        # Pool lounge chairs (5 spread out for wider pool area)
         - type: rectangle
           x: 4
           y: 16
@@ -1306,7 +1349,7 @@ basement:
           linewidth: 1
 
         - type: rectangle
-          x: 10
+          x: 11
           y: 16
           width: 5
           height: 2
@@ -1316,7 +1359,7 @@ basement:
           linewidth: 1
 
         - type: rectangle
-          x: 16
+          x: 18
           y: 16
           width: 5
           height: 2
@@ -1326,7 +1369,17 @@ basement:
           linewidth: 1
 
         - type: rectangle
-          x: 22
+          x: 25
+          y: 16
+          width: 5
+          height: 2
+          color: "#87CEEB"
+          edge_color: black
+          label: ""
+          linewidth: 1
+
+        - type: rectangle
+          x: 32
           y: 16
           width: 5
           height: 2
@@ -1337,7 +1390,7 @@ basement:
 
         # Bookshelves - vertical along bar/pool wall
         - type: rectangle
-          x: 35
+          x: 45
           y: 5
           width: 2
           height: 14
@@ -1350,8 +1403,8 @@ basement:
 
         # Bookshelves - horizontal under utilities
         - type: rectangle
-          x: 38
-          y: 32
+          x: 48
+          y: 27
           width: 10
           height: 2
           color: books
@@ -1363,8 +1416,8 @@ basement:
 
         # Bookshelves - near storage/bar border
         - type: rectangle
-          x: 63
-          y: 20
+          x: 78
+          y: 15
           width: 2
           height: 10
           color: books
@@ -1376,8 +1429,8 @@ basement:
 
         # Bookshelves - gaming area shelves
         - type: rectangle
-          x: 65
-          y: 18
+          x: 80
+          y: 15
           width: 8
           height: 2
           color: books
@@ -1390,7 +1443,7 @@ basement:
         # Bath fixtures - Toilet
         - type: ellipse
           x: 95
-          y: 40
+          y: 38
           width: 2
           height: 2.5
           color: "#ffffff"
@@ -1401,7 +1454,7 @@ basement:
         # Bath fixtures - Sink
         - type: rectangle
           x: 80
-          y: 40
+          y: 38
           width: 6
           height: 2
           color: "#ffffff"
@@ -1414,20 +1467,20 @@ basement:
     # =========================================================================
     text_annotations:
         # Bar area title
-        - x: 50
-          y: 30
+        - x: 62
+          y: 28
           text: "Bar Area"
           fontsize: 12
           ha: center
           fontweight: bold
         # Pool area label
-        - x: 15
+        - x: 20
           y: 9
           text: "Spa"
           fontsize: 8
           ha: center
         # Lounge chairs label
-        - x: 15
+        - x: 20
           y: 14
           text: "Lounge Chairs"
           fontsize: 6

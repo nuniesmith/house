@@ -25,4 +25,4 @@ $PYTHON -m pip install -q -r requirements.txt
 
 # Run the floor plan generator
 echo "Running floor plan generator..."
-$PYTHON floor_plan_generator.py
+$PYTHON main.py
