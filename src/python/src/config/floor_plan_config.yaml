@@ -324,7 +324,7 @@ main_floor:
           label_fontsize: 10
           auto_dimension: true
           dimension_text: '16''-6" x 15''-2"'
-          notes: "7/12 VAULTED CLG."
+          notes: "7/12 VAULTED\nCLG."
 
         # Front Hall (10'-2" x 12'-5" per reference)
         - x: 42
@@ -374,7 +374,7 @@ main_floor:
           dimension_text: '14''-2" x 12''-2"'
           notes: '14''-0" CLG.'
 
-        # Bar (13'-6" x 9'-0" per reference)
+        # Bar (13'-6" x 9'-0" per reference) - label offset from office wall
         - x: 56
           y: 20
           width: 14
@@ -382,6 +382,7 @@ main_floor:
           label: "BAR"
           color: living
           label_fontsize: 8
+          label_offset_x: -1
           auto_dimension: true
           dimension_text: '13''-6" x 9''-0"'
           notes: '14''-0" CLG.'
@@ -400,7 +401,7 @@ main_floor:
           label_fontsize: 9
           auto_dimension: true
           dimension_text: '28''-2" x 15''-4"'
-          notes: "VAULTED CLG."
+          notes: "VAULTED\nCLG."
 
         # =======================================================================
         # RIGHT WING - Master Suite, Office
@@ -440,7 +441,7 @@ main_floor:
           label_fontsize: 10
           auto_dimension: true
           dimension_text: '17''-8" x 22''-8"'
-          notes: "VAULTED CLG."
+          notes: "VAULTED\nCLG."
 
         # WIC 1 (Master closet 1)
         - x: 73
@@ -484,7 +485,7 @@ main_floor:
           label_fontsize: 8
           auto_dimension: true
           dimension_text: '19''-2" x 10''-0"'
-          notes: "VAULTED CLG."
+          notes: "VAULTED\nCLG."
 
         # Side Porch (10'-0" x 32'-0" per reference)
         - x: 115
@@ -812,6 +813,7 @@ main_floor:
           num_steps: 14
           orientation: vertical
           label: "Stairs\nDown"
+          label_offset_x: -1
 
     # =========================================================================
     # FURNITURE / FIXTURES (Bathroom fixtures to match reference)
@@ -1011,8 +1013,9 @@ basement:
           height: 20
           label: "Gaming / Studio"
           color: gaming
-          label_fontsize: 10
+          label_fontsize: 12
           label_color: white
+          fontweight: bold
           auto_dimension: true
           dimension_text: "20' x 20'"
 
@@ -1052,20 +1055,20 @@ basement:
             dimension_text: "30' x 25'"
         seating:
             start_x: 3
-            start_y: 24
+            start_y: 25
             rows: 3
             seats_per_row: 5
             chair_width: 4
             chair_height: 3
-            row_spacing: 7
+            row_spacing: 6
             seat_spacing: 5
             chair_color: chair
             edge_color: gray
         false_wall:
             x1: 0
-            y1: 20
+            y1: 20.5
             x2: 30
-            y2: 20
+            y2: 20.5
             color: red
             linewidth: 3
             linestyle: "--"
@@ -1086,22 +1089,22 @@ basement:
             label: ""
         pool:
             x: 3
-            y: 3
+            y: 4
             width: 25
-            height: 12
+            height: 11
             color: pool
             edge_color: "#0288d1"
             label: "Salt Water Pool"
         hot_tub:
-            x: 35
-            y: 4
-            radius: 6
+            x: 32
+            y: 6
+            radius: 5
             color: spa
             edge_color: "#0288d1"
             label: "Hot Tub"
         spa_label:
-            x: 35
-            y: 14
+            x: 38
+            y: 12
             text: "Spa"
 
     # =========================================================================
@@ -1184,10 +1187,10 @@ basement:
           rotation: 0
           linewidth: 2
 
-        # Sink/DW label area
+        # Sink/DW label area (2' gap from bar for counter flow)
         - type: rectangle
           x: 55
-          y: 25
+          y: 26
           width: 10
           height: 2
           color: "#666666"
@@ -1197,112 +1200,112 @@ basement:
           label_color: white
           linewidth: 1
 
-        # Sectional Couch (L-shaped)
+        # Sectional Couch (L-shaped) - moved slightly for breathing room
         - type: rectangle
-          x: 50
-          y: 5
+          x: 49
+          y: 4
           width: 12
           height: 4
           color: leather
           edge_color: black
-          label: "Sectional Couch"
+          label: "Sectional"
           label_fontsize: 6
           label_color: white
           linewidth: 2
 
         # Couch back piece (L-shape)
         - type: rectangle
-          x: 48
-          y: 5
+          x: 46
+          y: 4
           width: 3
           height: 8
           color: leather
           edge_color: black
-          label: "Couch"
+          label: ""
           label_fontsize: 5
           label_color: white
           linewidth: 2
 
-        # Round table (central seating area per rough sketch)
+        # Round table (central seating area - scaled down 10% for chair clearance)
         - type: circle
           x: 62
-          y: 12
-          width: 6
+          y: 13
+          width: 5.5
           color: wood
           edge_color: black
           label: "Table"
           linewidth: 1
 
-        # Chair 1 - top of table
+        # Chair 1 - top of table (moved out 1.5' radially)
         - type: rectangle
           x: 60
-          y: 17
-          width: 4
+          y: 19
+          width: 3
           height: 3
           color: chair
           edge_color: black
-          label: "Chair"
+          label: ""
           label_fontsize: 5
           label_color: white
           linewidth: 1
 
-        # Chair 2 - bottom of table
+        # Chair 2 - bottom of table (moved out 1.5' radially)
         - type: rectangle
           x: 60
-          y: 6
-          width: 4
+          y: 5
+          width: 3
           height: 3
           color: chair
           edge_color: black
-          label: "Chair"
+          label: ""
           label_fontsize: 5
           label_color: white
           linewidth: 1
 
-        # Chair 3 - left of table
+        # Chair 3 - left of table (moved out 1.5' radially)
         - type: rectangle
-          x: 54
+          x: 53
           y: 11
           width: 3
-          height: 4
-          color: chair
-          edge_color: black
-          label: "Chair"
-          label_fontsize: 5
-          label_color: white
-          linewidth: 1
-
-        # Chair 4 - right of table
-        - type: rectangle
-          x: 68
-          y: 11
-          width: 3
-          height: 4
-          color: chair
-          edge_color: black
-          label: "Chair"
-          label_fontsize: 5
-          label_color: white
-          linewidth: 1
-
-        # Chair 5 - extra seating per rough sketch
-        - type: rectangle
-          x: 72
-          y: 6
-          width: 4
           height: 3
           color: chair
           edge_color: black
-          label: "Chair"
+          label: ""
           label_fontsize: 5
           label_color: white
           linewidth: 1
 
-        # Hammock in gaming area
+        # Chair 4 - right of table (moved out 1.5' radially)
+        - type: rectangle
+          x: 69
+          y: 11
+          width: 3
+          height: 3
+          color: chair
+          edge_color: black
+          label: ""
+          label_fontsize: 5
+          label_color: white
+          linewidth: 1
+
+        # Chair 5 - extra seating with 3' gap
+        - type: rectangle
+          x: 73
+          y: 5
+          width: 3
+          height: 3
+          color: chair
+          edge_color: black
+          label: ""
+          label_fontsize: 5
+          label_color: white
+          linewidth: 1
+
+        # Hammock in gaming area (moved left/down 2' for desk separation)
         - type: ellipse
-          x: 88
-          y: 8
-          width: 10
+          x: 86
+          y: 14
+          width: 9
           height: 4
           color: hammock
           edge_color: "#8b4513"
@@ -1311,10 +1314,10 @@ basement:
           rotation: 0
           linewidth: 2
 
-        # Gaming desk
+        # Gaming desk (repositioned for balance)
         - type: rectangle
           x: 82
-          y: 3
+          y: 4
           width: 8
           height: 4
           color: wood
@@ -1337,10 +1340,10 @@ basement:
           label_color: white
           linewidth: 1
 
-        # Pool lounge chairs (5 spread out for wider pool area)
+        # Pool lounge chairs (4 evenly spaced with 2' gaps for circulation)
         - type: rectangle
-          x: 4
-          y: 16
+          x: 5
+          y: 17
           width: 5
           height: 2
           color: "#87CEEB"
@@ -1349,8 +1352,8 @@ basement:
           linewidth: 1
 
         - type: rectangle
-          x: 11
-          y: 16
+          x: 12
+          y: 17
           width: 5
           height: 2
           color: "#87CEEB"
@@ -1359,8 +1362,8 @@ basement:
           linewidth: 1
 
         - type: rectangle
-          x: 18
-          y: 16
+          x: 19
+          y: 17
           width: 5
           height: 2
           color: "#87CEEB"
@@ -1369,8 +1372,8 @@ basement:
           linewidth: 1
 
         - type: rectangle
-          x: 25
-          y: 16
+          x: 26
+          y: 17
           width: 5
           height: 2
           color: "#87CEEB"
@@ -1378,22 +1381,12 @@ basement:
           label: ""
           linewidth: 1
 
+        # Bookshelves - vertical along bar/pool wall (1' buffer from wall)
         - type: rectangle
-          x: 32
-          y: 16
-          width: 5
-          height: 2
-          color: "#87CEEB"
-          edge_color: black
-          label: ""
-          linewidth: 1
-
-        # Bookshelves - vertical along bar/pool wall
-        - type: rectangle
-          x: 45
-          y: 5
+          x: 46
+          y: 14
           width: 2
-          height: 14
+          height: 12
           color: books
           edge_color: black
           label: "Books"
@@ -1403,7 +1396,7 @@ basement:
 
         # Bookshelves - horizontal under utilities
         - type: rectangle
-          x: 48
+          x: 49
           y: 27
           width: 10
           height: 2
@@ -1414,24 +1407,24 @@ basement:
           label_color: white
           linewidth: 2
 
-        # Bookshelves - near storage/bar border
+        # Bookshelves - near storage/bar border (shifted left 1' for wall buffer)
         - type: rectangle
-          x: 78
+          x: 77
           y: 15
           width: 2
           height: 10
           color: books
           edge_color: black
-          label: "Books"
+          label: ""
           label_fontsize: 5
           label_color: white
           linewidth: 2
 
-        # Bookshelves - gaming area shelves
+        # Bookshelves - gaming area shelves (shifted left 1' for wall buffer)
         - type: rectangle
-          x: 80
-          y: 15
-          width: 8
+          x: 81
+          y: 17
+          width: 7
           height: 2
           color: books
           edge_color: black
@@ -1440,10 +1433,10 @@ basement:
           label_color: white
           linewidth: 2
 
-        # Bath fixtures - Toilet
+        # Bath fixtures - Toilet (1' buffer from walls, positioned in bath zone 70-100x, 30-45y)
         - type: ellipse
-          x: 95
-          y: 38
+          x: 85
+          y: 35
           width: 2
           height: 2.5
           color: "#ffffff"
@@ -1451,47 +1444,67 @@ basement:
           label: ""
           linewidth: 1
 
-        # Bath fixtures - Sink
+        # Bath fixtures - Sink/Vanity (1' buffer from walls)
         - type: rectangle
-          x: 80
-          y: 38
-          width: 6
+          x: 72
+          y: 40
+          width: 5
           height: 2
           color: "#ffffff"
           edge_color: black
-          label: ""
+          label: "Vanity"
+          label_fontsize: 5
+          linewidth: 1
+
+        # Bath fixtures - Shower (3' landing clearance from stairs)
+        - type: rectangle
+          x: 72
+          y: 32
+          width: 5
+          height: 5
+          color: "#e6f3ff"
+          edge_color: "#0288d1"
+          label: "Shower"
+          label_fontsize: 5
           linewidth: 1
 
     # =========================================================================
     # TEXT ANNOTATIONS
     # =========================================================================
     text_annotations:
-        # Bar area title
+        # Bar area title (moved up 1' for breathing room from books)
         - x: 62
-          y: 28
+          y: 29
           text: "Bar Area"
           fontsize: 12
           ha: center
           fontweight: bold
         # Pool area label
-        - x: 20
+        - x: 15
           y: 9
-          text: "Spa"
+          text: "Salt Water Pool"
           fontsize: 8
           ha: center
-        # Lounge chairs label
-        - x: 20
-          y: 14
+        # Lounge chairs label (moved down 1' into pool area)
+        - x: 15
+          y: 15
           text: "Lounge Chairs"
           fontsize: 6
           ha: center
-        # Rows of chairs note (theater)
+        # Rows of chairs note (theater - moved up 1')
         - x: 15
-          y: 28
+          y: 29
           text: "Rows of Chairs"
           fontsize: 7
           ha: center
           color: white
+        # Ontario pool dehumidification note
+        - x: 22
+          y: -3
+          text: "Pool Dehumidification Zone"
+          fontsize: 5
+          ha: center
+          color: gray
 
     # =========================================================================
     # LINE ANNOTATIONS
