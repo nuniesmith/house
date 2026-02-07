@@ -26,7 +26,7 @@ src_path = Path(__file__).parent.parent / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
-from drawing import (
+from drawing import ( # pyright: ignore[reportMissingImports]
     add_dimension_arrow,
     add_door,
     add_door_simple,
@@ -55,7 +55,7 @@ from drawing import (
     draw_text_annotations_from_data,
     draw_windows_from_data,
 )
-from models import (
+from models import ( # pyright: ignore[reportMissingImports]
     Door,
     Fireplace,
     Furniture,
@@ -67,7 +67,7 @@ from models import (
     TheaterSeating,
     Window,
 )
-from utilities import set_auto_dimensions, set_scale
+from utilities import set_auto_dimensions, set_scale # pyright: ignore[reportMissingImports]
 
 
 @pytest.fixture

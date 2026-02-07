@@ -305,7 +305,7 @@ def temp_config_file(tmp_path: Path, sample_config: dict[str, Any]) -> Path:
 @pytest.fixture(autouse=True)
 def reset_global_state():
     """Reset global state before and after each test."""
-    from utilities import (
+    from utilities import ( # pyright: ignore[reportMissingImports]
         set_auto_dimensions,
         set_debug_mode,
         set_grid_spacing,
@@ -333,7 +333,7 @@ def reset_global_state():
 @pytest.fixture
 def drawing_config():
     """Provide a DrawingConfig instance for testing."""
-    from utilities import DrawingConfig
+    from utilities import DrawingConfig # pyright: ignore[reportMissingImports]
 
     return DrawingConfig(
         scale=1.0,

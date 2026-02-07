@@ -22,7 +22,7 @@ src_path = Path(__file__).parent.parent / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
-from generators import (
+from generators import ( # pyright: ignore[reportMissingImports]
     OUTPUT_DIR,
     apply_config_settings,
     draw_basement,
@@ -35,7 +35,7 @@ from generators import (
     get_default_config,
     load_config,
 )
-from utilities import (
+from utilities import ( # pyright: ignore[reportMissingImports]
     get_auto_dimensions,
     get_debug_mode,
     get_grid_spacing,

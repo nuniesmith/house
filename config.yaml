@@ -314,10 +314,92 @@ main_floor:
           # style: dashed
 
     # =========================================================================
-    # DOORS - Simplified visual representations
+    # DOORS
     # =========================================================================
-    doors: []
-    windows: []
+    doors:
+        # Front Entry
+        - x: 48
+          y: 0
+          width: 5
+          direction: up
+          swing: right
+        # Garage to Mud Room
+        - x: 25
+          y: 12
+          width: 3
+          direction: right
+          swing: down
+        # Mud Room to Interior
+        - x: 25
+          y: 18
+          width: 3
+          direction: right
+          swing: up
+        # Master Suite Entry
+        - x: 87
+          y: 5
+          width: 3
+          direction: right
+          swing: up
+        # Office Entry (French doors)
+        - x: 87
+          y: 28
+          width: 4
+          direction: right
+          swing: left
+        # Bedroom 2 Entry
+        - x: 38
+          y: 60
+          width: 3
+          direction: left
+          swing: down
+        # Bedroom 3 Entry
+        - x: 38
+          y: 46
+          width: 3
+          direction: left
+          swing: up
+        # Bedroom 4 Entry
+        - x: 38
+          y: 24
+          width: 3
+          direction: left
+          swing: up
+
+    # =========================================================================
+    # WINDOWS
+    # =========================================================================
+    windows:
+        # Front Facade (Dining/Lounge)
+        - x: 45
+          y: 0
+          width: 6
+          orientation: horizontal
+        - x: 75
+          y: 0
+          width: 6
+          orientation: horizontal
+        # Garage
+        - x: 0
+          y: 20
+          width: 6
+          orientation: vertical
+        # Master Bedroom (Right Wall)
+        - x: 107
+          y: 10
+          width: 8
+          orientation: vertical
+        # Family Room (Rear)
+        - x: 65
+          y: 43
+          width: 8
+          orientation: horizontal
+        # Kitchen (Rear)
+        - x: 45
+          y: 43
+          width: 6
+          orientation: horizontal
+
     fireplaces: []
     stairs: []
     furniture: []
