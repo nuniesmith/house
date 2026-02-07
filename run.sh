@@ -4,8 +4,8 @@
 # Floor Plan Generator - Run Script
 # =============================================================================
 # Usage:
-#   ./run.sh                          # Run with default config.yaml
-#   ./run.sh --config my_config.yaml  # Run with custom config file
+#   ./run.sh                          # Run with default floorplan.yaml
+#   ./run.sh --config floorplan.yaml  # Run with custom config file
 #   ./run.sh --skip-tests             # Skip pytest and just run main.py
 #   ./run.sh --tests-only             # Only run tests, don't generate
 #   ./run.sh --debug                  # Enable debug grid overlay
@@ -55,7 +55,7 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: ./run.sh [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  --config <file>   Path to YAML config file (default: config.yaml)"
+            echo "  --config <file>   Path to YAML config file (default: floorplan.yaml)"
             echo "  --skip-tests      Skip running pytest before generation"
             echo "  --tests-only      Only run tests, don't generate floor plans"
             echo "  --debug           Enable debug grid overlay"

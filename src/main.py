@@ -24,7 +24,7 @@ This is the main entry point that uses modular packages:
 - utilities.py   - Helper functions (scaling, validation, colors)
 - drawing.py     - Drawing functions for matplotlib
 - generators.py  - Floor plan generation and export functions
-- config.yaml    - YAML configuration file
+- floorplan.yaml    - YAML configuration file
 """
 
 import argparse
@@ -65,11 +65,11 @@ def _create_argument_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python main.py --config config.yaml              # Generate PNG files
-  python main.py --config config.yaml --svg-only   # Generate only SVG files
-  python main.py --config config.yaml --pdf-only   # Generate only combined PDF
-  python main.py --config config.yaml --debug      # Generate with grid overlay
-  python main.py --config config.yaml --validate   # Only validate config file
+  python main.py --config floorplan.yaml              # Generate PNG files
+  python main.py --config floorplan.yaml --svg-only   # Generate only SVG files
+  python main.py --config floorplan.yaml --pdf-only   # Generate only combined PDF
+  python main.py --config floorplan.yaml --debug      # Generate with grid overlay
+  python main.py --config floorplan.yaml --validate   # Only validate config file
         """,
     )
     parser.add_argument(
@@ -115,7 +115,7 @@ def _print_completion_message(output_files: list[Path]) -> None:
     for f in output_files:
         print(f"  - {f}")
     print()
-    print("To modify the floor plans, edit 'config.yaml'")
+    print("To modify the floor plans, edit 'floorplan.yaml'")
     print("Set 'debug_mode: true' in the config to show grid overlay")
     print()
     print("SVG files can be opened in:")

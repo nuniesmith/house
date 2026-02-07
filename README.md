@@ -19,7 +19,7 @@ A Python-based floor plan generator using matplotlib that creates professional a
 ```
 house/
 ├── run.sh                  # Main runner script (runs tests then generates)
-├── config.yaml             # YAML configuration file (edit this!)
+├── floorplan.yaml             # YAML configuration file (edit this!)
 ├── requirements.txt        # Python dependencies
 ├── pytest.ini              # Pytest configuration
 ├── docker-compose.yml      # Docker setup
@@ -72,8 +72,8 @@ pip install matplotlib PyYAML
 Use `run.sh` to run tests first, then generate floor plans:
 
 ```bash
-./run.sh                              # Run tests + generate with config.yaml
-./run.sh --config my_config.yaml      # Use a custom config file
+./run.sh                              # Run tests + generate with floorplan.yaml
+./run.sh --config floorplan.yaml      # Use a custom config file
 ./run.sh --skip-tests                 # Skip pytest, just generate
 ./run.sh --tests-only                 # Only run tests, don't generate
 ./run.sh --debug                      # Enable debug grid overlay
@@ -89,11 +89,11 @@ This will generate in the `output/` directory:
 You can also run `main.py` directly (skips tests):
 
 ```bash
-python src/main.py --config config.yaml              # Generate PNG files
-python src/main.py --config config.yaml --svg-only    # Generate only SVG files
-python src/main.py --config config.yaml --pdf-only    # Generate only combined PDF
-python src/main.py --config config.yaml --debug       # Generate with grid overlay
-python src/main.py --config config.yaml --validate    # Only validate config file
+python src/main.py --config floorplan.yaml              # Generate PNG files
+python src/main.py --config floorplan.yaml --svg-only    # Generate only SVG files
+python src/main.py --config floorplan.yaml --pdf-only    # Generate only combined PDF
+python src/main.py --config floorplan.yaml --debug       # Generate with grid overlay
+python src/main.py --config floorplan.yaml --validate    # Only validate config file
 ```
 
 ### Running Tests
@@ -106,7 +106,7 @@ pytest tests/ --cov=src             # Run with coverage report
 
 ### Configuration
 
-All floor plan data is stored in `config/config.yaml`. Edit this file to modify:
+All floor plan data is stored in `config/floorplan.yaml`. Edit this file to modify:
 
 #### Global Settings
 
@@ -224,7 +224,7 @@ fireplaces:
 
 Enable debug mode to show a grid overlay for easier positioning:
 
-1. Edit `config/config.yaml`:
+1. Edit `config/floorplan.yaml`:
    ```yaml
    settings:
      debug_mode: true
@@ -257,7 +257,7 @@ from generators import (
 )
 
 # Load configuration (config file is REQUIRED)
-config = load_config("config.yaml")
+config = load_config("floorplan.yaml")
 apply_config_settings(config)
 
 # Generate individual floor plans
@@ -332,7 +332,7 @@ from drawing import (
 ### Import errors
 Make sure you're running from the project root directory and using `--config`:
 ```bash
-python src/main.py --config config.yaml
+python src/main.py --config floorplan.yaml
 # Or use the run script:
 ./run.sh
 ```
@@ -355,7 +355,7 @@ Check that the `output/` directory exists and you have write permissions.
 ### Config validation warnings
 Run with `--validate` to see all configuration issues:
 ```bash
-python src/main.py --config config.yaml --validate
+python src/main.py --config floorplan.yaml --validate
 # Or:
 ./run.sh --validate
 ```

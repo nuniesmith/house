@@ -169,10 +169,10 @@ main_floor:
           color: utility
           linewidth: 3
 
-        # --- LEFT WING: BEDROOMS ---
+        # --- LEFT WING: BEDROOMS (Shrunk to 14' to fit Hallway) ---
         - x: 25
           y: 22
-          width: 18
+          width: 14
           height: 14
           label: "BEDROOM 4"
           color: bedroom
@@ -188,15 +188,16 @@ main_floor:
 
         - x: 35
           y: 36
-          width: 8
+          width: 4
           height: 8
           label: "LAUNDRY"
           color: utility
           linewidth: 3
+          label_fontsize: 6
 
         - x: 25
           y: 44
-          width: 18
+          width: 14
           height: 14
           label: "BEDROOM 3"
           color: bedroom
@@ -204,11 +205,20 @@ main_floor:
 
         - x: 25
           y: 58
-          width: 18
+          width: 14
           height: 14
           label: "BEDROOM 2"
           color: bedroom
           linewidth: 3
+
+        # --- NEW: HALLWAY ---
+        - x: 39
+          y: 22
+          width: 4
+          height: 50
+          label: "HALL"
+          color: hall
+          linewidth: 2
 
         # --- CENTER: LIVING CORE ---
         # Front
@@ -239,7 +249,7 @@ main_floor:
         # Middle / Back
         - x: 43
           y: 15
-          width: 16
+          width: 18
           height: 10
           label: "BUTLER'S\nPANTRY"
           color: utility
@@ -304,9 +314,9 @@ main_floor:
           linewidth: 3
           # style: dashed # Assuming your parser handles 'style'
 
-        - x: 45
+        - x: 43
           y: 43
-          width: 40
+          width: 44
           height: 15
           label: "OUTDOOR\nLIVING"
           color: porch
@@ -348,23 +358,83 @@ main_floor:
           direction: right
           swing: left
         # Bedroom 2 Entry
-        - x: 38
+        - x: 39
           y: 60
           width: 3
           direction: left
           swing: down
         # Bedroom 3 Entry
-        - x: 38
+        - x: 39
           y: 46
           width: 3
           direction: left
           swing: up
         # Bedroom 4 Entry
-        - x: 38
+        - x: 39
           y: 24
           width: 3
           direction: left
           swing: up
+        # Hallway to Mudroom connection
+        - x: 37
+          y: 22
+          width: 4
+          direction: up
+          swing: left
+        # Laundry Entry (from Hall)
+        - x: 39
+          y: 38
+          width: 3
+          direction: left
+          swing: down
+        # Butler's Pantry to Kitchen
+        - x: 50
+          y: 25
+          width: 3
+          direction: down
+          swing: right
+        # Kitchen to Family Room
+        - x: 63
+          y: 30
+          width: 4
+          direction: right
+          swing: up
+        # Dining Room Entry (from Foyer)
+        - x: 61
+          y: 5
+          width: 4
+          direction: right
+          swing: down
+        # Lounge Entry (from Foyer)
+        - x: 73
+          y: 5
+          width: 3
+          direction: right
+          swing: up
+        # Master Bath Entry
+        - x: 107
+          y: 5
+          width: 3
+          direction: right
+          swing: up
+        # Walk-In Closet Entry
+        - x: 107
+          y: 18
+          width: 3
+          direction: right
+          swing: down
+        # Outdoor Living (from Kitchen/Family Room)
+        - x: 55
+          y: 43
+          width: 5
+          direction: down
+          swing: right
+        # Front Porch side entry
+        - x: 65
+          y: 0
+          width: 4
+          direction: up
+          swing: left
 
     # =========================================================================
     # WINDOWS
@@ -399,9 +469,55 @@ main_floor:
           y: 43
           width: 6
           orientation: horizontal
+        # Bedroom 2 (north wall)
+        - x: 30
+          y: 72
+          width: 6
+          orientation: horizontal
+        # Bedroom 3 (west wall)
+        - x: 25
+          y: 48
+          width: 5
+          orientation: vertical
+        # Bedroom 4 (west wall)
+        - x: 25
+          y: 28
+          width: 5
+          orientation: vertical
+        # Master Suite (south wall)
+        - x: 92
+          y: 0
+          width: 8
+          orientation: horizontal
+        # Lounge (rear/north wall)
+        - x: 77
+          y: 15
+          width: 6
+          orientation: horizontal
+        # Kitchen (west wall toward hallway)
+        - x: 43
+          y: 35
+          width: 5
+          orientation: vertical
 
-    fireplaces: []
-    stairs: []
+    fireplaces:
+        # Gas fireplace on Family Room north wall
+        - x: 75
+          y: 25
+          width: 4
+          height: 3
+          label: "Gas Fireplace"
+
+    stairs:
+        # Stairs down to basement (between Butler's Pantry and Kitchen)
+        - x: 59
+          y: 15
+          width: 4
+          height: 10
+          num_steps: 10
+          orientation: vertical
+          label: "DN"
+
     furniture: []
 
 # =============================================================================
@@ -487,10 +603,10 @@ basement:
           linewidth: 3
 
         # --- CENTER / OPEN AREA ---
-        # Open Rec Area
+        # Open Rec Area (trimmed to stop at exit stairs column)
         - x: 25
           y: 20
-          width: 65
+          width: 55
           height: 25
           label: "OPEN REC AREA"
           color: living
@@ -516,16 +632,6 @@ basement:
           label_color: white
           linewidth: 3
 
-        # --- FAR RIGHT ---
-        # Exit Stairs
-        - x: 90
-          y: 0
-          width: 10
-          height: 60
-          label: "STAIRS EXIT"
-          color: hammock
-          linewidth: 3
-
     theater:
         room:
             x: 0
@@ -535,7 +641,28 @@ basement:
             label: "Home Theater"
             color: theater
             label_fontsize: 12
-        seating: []
+        seating:
+            start_x: 3
+            start_y: 37
+            rows: 3
+            seats_per_row: 5
+            chair_width: 3
+            chair_height: 2.5
+            row_spacing: 5
+            seat_spacing: 4
+            chair_color: chair
+            edge_color: gray
+        false_wall:
+            x1: 0
+            y1: 35
+            x2: 30
+            y2: 35
+            color: red
+            linewidth: 4
+            linestyle: "--"
+            label: "False Wall"
+            label_x: 15
+            label_y: 33
 
     pool:
         area:
@@ -544,21 +671,38 @@ basement:
             width: 25
             height: 35
             color: pool_area
-            label: ""
+            label: "POOL / HOT TUB"
+        pool:
+            x: 5
+            y: 3
+            width: 12
+            height: 22
+            color: pool
+            edge_color: "#0288d1"
+            label: "Salt Water\nPool"
         hot_tub:
-            x: 10
-            y: 10
-            radius: 0
+            x: 8
+            y: 27
+            radius: 4
             color: spa
             edge_color: "#0288d1"
-            label: ""
-        spa_label:
-            x: 0
-            y: 0
-            text: ""
+            label: "Hot\nTub"
 
     doors: []
-    stairs: []
+    stairs:
+        - x: 70
+          y: 45
+          width: 20
+          height: 15
+          label: "STAIRS UP"
+
+        - x: 90
+          y: 0
+          width: 10
+          height: 60
+          num_steps: 20
+          orientation: vertical
+          label: "EXIT STAIRS"
     furniture: []
     text_annotations: []
     line_annotations: []

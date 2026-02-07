@@ -8,8 +8,8 @@ retrieve results via HTTP endpoints.
 
 Endpoints:
     GET  /api/health          - Health check
-    GET  /api/config          - Return current config.yaml contents
-    POST /api/config          - Update config.yaml
+    GET  /api/config          - Return current floorplan.yaml contents
+    POST /api/config          - Update floorplan.yaml
     POST /api/generate        - Generate floor plans (PNG/SVG/PDF)
     GET  /api/output/<file>   - Retrieve generated output files
     GET  /api/outputs         - List all generated output files
@@ -71,7 +71,7 @@ logger = logging.getLogger("floorplan-api")
 
 # Resolve paths relative to the project root (one level above src/)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CONFIG_PATH = Path(os.environ.get("CONFIG_PATH", str(PROJECT_ROOT / "config.yaml")))
+CONFIG_PATH = Path(os.environ.get("CONFIG_PATH", str(PROJECT_ROOT / "floorplan.yaml")))
 OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", str(OUTPUT_DIR)))
 
 # Ensure output directory exists
@@ -190,7 +190,7 @@ async def get_config():
 @app.post("/api/config")
 async def update_config(request: Request, body: Optional[ConfigUpdateBody] = None):
     """
-    Update config.yaml with new content.
+    Update floorplan.yaml with new content.
 
     Accepts JSON body with key ``yaml`` containing the raw YAML string,
     or a raw YAML body with Content-Type text/yaml.
@@ -335,7 +335,7 @@ async def generate(
     floor: Optional[str] = Query(None, alias="floor"),
 ):
     """
-    Generate floor plan outputs from the current config.yaml.
+    Generate floor plan outputs from the current floorplan.yaml.
 
     Query parameters / JSON body options:
         format : str — ``png`` (default), ``svg``, ``pdf``, or ``all``

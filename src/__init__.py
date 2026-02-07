@@ -17,7 +17,7 @@ Modules
 
 Configuration
 -------------
-Floor plans are configured via YAML files. See `config.yaml` for
+Floor plans are configured via YAML files. See `floorplan.yaml` for
 the default configuration with all available options documented.
 
 Quick Start

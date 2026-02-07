@@ -59,7 +59,7 @@ class TestLoadConfig:
     def test_load_config_nonexistent_file(self):
         """Test loading config from non-existent file raises FileNotFoundError."""
         with pytest.raises(FileNotFoundError, match="Config file not found"):
-            load_config("/nonexistent/path/config.yaml")
+            load_config("/nonexistent/path/floorplan.yaml")
 
     def test_load_config_with_valid_file(self, temp_config_file):
         """Test loading config from a valid file."""

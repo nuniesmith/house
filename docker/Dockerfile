@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source code, tests, and config
 COPY src/          src/
 COPY tests/        tests/
-COPY config.yaml   config.yaml
+COPY floorplan.yaml   floorplan.yaml
 COPY pytest.ini    pytest.ini
 
 # Run the test suite — build fails if tests fail
@@ -37,7 +37,7 @@ RUN python -m pytest tests/ -v --tb=short
 
 # Generate initial floor plan outputs to verify the pipeline works
 RUN mkdir -p output && \
-    python src/main.py --config config.yaml --png-only && \
+    python src/main.py --config floorplan.yaml --png-only && \
     echo "✅ PNG generation succeeded"
 
 # ------------------------------------------------------------------
@@ -65,7 +65,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source from the builder stage
 COPY --from=builder /build/src/       /app/src/
-COPY --from=builder /build/config.yaml /app/config.yaml
+COPY --from=builder /build/floorplan.yaml /app/floorplan.yaml
 
 # Copy pre-generated output from the builder stage
 COPY --from=builder /build/output/    /app/output/
@@ -107,7 +107,7 @@ autostart=true
 autorestart=true
 stdout_logfile=/var/log/floorplan/api-stdout.log
 stderr_logfile=/var/log/floorplan/api-stderr.log
-environment=CONFIG_PATH="/app/config.yaml",OUTPUT_PATH="/app/output",MPLBACKEND="Agg"
+environment=CONFIG_PATH="/app/floorplan.yaml",OUTPUT_PATH="/app/output",MPLBACKEND="Agg"
 priority=20
 EOF
 
@@ -116,7 +116,7 @@ EOF
 # ------------------------------------------------------------------
 ENV PYTHONUNBUFFERED=1 \
     MPLBACKEND=Agg \
-    CONFIG_PATH=/app/config.yaml \
+    CONFIG_PATH=/app/floorplan.yaml \
     OUTPUT_PATH=/app/output \
     API_PORT=5000
 
