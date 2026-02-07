@@ -1,208 +1,156 @@
 #!/bin/bash
-# ===========================================
-# FloorPlan Designer - Project Runner
-# ===========================================
-# Simple setup for house build planning project
-#
-# Usage: ./run.sh [command]
-#
-# Commands:
-#   start       - Start the application
-#   stop        - Stop the application
-#   restart     - Restart the application
-#   build       - Build the Docker image
-#   logs        - View application logs
-#   status      - Show status of services
-#   clean       - Clean up containers and images
-#   help        - Show this help message
 
-set -e
+# =============================================================================
+# Floor Plan Generator - Run Script
+# =============================================================================
+# Usage:
+#   ./run.sh                          # Run with default config.yaml
+#   ./run.sh --config my_config.yaml  # Run with custom config file
+#   ./run.sh --skip-tests             # Skip pytest and just run main.py
+#   ./run.sh --tests-only             # Only run tests, don't generate
+#   ./run.sh --debug                  # Enable debug grid overlay
+#   ./run.sh --pdf                    # Also generate combined PDF
+# =============================================================================
 
-# ===========================================
-# Configuration
-# ===========================================
+# 1. Define Paths
+VENV_DIR="./.venv"
+SCRIPT_FILE="src/main.py"
+CONFIG_FILE="config.yaml"
+SKIP_TESTS=false
+TESTS_ONLY=false
+DEBUG_FLAG=""
+PDF_FLAG=""
+EXTRA_ARGS=""
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$SCRIPT_DIR"
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
-
-# Default port
-PORT="${PORT:-8666}"
-
-# ===========================================
-# Helper Functions
-# ===========================================
-
-print_header() {
-    echo -e "${CYAN}"
-    echo "╔═══════════════════════════════════════════╗"
-    echo "║     🏠 FloorPlan Designer                 ║"
-    echo "╚═══════════════════════════════════════════╝"
-    echo -e "${NC}"
-}
-
-print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-check_docker() {
-    if ! command -v docker &> /dev/null; then
-        print_error "Docker not found. Please install Docker."
-        exit 1
-    fi
-}
-
-# ===========================================
-# Commands
-# ===========================================
-
-cmd_start() {
-    print_header
-    check_docker
-    cd "$PROJECT_DIR"
-
-    print_info "Starting FloorPlan Designer..."
-    docker compose up -d
-
-    print_success "Started! Access at http://localhost:$PORT"
-}
-
-cmd_stop() {
-    print_header
-    check_docker
-    cd "$PROJECT_DIR"
-
-    print_info "Stopping FloorPlan Designer..."
-    docker compose down
-
-    print_success "Stopped"
-}
-
-cmd_restart() {
-    cmd_stop
-    sleep 1
-    cmd_start
-}
-
-cmd_build() {
-    print_header
-    check_docker
-    cd "$PROJECT_DIR"
-
-    print_info "Building Docker image..."
-    docker compose build
-
-    print_success "Build complete!"
-}
-
-cmd_logs() {
-    print_header
-    check_docker
-    cd "$PROJECT_DIR"
-
-    print_info "Showing logs (Ctrl+C to exit)..."
-    docker compose logs -f
-}
-
-cmd_status() {
-    print_header
-    check_docker
-    cd "$PROJECT_DIR"
-
-    print_info "Service Status:"
-    echo ""
-
-    if docker compose ps -q 2>/dev/null | grep -q .; then
-        print_success "Container is running"
-        docker compose ps
-    else
-        print_warn "Container is not running"
-    fi
-
-    echo ""
-    print_info "Access URL: http://localhost:$PORT"
-}
-
-cmd_clean() {
-    print_header
-    check_docker
-    cd "$PROJECT_DIR"
-
-    print_info "Cleaning up..."
-
-    # Stop containers
-    docker compose down -v --rmi local 2>/dev/null || true
-
-    print_success "Clean complete!"
-}
-
-cmd_help() {
-    print_header
-    echo "Usage: ./run.sh [command]"
-    echo ""
-    echo "Commands:"
-    echo "  start       Start the application"
-    echo "  stop        Stop the application"
-    echo "  restart     Restart the application"
-    echo "  build       Build the Docker image"
-    echo "  logs        View application logs"
-    echo "  status      Show status of services"
-    echo "  clean       Clean up containers and images"
-    echo "  help        Show this help message"
-    echo ""
-    echo "Environment Variables:"
-    echo "  PORT        Server port (default: 8666)"
-    echo ""
-    echo "Examples:"
-    echo "  ./run.sh start            # Start the application"
-    echo "  ./run.sh logs             # View logs"
-    echo "  PORT=9000 ./run.sh start  # Start on port 9000"
-}
-
-# ===========================================
-# Main Entry Point
-# ===========================================
-
-main() {
-    local command="${1:-help}"
-
-    case "$command" in
-        start)      cmd_start ;;
-        stop)       cmd_stop ;;
-        restart)    cmd_restart ;;
-        build)      cmd_build ;;
-        logs)       cmd_logs ;;
-        status)     cmd_status ;;
-        clean)      cmd_clean ;;
-        help|--help|-h)
-            cmd_help
+# 2. Parse Arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        --skip-tests)
+            SKIP_TESTS=true
+            shift
+            ;;
+        --tests-only)
+            TESTS_ONLY=true
+            shift
+            ;;
+        --debug)
+            DEBUG_FLAG="--debug"
+            shift
+            ;;
+        --pdf)
+            PDF_FLAG="--pdf"
+            shift
+            ;;
+        --svg-only|--pdf-only|--png-only|--validate)
+            EXTRA_ARGS="$EXTRA_ARGS $1"
+            shift
             ;;
         *)
-            print_error "Unknown command: $command"
+            echo "⚠️  Unknown argument: $1"
             echo ""
-            cmd_help
+            echo "Usage: ./run.sh [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --config <file>   Path to YAML config file (default: config.yaml)"
+            echo "  --skip-tests      Skip running pytest before generation"
+            echo "  --tests-only      Only run tests, don't generate floor plans"
+            echo "  --debug           Enable debug grid overlay"
+            echo "  --pdf             Also generate combined PDF output"
+            echo "  --svg-only        Only generate SVG files"
+            echo "  --pdf-only        Only generate combined PDF"
+            echo "  --png-only        Only generate PNG files (default)"
+            echo "  --validate        Only validate config, don't generate"
             exit 1
             ;;
     esac
-}
+done
 
-main "$@"
+# 3. Check if the Virtual Environment exists
+if [ ! -d "$VENV_DIR" ]; then
+    echo "❌ Error: Virtual environment not found at $VENV_DIR"
+    echo "   Please create it first:"
+    echo "     python3 -m venv .venv"
+    echo "     source .venv/bin/activate  # or .venv/Scripts/activate on Windows"
+    echo "     pip install -r requirements.txt"
+    exit 1
+fi
+
+# 4. Check if the Python script exists
+if [ ! -f "$SCRIPT_FILE" ]; then
+    echo "❌ Error: Script not found at $SCRIPT_FILE"
+    echo "   Make sure main.py is in the 'src' folder."
+    exit 1
+fi
+
+# 5. Check if the config file exists
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "❌ Error: Config file not found at $CONFIG_FILE"
+    echo "   Please provide a valid YAML config file."
+    echo "   Use --config <path> to specify a different config file."
+    exit 1
+fi
+
+# Determine python executable from venv
+if [ -f "$VENV_DIR/bin/python" ]; then
+    PYTHON="$VENV_DIR/bin/python"
+elif [ -f "$VENV_DIR/Scripts/python.exe" ]; then
+    PYTHON="$VENV_DIR/Scripts/python.exe"
+else
+    echo "❌ Error: Cannot find python executable in $VENV_DIR"
+    exit 1
+fi
+
+echo "============================================================"
+echo "  Floor Plan Generator"
+echo "============================================================"
+echo "  Config: $CONFIG_FILE"
+echo "  Python: $PYTHON"
+echo "============================================================"
+echo ""
+
+# 6. Run Tests (unless skipped)
+if [ "$SKIP_TESTS" = false ]; then
+    echo "🧪 Running tests..."
+    echo "------------------------------------------------------------"
+    "$PYTHON" -m pytest tests/ -v --tb=short
+    TEST_EXIT_CODE=$?
+
+    if [ $TEST_EXIT_CODE -ne 0 ]; then
+        echo ""
+        echo "❌ Tests failed with exit code $TEST_EXIT_CODE"
+        echo "   Fix the failing tests before generating floor plans."
+        echo "   Use --skip-tests to bypass this check."
+        exit $TEST_EXIT_CODE
+    fi
+
+    echo ""
+    echo "✅ All tests passed!"
+    echo "------------------------------------------------------------"
+    echo ""
+fi
+
+# 7. If tests-only mode, exit here
+if [ "$TESTS_ONLY" = true ]; then
+    echo "✅ Tests-only mode complete."
+    exit 0
+fi
+
+# 8. Run the floor plan generator
+echo "🚀 Running $SCRIPT_FILE with config: $CONFIG_FILE"
+echo ""
+
+"$PYTHON" "$SCRIPT_FILE" --config "$CONFIG_FILE" $DEBUG_FLAG $PDF_FLAG $EXTRA_ARGS
+RUN_EXIT_CODE=$?
+
+echo ""
+if [ $RUN_EXIT_CODE -eq 0 ]; then
+    echo "✅ Done. Check the 'output' directory for generated files."
+else
+    echo "⚠️  Script finished with errors (exit code: $RUN_EXIT_CODE)."
+fi
+
+exit $RUN_EXIT_CODE
