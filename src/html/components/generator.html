@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floor Plan Generator | Construction Management Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .generator-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            color: #88ff00;
+            text-shadow: 0 0 10px rgba(136, 255, 0, 0.3);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #333366;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel:hover {
+            border-color: #00ff88;
+        }
+
+        .panel h3 {
+            color: #88ff00;
+            margin-bottom: 15px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #333366;
+            padding-bottom: 8px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        .preview-area {
+            flex: 1;
+            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+            border: 2px solid #333366;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .preview-header h3 {
+            color: #88ff00;
+            font-size: 1em;
+        }
+
+        .preview-tabs {
+            display: flex;
+            gap: 5px;
+        }
+
+        .preview-tab {
+            padding: 6px 14px;
+            background: #1a1a3a;
+            border: 1px solid #333366;
+            border-radius: 6px;
+            color: #00ff88;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .preview-tab:hover {
+            border-color: #00ff88;
+        }
+
+        .preview-tab.active {
+            background: #00ff88;
+            color: #0f0f23;
+            border-color: #00ff88;
+            font-weight: bold;
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f0f23;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .preview-content img,
+        .preview-content svg {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: #555;
+            padding: 40px;
+        }
+
+        .preview-placeholder .icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .preview-placeholder p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            background: transparent;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+            color: #0f0f23;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 68, 68, 0.1);
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.2);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8em;
+        }
+
+        .btn-block {
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #88ff00;
+            font-size: 0.8em;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #0f0f23;
+            border: 1px solid #333366;
+            border-radius: 6px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: #00ff88;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .radio-btn {
+            padding: 6px 12px;
+            background: #0f0f23;
+            border: 1px solid #333366;
+            border-radius: 6px;
+            color: #888;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .radio-btn:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .radio-btn.active {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #0f0f23;
+            border-radius: 8px;
+            font-size: 0.85em;
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #555;
+            flex-shrink: 0;
+        }
+
+        .status-dot.connected {
+            background: #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.error {
+            background: #ff4444;
+            box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+        }
+
+        .status-dot.working {
+            background: #ffaa00;
+            box-shadow: 0 0 8px rgba(255, 170, 0, 0.5);
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .room-list {
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 0.85em;
+        }
+
+        .room-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            border-bottom: 1px solid #1a1a3a;
+            transition: background 0.2s;
+        }
+
+        .room-item:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .room-item .room-name {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .room-item .room-size {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .room-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            border: 1px solid #555;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .room-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .output-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .output-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #1a1a3a;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+        }
+
+        .output-item:hover {
+            border-color: #333366;
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        .output-item .file-name {
+            color: #00ff88;
+            font-size: 0.85em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .output-item .file-size {
+            color: #666;
+            font-size: 0.8em;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .output-actions button {
+            padding: 3px 8px;
+            background: transparent;
+            border: 1px solid #333366;
+            border-radius: 4px;
+            color: #00ff88;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75em;
+            transition: all 0.2s;
+        }
+
+        .output-actions button:hover {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-card {
+            background: #0f0f23;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #88ff00;
+        }
+
+        .stat-label {
+            font-size: 0.7em;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .log-area {
+            background: #0a0a1a;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.8em;
+            max-height: 150px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid #111;
+            padding: 2px 0;
+        }
+
+        .log-entry .log-time {
+            color: #555;
+        }
+
+        .log-entry .log-info {
+            color: #00ff88;
+        }
+
+        .log-entry .log-warn {
+            color: #ffaa00;
+        }
+
+        .log-entry .log-error {
+            color: #ff4444;
+        }
+
+        .log-entry .log-success {
+            color: #88ff00;
+        }
+
+        .config-editor {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            background: #0a0a1a;
+            border: 1px solid #333366;
+            border-radius: 8px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            padding: 15px;
+            resize: none;
+            line-height: 1.5;
+            tab-size: 2;
+        }
+
+        .config-editor:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 50%;
+            border-top-color: #00ff88;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 15, 35, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .loading-overlay .spinner {
+            width: 40px;
+            height: 40px;
+            border-width: 3px;
+        }
+
+        .loading-overlay p {
+            margin-top: 15px;
+            color: #88ff00;
+            font-size: 1em;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(255, 170, 0, 0.15);
+            color: #ffaa00;
+            border: 1px solid rgba(255, 170, 0, 0.3);
+        }
+
+        .badge-error {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .tab-view {
+            display: none;
+            height: 100%;
+        }
+
+        .tab-view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #1a1a3a;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #88ff00);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .empty-state {
+            color: #444;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1024px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .sidebar {
+                order: 2;
+            }
+
+            .main-content {
+                order: 1;
+                min-height: 500px;
+            }
+
+            .preview-area {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="generator-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏗️ Floor Plan Generator</h1>
+            <div class="header-controls">
+                <span class="badge badge-success" id="versionBadge">v1.0</span>
+                <button class="btn btn-sm" onclick="refreshAll()">🔄 Refresh</button>
+                <button class="btn btn-sm" onclick="goHome()">🏠 Home</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Generation Controls -->
+            <div class="panel">
+                <h3>⚡ Generate</h3>
+                <div class="form-group">
+                    <label>Output Format</label>
+                    <div class="radio-group" id="formatGroup">
+                        <div class="radio-btn active" data-value="png" onclick="selectFormat(this)">PNG</div>
+                        <div class="radio-btn" data-value="svg" onclick="selectFormat(this)">SVG</div>
+                        <div class="radio-btn" data-value="pdf" onclick="selectFormat(this)">PDF</div>
+                        <div class="radio-btn" data-value="all" onclick="selectFormat(this)">ALL</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Floor</label>
+                    <div class="radio-group" id="floorGroup">
+                        <div class="radio-btn active" data-value="both" onclick="selectFloor(this)">Both</div>
+                        <div class="radio-btn" data-value="main" onclick="selectFloor(this)">Main</div>
+                        <div class="radio-btn" data-value="basement" onclick="selectFloor(this)">Basement</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" id="generateBtn" onclick="generateFloorPlan()" style="margin-top: 15px;">
+                    🚀 GENERATE FLOOR PLAN
+                </button>
+                <div class="progress-bar-container hidden" id="progressBar">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Room Summary -->
+            <div class="panel">
+                <h3>🏠 Room Summary</h3>
+                <div class="stats-grid" id="roomStats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="mainRoomCount">--</div>
+                        <div class="stat-label">Main Rooms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="basementRoomCount">--</div>
+                        <div class="stat-label">Basement Rooms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mainSqft">--</div>
+                        <div class="stat-label">Main Sq Ft</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="basementSqft">--</div>
+                        <div class="stat-label">Bsmt Sq Ft</div>
+                    </div>
+                </div>
+                <div class="room-list" id="roomList" style="margin-top: 10px;">
+                    <div class="empty-state">Loading rooms...</div>
+                </div>
+            </div>
+
+            <!-- Output Files -->
+            <div class="panel">
+                <h3>📁 Generated Files</h3>
+                <div class="output-list" id="outputList">
+                    <div class="empty-state">No files generated yet</div>
+                </div>
+                <button class="btn btn-sm btn-block" onclick="refreshOutputs()" style="margin-top: 10px;">🔄 Refresh</button>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="panel">
+                <h3>📋 Activity Log</h3>
+                <div class="log-area" id="logArea">
+                    <div class="log-entry"><span class="log-time">[--:--]</span> <span class="log-info">Waiting for initialization...</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="preview-area">
+                <div class="preview-header">
+                    <h3>📐 Preview</h3>
+                    <div class="preview-tabs">
+                        <div class="preview-tab active" data-tab="preview" onclick="showTab(this, 'preview')">🖼️ Preview</div>
+                        <div class="preview-tab" data-tab="config" onclick="showTab(this, 'config')">📝 Config</div>
+                        <div class="preview-tab" data-tab="rooms-detail" onclick="showTab(this, 'rooms-detail')">🏠 Rooms</div>
+                    </div>
+                </div>
+
+                <!-- Preview Tab -->
+                <div class="tab-view active" id="tab-preview">
+                    <div class="preview-content" id="previewContent">
+                        <div class="preview-placeholder">
+                            <div class="icon">📐</div>
+                            <p>Click <strong>GENERATE FLOOR PLAN</strong> to create<br>floor plan images from your config.</p>
+                            <p style="margin-top: 10px; font-size: 0.85em; color: #444;">
+                                Supports PNG, SVG, and PDF output formats.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Loading overlay (hidden by default) -->
+                    <div class="loading-overlay hidden" id="loadingOverlay">
+                        <div class="spinner"></div>
+                        <p id="loadingText">Generating floor plans...</p>
+                    </div>
+                </div>
+
+                <!-- Config Editor Tab -->
+                <div class="tab-view" id="tab-config">
+                    <textarea class="config-editor" id="configEditor" spellcheck="false" placeholder="Loading config..."></textarea>
+                    <div style="display: flex; gap: 10px; margin-top: 10px; flex-shrink: 0;">
+                        <button class="btn btn-sm" onclick="loadConfig()">🔄 Reload</button>
+                        <button class="btn btn-sm" onclick="validateConfig()">✅ Validate</button>
+                        <button class="btn btn-sm btn-primary" onclick="saveConfig()">💾 Save Config</button>
+                    </div>
+                </div>
+
+                <!-- Rooms Detail Tab -->
+                <div class="tab-view" id="tab-rooms-detail">
+                    <div style="overflow-y: auto; flex: 1;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px;" id="roomsDetailGrid">
+                            <div class="empty-state" style="grid-column: 1 / -1;">Loading room details...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting to API...</span>
+                <span style="margin-left: auto; color: #555; font-size: 0.8em;" id="lastGenerated">Last: never</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // State
+        // =============================================
+        const API_BASE = window.location.origin + '/api';
+        let selectedFormat = 'png';
+        let selectedFloor = 'both';
+        let apiConnected = false;
+        let isGenerating = false;
+
+        // Color map matching config.yaml color keys to hex
+        const COLOR_MAP = {
+            garage: '#f5f5f5',
+            bedroom: '#fffde7',
+            bathroom: '#e0ffff',
+            kitchen: '#ffeebb',
+            living: '#fafafa',
+            dining: '#fff8dc',
+            office: '#f5f5f5',
+            utility: '#ffdfba',
+            porch: '#f0fff0',
+            closet: '#f0f0f0',
+            hall: '#fffbeb',
+            powder: '#fffde7',
+            theater: '#708090',
+            gaming: '#4a5568',
+            pool: '#63b3ed',
+            pool_area: '#aeeeee',
+            spa: '#81e6d9',
+            bar: '#8b4513',
+            storage: '#f5f5dc',
+            bath: '#e6f3ff',
+            books: '#8b4513',
+            pool_utilities: '#e8e8e8',
+            hammock: '#deb887'
+        };
+
+        // =============================================
+        // Init
+        // =============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            checkHealth();
+            loadRooms();
+            loadOutputs();
+            loadConfig();
+
+            // Auto-refresh health every 30s
+            setInterval(checkHealth, 30000);
+        });
+
+        // =============================================
+        // API Helpers
+        // =============================================
+        async function apiFetch(endpoint, options = {}) {
+            const url = API_BASE + endpoint;
+            try {
+                const resp = await fetch(url, {
+                    headers: { 'Content-Type': 'application/json', ...options.headers },
+                    ...options
+                });
+                return await resp.json();
+            } catch (err) {
+                log('error', `API error: ${err.message}`);
+                throw err;
+            }
+        }
+
+        // =============================================
+        // Health Check
+        // =============================================
+        async function checkHealth() {
+            try {
+                const data = await apiFetch('/health');
+                if (data.status === 'healthy') {
+                    setStatus('connected', `API Connected | ${data.output_file_count} output file(s)`);
+                    apiConnected = true;
+                } else {
+                    setStatus('error', 'API returned unhealthy status');
+                    apiConnected = false;
+                }
+            } catch {
+                setStatus('error', 'Cannot reach API — is the server running?');
+                apiConnected = false;
+            }
+        }
+
+        // =============================================
+        // Generate Floor Plan
+        // =============================================
+        async function generateFloorPlan() {
+            if (isGenerating) return;
+            if (!apiConnected) {
+                log('error', 'Cannot generate — API is not connected');
+                return;
+            }
+
+            isGenerating = true;
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ GENERATING...';
+
+            showLoadingOverlay(true, 'Generating floor plans...');
+            showProgressBar(true);
+
+            log('info', `Generating: format=${selectedFormat}, floor=${selectedFloor}`);
+
+            try {
+                // Animate progress bar
+                animateProgress(0, 90, 8000);
+
+                const data = await apiFetch('/generate', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        format: selectedFormat,
+                        floor: selectedFloor
+                    })
+                });
+
+                setProgressBar(100);
+
+                if (data.status === 'ok') {
+                    log('success', `Generated ${data.files.length} file(s)`);
+                    data.files.forEach(f => {
+                        const name = f.split(/[\\/]/).pop();
+                        log('info', `  → ${name}`);
+                    });
+
+                    // Update last generated timestamp
+                    document.getElementById('lastGenerated').textContent =
+                        'Last: ' + new Date().toLocaleTimeString();
+
+                    // Refresh output list
+                    await loadOutputs();
+
+                    // If SVG or PNG, try to show preview
+                    if (selectedFormat === 'svg' || selectedFormat === 'all') {
+                        await loadSvgPreview();
+                    } else if (selectedFormat === 'png') {
+                        await loadPngPreview();
+                    } else {
+                        showPreviewMessage('✅ Generation complete! Check the Generated Files panel.');
+                    }
+                } else {
+                    log('error', `Generation failed: ${data.message}`);
+                    showPreviewMessage(`❌ Error: ${data.message}`);
+                }
+            } catch (err) {
+                log('error', `Generation failed: ${err.message}`);
+                showPreviewMessage(`❌ Error: ${err.message}`);
+            } finally {
+                isGenerating = false;
+                btn.disabled = false;
+                btn.textContent = '🚀 GENERATE FLOOR PLAN';
+                showLoadingOverlay(false);
+                setTimeout(() => showProgressBar(false), 1500);
+            }
+        }
+
+        // =============================================
+        // Load Previews
+        // =============================================
+        async function loadSvgPreview() {
+            try {
+                const data = await apiFetch('/generate/svg', {
+                    method: 'POST',
+                    body: JSON.stringify({ floor: selectedFloor })
+                });
+
+                if (data.status === 'ok' && data.svgs) {
+                    const container = document.getElementById('previewContent');
+                    container.innerHTML = '';
+
+                    const keys = Object.keys(data.svgs);
+                    if (keys.length === 0) {
+                        showPreviewMessage('No SVG output generated.');
+                        return;
+                    }
+
+                    keys.forEach(key => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.cssText = 'margin: 10px; text-align: center;';
+
+                        const title = document.createElement('div');
+                        title.style.cssText = 'color: #88ff00; margin-bottom: 5px; font-weight: bold;';
+                        title.textContent = key.replace(/_/g, ' ').toUpperCase();
+                        wrapper.appendChild(title);
+
+                        const svgDiv = document.createElement('div');
+                        svgDiv.innerHTML = data.svgs[key];
+                        const svg = svgDiv.querySelector('svg');
+                        if (svg) {
+                            svg.style.maxWidth = '100%';
+                            svg.style.height = 'auto';
+                            svg.style.background = 'white';
+                            svg.style.borderRadius = '8px';
+                        }
+                        wrapper.appendChild(svgDiv);
+                        container.appendChild(wrapper);
+                    });
+                }
+            } catch (err) {
+                log('warn', `Could not load SVG preview: ${err.message}`);
+            }
+        }
+
+        async function loadPngPreview() {
+            try {
+                const data = await apiFetch('/outputs');
+                if (data.status === 'ok') {
+                    const pngFiles = data.files.filter(f => f.name.endsWith('.png'));
+                    if (pngFiles.length === 0) {
+                        showPreviewMessage('✅ Generated! No PNG files found to preview.');
+                        return;
+                    }
+
+                    const container = document.getElementById('previewContent');
+                    container.innerHTML = '';
+                    container.style.flexDirection = 'column';
+                    container.style.gap = '15px';
+
+                    // Show images matching selected floor
+                    let filesToShow = pngFiles;
+                    if (selectedFloor === 'main') {
+                        filesToShow = pngFiles.filter(f => f.name.toLowerCase().includes('main'));
+                    } else if (selectedFloor === 'basement') {
+                        filesToShow = pngFiles.filter(f => f.name.toLowerCase().includes('basement'));
+                    }
+
+                    if (filesToShow.length === 0) filesToShow = pngFiles;
+
+                    filesToShow.forEach(file => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.cssText = 'text-align: center; padding: 10px;';
+
+                        const title = document.createElement('div');
+                        title.style.cssText = 'color: #88ff00; margin-bottom: 8px; font-weight: bold; font-size: 0.9em;';
+                        title.textContent = file.name.replace(/\.[^.]+$/, '').replace(/_/g, ' ').toUpperCase();
+                        wrapper.appendChild(title);
+
+                        const img = document.createElement('img');
+                        img.src = file.url + '?t=' + Date.now();
+                        img.alt = file.name;
+                        img.style.cssText = 'max-width: 100%; height: auto; border-radius: 8px; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.3);';
+                        wrapper.appendChild(img);
+
+                        container.appendChild(wrapper);
+                    });
+                }
+            } catch (err) {
+                log('warn', `Could not load PNG preview: ${err.message}`);
+                showPreviewMessage('✅ Generated! Open files from the Generated Files panel.');
+            }
+        }
+
+        // =============================================
+        // Rooms
+        // =============================================
+        async function loadRooms() {
+            try {
+                const data = await apiFetch('/rooms');
+                if (data.status === 'ok') {
+                    document.getElementById('mainRoomCount').textContent = data.main_floor.count;
+                    document.getElementById('basementRoomCount').textContent = data.basement.count;
+                    document.getElementById('mainSqft').textContent = formatNumber(data.main_floor.total_sqft);
+                    document.getElementById('basementSqft').textContent = formatNumber(data.basement.total_sqft);
+
+                    renderRoomList(data.main_floor.rooms, data.basement.rooms);
+                    renderRoomDetails(data.main_floor, data.basement);
+                }
+            } catch {
+                document.getElementById('roomList').innerHTML =
+                    '<div class="empty-state">Could not load room data</div>';
+            }
+        }
+
+        function renderRoomList(mainRooms, basementRooms) {
+            const container = document.getElementById('roomList');
+            container.innerHTML = '';
+
+            if (mainRooms.length > 0) {
+                const header = document.createElement('div');
+                header.style.cssText = 'color: #88ff00; font-weight: bold; padding: 6px 8px; font-size: 0.85em; border-bottom: 1px solid #333;';
+                header.textContent = '▸ MAIN FLOOR';
+                container.appendChild(header);
+
+                mainRooms.forEach(room => {
+                    container.appendChild(createRoomItem(room));
+                });
+            }
+
+            if (basementRooms.length > 0) {
+                const header = document.createElement('div');
+                header.style.cssText = 'color: #88ff00; font-weight: bold; padding: 6px 8px; font-size: 0.85em; border-bottom: 1px solid #333; margin-top: 8px;';
+                header.textContent = '▸ BASEMENT';
+                container.appendChild(header);
+
+                basementRooms.forEach(room => {
+                    container.appendChild(createRoomItem(room));
+                });
+            }
+        }
+
+        function createRoomItem(room) {
+            const el = document.createElement('div');
+            el.className = 'room-item';
+
+            const colorHex = COLOR_MAP[room.color] || '#888';
+
+            el.innerHTML = `
+                <div class="room-info">
+                    <div class="room-color" style="background: ${colorHex};"></div>
+                    <span class="room-name">${room.label}</span>
+                </div>
+                <span class="room-size">${room.area_sqft} sf</span>
+            `;
+            return el;
+        }
+
+        function renderRoomDetails(mainFloor, basement) {
+            const grid = document.getElementById('roomsDetailGrid');
+            grid.innerHTML = '';
+
+            const createFloorPanel = (title, floorData) => {
+                const panel = document.createElement('div');
+                panel.style.cssText = 'background: #1a1a3a; border-radius: 8px; padding: 15px; border: 1px solid #333366;';
+
+                let roomsHtml = floorData.rooms.map(r => {
+                    const color = COLOR_MAP[r.color] || '#888';
+                    return `
+                        <div style="display: flex; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a1a2e;">
+                            <div style="width: 10px; height: 10px; border-radius: 2px; background: ${color}; margin-right: 8px; flex-shrink: 0;"></div>
+                            <span style="flex: 1; color: #00ff88; font-size: 0.85em;">${r.label}</span>
+                            <span style="color: #666; font-size: 0.8em; white-space: nowrap;">${r.dimension_text}</span>
+                            <span style="color: #555; font-size: 0.75em; margin-left: 8px; white-space: nowrap;">${r.area_sqft} sf</span>
+                        </div>
+                    `;
+                }).join('');
+
+                panel.innerHTML = `
+                    <h4 style="color: #88ff00; margin-bottom: 10px; font-size: 0.95em;">${title}</h4>
+                    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                        <div style="background: #0f0f23; border-radius: 6px; padding: 8px; flex: 1; text-align: center;">
+                            <div style="color: #88ff00; font-size: 1.3em; font-weight: bold;">${floorData.count}</div>
+                            <div style="color: #555; font-size: 0.7em;">ROOMS</div>
+                        </div>
+                        <div style="background: #0f0f23; border-radius: 6px; padding: 8px; flex: 1; text-align: center;">
+                            <div style="color: #88ff00; font-size: 1.3em; font-weight: bold;">${formatNumber(floorData.total_sqft)}</div>
+                            <div style="color: #555; font-size: 0.7em;">SQ FT</div>
+                        </div>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">${roomsHtml}</div>
+                `;
+                return panel;
+            };
+
+            grid.appendChild(createFloorPanel('🏠 Main Floor', mainFloor));
+            grid.appendChild(createFloorPanel('🏗️ Basement', basement));
+        }
+
+        // =============================================
+        // Output Files
+        // =============================================
+        async function loadOutputs() {
+            try {
+                const data = await apiFetch('/outputs');
+                if (data.status === 'ok') {
+                    renderOutputList(data.files);
+                }
+            } catch {
+                document.getElementById('outputList').innerHTML =
+                    '<div class="empty-state">Could not load files</div>';
+            }
+        }
+
+        function renderOutputList(files) {
+            const container = document.getElementById('outputList');
+
+            if (files.length === 0) {
+                container.innerHTML = '<div class="empty-state">No files generated yet</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            files.forEach(file => {
+                const el = document.createElement('div');
+                el.className = 'output-item';
+                el.innerHTML = `
+                    <span class="file-name" title="${file.name}">${file.name}</span>
+                    <span class="file-size">${formatBytes(file.size_bytes)}</span>
+                    <div class="output-actions">
+                        <button onclick="viewFile('${file.name}')" title="View">👁</button>
+                        <button onclick="downloadFile('${file.url}')" title="Download">⬇</button>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function viewFile(filename) {
+            const url = API_BASE + '/output/' + filename;
+            if (filename.endsWith('.png') || filename.endsWith('.svg')) {
+                const container = document.getElementById('previewContent');
+                if (filename.endsWith('.png')) {
+                    container.innerHTML = `<img src="${url}?t=${Date.now()}" alt="${filename}" style="max-width:100%; height:auto; background:white; border-radius:8px;">`;
+                } else {
+                    fetch(url)
+                        .then(r => r.text())
+                        .then(svg => {
+                            container.innerHTML = `<div style="background:white; border-radius:8px; padding:10px;">${svg}</div>`;
+                            const svgEl = container.querySelector('svg');
+                            if (svgEl) {
+                                svgEl.style.maxWidth = '100%';
+                                svgEl.style.height = 'auto';
+                            }
+                        });
+                }
+                // Switch to preview tab
+                document.querySelector('[data-tab="preview"]').click();
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        function downloadFile(url) {
+            const link = document.createElement('a');
+            link.href = url + '?download=true';
+            link.download = '';
+            link.click();
+        }
+
+        // =============================================
+        // Config Editor
+        // =============================================
+        async function loadConfig() {
+            try {
+                const data = await apiFetch('/config');
+                if (data.status === 'ok') {
+                    document.getElementById('configEditor').value = data.raw_yaml;
+                    log('info', 'Config loaded');
+                }
+            } catch {
+                document.getElementById('configEditor').value = '# Could not load config\n# Is the API running?';
+            }
+        }
+
+        async function saveConfig() {
+            const yaml = document.getElementById('configEditor').value;
+            if (!yaml.trim()) {
+                log('error', 'Config is empty — not saving');
+                return;
+            }
+
+            try {
+                const data = await apiFetch('/config', {
+                    method: 'POST',
+                    body: JSON.stringify({ yaml: yaml })
+                });
+
+                if (data.status === 'ok') {
+                    log('success', 'Config saved successfully');
+                    if (data.warnings && data.warnings.length > 0) {
+                        data.warnings.forEach(w => log('warn', w));
+                    }
+                    // Reload rooms since config changed
+                    await loadRooms();
+                } else {
+                    log('error', `Save failed: ${data.message}`);
+                }
+            } catch (err) {
+                log('error', `Save failed: ${err.message}`);
+            }
+        }
+
+        async function validateConfig() {
+            const yaml = document.getElementById('configEditor').value;
+            try {
+                const data = await apiFetch('/validate', {
+                    method: 'POST',
+                    body: JSON.stringify({ yaml: yaml })
+                });
+
+                if (data.status === 'valid') {
+                    log('success', `Config is valid! ${data.room_count} rooms defined.`);
+                } else if (data.status === 'valid_with_warnings') {
+                    log('warn', `Config valid with ${data.warnings.length} warning(s):`);
+                    data.warnings.forEach(w => log('warn', `  ${w}`));
+                } else {
+                    log('error', 'Config validation failed:');
+                    (data.errors || []).forEach(e => log('error', `  ${e}`));
+                }
+            } catch (err) {
+                log('error', `Validation error: ${err.message}`);
+            }
+        }
+
+        // =============================================
+        // UI Helpers
+        // =============================================
+        function selectFormat(el) {
+            document.querySelectorAll('#formatGroup .radio-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedFormat = el.dataset.value;
+        }
+
+        function selectFloor(el) {
+            document.querySelectorAll('#floorGroup .radio-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedFloor = el.dataset.value;
+        }
+
+        function showTab(tabEl, tabName) {
+            document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+            tabEl.classList.add('active');
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        function setStatus(state, text) {
+            const dot = document.getElementById('statusDot');
+            const textEl = document.getElementById('statusText');
+            dot.className = 'status-dot ' + state;
+            textEl.textContent = text;
+        }
+
+        function showLoadingOverlay(show, text) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                document.getElementById('loadingText').textContent = text || 'Processing...';
+                overlay.classList.remove('hidden');
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function showProgressBar(show) {
+            const bar = document.getElementById('progressBar');
+            if (show) {
+                bar.classList.remove('hidden');
+                setProgressBar(0);
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
+        function setProgressBar(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        let progressInterval = null;
+        function animateProgress(from, to, duration) {
+            if (progressInterval) clearInterval(progressInterval);
+            let current = from;
+            const step = (to - from) / (duration / 100);
+            progressInterval = setInterval(() => {
+                current = Math.min(current + step, to);
+                setProgressBar(current);
+                if (current >= to) clearInterval(progressInterval);
+            }, 100);
+        }
+
+        function showPreviewMessage(msg) {
+            document.getElementById('previewContent').innerHTML = `
+                <div class="preview-placeholder">
+                    <p>${msg}</p>
+                </div>
+            `;
+        }
+
+        function log(level, message) {
+            const area = document.getElementById('logArea');
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-${level}">${escapeHtml(message)}</span>`;
+            area.appendChild(entry);
+            area.scrollTop = area.scrollHeight;
+
+            // Keep last 100 entries
+            while (area.children.length > 100) {
+                area.removeChild(area.firstChild);
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function formatNumber(n) {
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+            return Math.round(n).toLocaleString();
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // =============================================
+        // Global Actions
+        // =============================================
+        async function refreshAll() {
+            log('info', 'Refreshing all data...');
+            await Promise.all([checkHealth(), loadRooms(), loadOutputs(), loadConfig()]);
+            log('success', 'Refresh complete');
+        }
+
+        async function refreshOutputs() {
+            await loadOutputs();
+            log('info', 'Output list refreshed');
+        }
+
+        function goHome() {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'navigate', view: 'welcome' }, '*');
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        // Handle tab key in config editor
+        document.addEventListener('DOMContentLoaded', () => {
+            const editor = document.getElementById('configEditor');
+            editor.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 2;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

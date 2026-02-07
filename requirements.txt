@@ -9,6 +9,11 @@
 matplotlib
 PyYAML
 
+# Web API server
+fastapi
+uvicorn[standard]
+pydantic
+
 # =============================================================================
 # Development Dependencies (uncomment for development)
 # =============================================================================

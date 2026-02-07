@@ -15,7 +15,7 @@
 # 1. Define Paths
 VENV_DIR="./.venv"
 SCRIPT_FILE="src/main.py"
-CONFIG_FILE="config.yaml"
+CONFIG_FILE="./config/floorplan.yaml"
 SKIP_TESTS=false
 TESTS_ONLY=false
 DEBUG_FLAG=""
@@ -69,14 +69,47 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# 3. Check if the Virtual Environment exists
+# 3. Create virtual environment if missing, upgrade pip, install requirements
 if [ ! -d "$VENV_DIR" ]; then
-    echo "❌ Error: Virtual environment not found at $VENV_DIR"
-    echo "   Please create it first:"
-    echo "     python3 -m venv .venv"
-    echo "     source .venv/bin/activate  # or .venv/Scripts/activate on Windows"
-    echo "     pip install -r requirements.txt"
+    echo "📦 Virtual environment not found at $VENV_DIR — creating it..."
+    python3 -m venv "$VENV_DIR"
+    if [ $? -ne 0 ]; then
+        echo "❌ Error: Failed to create virtual environment."
+        echo "   Make sure python3 and the venv module are installed."
+        exit 1
+    fi
+    echo "✅ Virtual environment created."
+    echo ""
+fi
+
+# Determine python executable from venv (needed early for pip steps)
+if [ -f "$VENV_DIR/bin/python" ]; then
+    PYTHON="$VENV_DIR/bin/python"
+elif [ -f "$VENV_DIR/Scripts/python.exe" ]; then
+    PYTHON="$VENV_DIR/Scripts/python.exe"
+else
+    echo "❌ Error: Cannot find python executable in $VENV_DIR"
     exit 1
+fi
+
+# Upgrade pip to latest
+echo "⬆️  Upgrading pip..."
+"$PYTHON" -m pip install --upgrade pip --quiet
+echo ""
+
+# Install / update requirements
+if [ -f "requirements.txt" ]; then
+    echo "📥 Installing/updating requirements..."
+    "$PYTHON" -m pip install --upgrade -r requirements.txt --quiet
+    if [ $? -ne 0 ]; then
+        echo "❌ Error: Failed to install requirements."
+        exit 1
+    fi
+    echo "✅ Requirements up to date."
+    echo ""
+else
+    echo "⚠️  No requirements.txt found — skipping dependency install."
+    echo ""
 fi
 
 # 4. Check if the Python script exists
@@ -91,16 +124,6 @@ if [ ! -f "$CONFIG_FILE" ]; then
     echo "❌ Error: Config file not found at $CONFIG_FILE"
     echo "   Please provide a valid YAML config file."
     echo "   Use --config <path> to specify a different config file."
-    exit 1
-fi
-
-# Determine python executable from venv
-if [ -f "$VENV_DIR/bin/python" ]; then
-    PYTHON="$VENV_DIR/bin/python"
-elif [ -f "$VENV_DIR/Scripts/python.exe" ]; then
-    PYTHON="$VENV_DIR/Scripts/python.exe"
-else
-    echo "❌ Error: Cannot find python executable in $VENV_DIR"
     exit 1
 fi
 

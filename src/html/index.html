@@ -1,1138 +1,1343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Construction Management Suite - House Build Planner</title>
-    <link rel="stylesheet" href="assets/css/main.css">
-    <style>
-        /* Additional page-specific styles */
-        body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #00ff88;
-            min-height: 100vh;
-            overflow-x: auto;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Construction Management Suite - House Build Planner</title>
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <style>
+            /* Additional page-specific styles */
+            body {
+                font-family: "Courier New", monospace;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: #00ff88;
+                min-height: 100vh;
+                overflow-x: auto;
+            }
 
-        /* App Shell Styles */
-        .app-shell {
-            display: grid;
-            grid-template-areas:
-                "sidebar header"
-                "sidebar content";
-            grid-template-columns: 320px 1fr;
-            grid-template-rows: 80px 1fr;
-            min-height: 100vh;
-        }
-
-        .app-sidebar {
-            grid-area: sidebar;
-            background: #0f0f23;
-            border-right: 3px solid #00ff88;
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 3px 0 15px rgba(0, 255, 136, 0.2);
-        }
-
-        .app-header {
-            grid-area: header;
-            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
-            color: #0f0f23;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #88ff00;
-            box-shadow: 0 3px 15px rgba(0, 255, 136, 0.2);
-        }
-
-        .app-content {
-            grid-area: content;
-            position: relative;
-            background: #1a1a2e;
-            overflow: hidden;
-        }
-
-        .content-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #1a1a2e;
-        }
-
-        /* Sidebar Navigation Styles */
-        .logo {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #88ff00;
-            margin-bottom: 25px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #88ff00;
-            animation: pulse-glow 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { text-shadow: 0 0 10px #88ff00; }
-            50% { text-shadow: 0 0 20px #88ff00, 0 0 30px #88ff00; }
-        }
-
-        .nav-section {
-            margin-bottom: 25px;
-        }
-
-        .nav-section-title {
-            color: #88ff00;
-            font-size: 1em;
-            font-weight: bold;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            padding: 8px 0;
-            border-bottom: 2px solid #2a2a5a;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            color: #00ff88;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-
-        .nav-item::before {
-            content: '>';
-            position: absolute;
-            left: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .nav-item:hover::before {
-            opacity: 1;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(0, 255, 136, 0.1);
-            color: #88ff00;
-            text-shadow: 0 0 10px #00ff88;
-            padding-left: 25px;
-        }
-
-        .nav-item.disabled {
-            opacity: 0.3;
-            pointer-events: none;
-            cursor: not-allowed;
-        }
-
-        .nav-item.disabled:hover {
-            background: transparent;
-            padding-left: 15px;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 10px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.9); }
-        }
-
-        .status-active { background: #00ff88; }
-        .status-planning { background: #ffaa00; }
-        .status-complete { background: #4488ff; }
-        .status-disabled { background: #666; animation: none; }
-
-        /* Project Toggle Switch */
-        .project-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            border: 1px solid #2a2a5a;
-        }
-
-        .project-toggle.enabled {
-            border-color: #00ff88;
-            background: rgba(0, 255, 136, 0.05);
-        }
-
-        .project-toggle-label {
-            flex: 1;
-            font-size: 0.85em;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 40px;
-            height: 20px;
-            background: #2a2a5a;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.active {
-            background: #00ff88;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 16px;
-            height: 16px;
-            background: #fff;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.active::after {
-            left: 22px;
-        }
-
-        /* Project Info Panel */
-        .project-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
-            border-radius: 10px;
-            border: 2px solid #00ff88;
-        }
-
-        .project-info-title {
-            color: #88ff00;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9em;
-        }
-
-        .project-stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #2a2a5a;
-            font-size: 0.85em;
-        }
-
-        .project-stat strong {
-            color: #88ff00;
-        }
-
-        .progress-ring {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin: 10px auto;
-        }
-
-        .progress-ring svg {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-
-        .progress-ring-bg {
-            fill: none;
-            stroke: #2a2a5a;
-            stroke-width: 8;
-        }
-
-        .progress-ring-progress {
-            fill: none;
-            stroke: #00ff88;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-dasharray: 157;
-            stroke-dashoffset: 157;
-            transition: stroke-dashoffset 0.5s ease;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #88ff00;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .quick-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 8px 5px;
-            background: #0f0f23;
-            border: 1px solid #2a2a5a;
-            color: #00ff88;
-            font-size: 0.75em;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .quick-btn:hover {
-            border-color: #00ff88;
-            background: rgba(0, 255, 136, 0.1);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-        }
-
-        /* Header Styles */
-        .breadcrumb {
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-
-        .control-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 8px 15px;
-            background: transparent;
-            border: 2px solid #0f0f23;
-            color: #0f0f23;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 5px;
-            font-size: 0.85em;
-        }
-
-        .btn:hover {
-            background: #0f0f23;
-            color: #00ff88;
-        }
-
-        .btn-primary {
-            background: #0f0f23;
-            color: #00ff88;
-        }
-
-        .btn-primary:hover {
-            background: #1a1a3a;
-            border-color: #1a1a3a;
-        }
-
-        /* Loading Indicator */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            background: #1a1a2e;
-            color: #88ff00;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #2a2a5a;
-            border-top-color: #00ff88;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
+            /* App Shell Styles */
             .app-shell {
+                display: grid;
                 grid-template-areas:
-                    "header"
-                    "content";
-                grid-template-columns: 1fr;
-                grid-template-rows: 60px 1fr;
+                    "sidebar header"
+                    "sidebar content";
+                grid-template-columns: 320px 1fr;
+                grid-template-rows: 80px 1fr;
+                min-height: 100vh;
             }
 
             .app-sidebar {
-                position: fixed;
-                left: -320px;
-                top: 0;
-                height: 100vh;
-                z-index: 1000;
-                transition: left 0.3s ease;
+                grid-area: sidebar;
+                background: #0f0f23;
+                border-right: 3px solid #00ff88;
+                padding: 20px;
+                overflow-y: auto;
+                box-shadow: 3px 0 15px rgba(0, 255, 136, 0.2);
             }
 
-            .app-sidebar.open {
-                left: 0;
+            .app-header {
+                grid-area: header;
+                background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+                color: #0f0f23;
+                padding: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 3px solid #88ff00;
+                box-shadow: 0 3px 15px rgba(0, 255, 136, 0.2);
+            }
+
+            .app-content {
+                grid-area: content;
+                position: relative;
+                background: #1a1a2e;
+                overflow: hidden;
+            }
+
+            .content-frame {
+                width: 100%;
+                height: 100%;
+                border: none;
+                background: #1a1a2e;
+            }
+
+            /* Sidebar Navigation Styles */
+            .logo {
+                font-size: 1.4em;
+                font-weight: bold;
+                color: #88ff00;
+                margin-bottom: 25px;
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                text-shadow: 0 0 10px #88ff00;
+                animation: pulse-glow 3s ease-in-out infinite;
+            }
+
+            @keyframes pulse-glow {
+                0%,
+                100% {
+                    text-shadow: 0 0 10px #88ff00;
+                }
+                50% {
+                    text-shadow:
+                        0 0 20px #88ff00,
+                        0 0 30px #88ff00;
+                }
             }
 
             .nav-section {
-                margin-bottom: 15px;
+                margin-bottom: 25px;
             }
 
+            .nav-section-title {
+                color: #88ff00;
+                font-size: 1em;
+                font-weight: bold;
+                margin-bottom: 12px;
+                text-transform: uppercase;
+                padding: 8px 0;
+                border-bottom: 2px solid #2a2a5a;
+                letter-spacing: 1px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 10px 15px;
+                color: #00ff88;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                margin-bottom: 5px;
+                border-radius: 5px;
+                font-size: 0.9em;
+            }
+
+            .nav-item::before {
+                content: ">";
+                position: absolute;
+                left: 5px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .nav-item:hover::before {
+                opacity: 1;
+            }
+
+            .nav-item:hover,
+            .nav-item.active {
+                background: rgba(0, 255, 136, 0.1);
+                color: #88ff00;
+                text-shadow: 0 0 10px #00ff88;
+                padding-left: 25px;
+            }
+
+            .nav-item.disabled {
+                opacity: 0.3;
+                pointer-events: none;
+                cursor: not-allowed;
+            }
+
+            .nav-item.disabled:hover {
+                background: transparent;
+                padding-left: 15px;
+            }
+
+            .status-indicator {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                margin-right: 10px;
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.6;
+                    transform: scale(0.9);
+                }
+            }
+
+            .status-active {
+                background: #00ff88;
+            }
+            .status-planning {
+                background: #ffaa00;
+            }
+            .status-complete {
+                background: #4488ff;
+            }
+            .status-disabled {
+                background: #666;
+                animation: none;
+            }
+
+            /* Project Toggle Switch */
+            .project-toggle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 12px;
+                margin-bottom: 8px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 5px;
+                border: 1px solid #2a2a5a;
+            }
+
+            .project-toggle.enabled {
+                border-color: #00ff88;
+                background: rgba(0, 255, 136, 0.05);
+            }
+
+            .project-toggle-label {
+                flex: 1;
+                font-size: 0.85em;
+            }
+
+            .toggle-switch {
+                position: relative;
+                width: 40px;
+                height: 20px;
+                background: #2a2a5a;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .toggle-switch.active {
+                background: #00ff88;
+            }
+
+            .toggle-switch::after {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 16px;
+                height: 16px;
+                background: #fff;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            }
+
+            .toggle-switch.active::after {
+                left: 22px;
+            }
+
+            /* Project Info Panel */
             .project-info {
-                padding: 10px;
+                margin-top: 20px;
+                padding: 15px;
+                background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+                border-radius: 10px;
+                border: 2px solid #00ff88;
             }
-        }
 
-        @media (max-width: 768px) {
-            .control-buttons {
+            .project-info-title {
+                color: #88ff00;
+                font-weight: bold;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-size: 0.9em;
+            }
+
+            .project-stat {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #2a2a5a;
+                font-size: 0.85em;
+            }
+
+            .project-stat strong {
+                color: #88ff00;
+            }
+
+            .progress-ring {
+                position: relative;
+                width: 80px;
+                height: 80px;
+                margin: 10px auto;
+            }
+
+            .progress-ring svg {
+                transform: rotate(-90deg);
+                width: 100%;
+                height: 100%;
+            }
+
+            .progress-ring-bg {
+                fill: none;
+                stroke: #2a2a5a;
+                stroke-width: 8;
+            }
+
+            .progress-ring-progress {
+                fill: none;
+                stroke: #00ff88;
+                stroke-width: 8;
+                stroke-linecap: round;
+                stroke-dasharray: 157;
+                stroke-dashoffset: 157;
+                transition: stroke-dashoffset 0.5s ease;
+            }
+
+            .progress-text {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #88ff00;
+            }
+
+            /* Quick Actions */
+            .quick-actions {
+                display: flex;
                 flex-wrap: wrap;
-                gap: 5px;
+                gap: 8px;
+                margin-top: 15px;
+            }
+
+            .quick-btn {
+                flex: 1;
+                min-width: 80px;
+                padding: 8px 5px;
+                background: #0f0f23;
+                border: 1px solid #2a2a5a;
+                color: #00ff88;
+                font-size: 0.75em;
+                text-align: center;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+
+            .quick-btn:hover {
+                border-color: #00ff88;
+                background: rgba(0, 255, 136, 0.1);
+                box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            }
+
+            /* Header Styles */
+            .breadcrumb {
+                font-weight: bold;
+                font-size: 1.1em;
+            }
+
+            .control-buttons {
+                display: flex;
+                gap: 10px;
             }
 
             .btn {
-                padding: 6px 10px;
-                font-size: 0.75em;
+                padding: 8px 15px;
+                background: transparent;
+                border: 2px solid #0f0f23;
+                color: #0f0f23;
+                font-family: "Courier New", monospace;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border-radius: 5px;
+                font-size: 0.85em;
             }
 
-            .breadcrumb {
-                font-size: 0.9em;
+            .btn:hover {
+                background: #0f0f23;
+                color: #00ff88;
             }
-        }
 
-        /* Welcome Screen */
-        .welcome-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 100%);
-        }
+            .btn-primary {
+                background: #0f0f23;
+                color: #00ff88;
+            }
 
-        .welcome-title {
-            font-size: 3em;
-            color: #88ff00;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px #88ff00;
-        }
+            .btn-primary:hover {
+                background: #1a1a3a;
+                border-color: #1a1a3a;
+            }
 
-        .welcome-subtitle {
-            font-size: 1.1em;
-            color: #666;
-            max-width: 600px;
-            margin-bottom: 40px;
-            line-height: 1.8;
-        }
+            /* Loading Indicator */
+            .loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                background: #1a1a2e;
+                color: #88ff00;
+            }
 
-        .welcome-stats {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+            .spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid #2a2a5a;
+                border-top-color: #00ff88;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 15px;
+            }
 
-        .welcome-stat {
-            background: #2a2a5a;
-            border: 2px solid #2a2a5a;
-            padding: 20px 30px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
 
-        .welcome-stat:hover {
-            border-color: #00ff88;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
-        }
+            /* Responsive */
+            @media (max-width: 1200px) {
+                .app-shell {
+                    grid-template-areas:
+                        "header"
+                        "content";
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 60px 1fr;
+                }
 
-        .welcome-stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #00ff88;
-        }
+                .app-sidebar {
+                    position: fixed;
+                    left: -320px;
+                    top: 0;
+                    height: 100vh;
+                    z-index: 1000;
+                    transition: left 0.3s ease;
+                }
 
-        .welcome-stat-label {
-            font-size: 0.85em;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+                .app-sidebar.open {
+                    left: 0;
+                }
 
-        .welcome-actions {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+                .nav-section {
+                    margin-bottom: 15px;
+                }
 
-        .welcome-btn {
-            padding: 15px 30px;
-            background: #00ff88;
-            border: none;
-            color: #0f0f23;
-            font-family: 'Courier New', monospace;
-            font-size: 1em;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
+                .project-info {
+                    padding: 10px;
+                }
+            }
 
-        .welcome-btn:hover {
-            background: #88ff00;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(136, 255, 0, 0.3);
-        }
+            @media (max-width: 768px) {
+                .control-buttons {
+                    flex-wrap: wrap;
+                    gap: 5px;
+                }
 
-        .welcome-btn.secondary {
-            background: transparent;
-            border: 2px solid #00ff88;
-            color: #00ff88;
-        }
+                .btn {
+                    padding: 6px 10px;
+                    font-size: 0.75em;
+                }
 
-        .welcome-btn.secondary:hover {
-            background: rgba(0, 255, 136, 0.1);
-        }
+                .breadcrumb {
+                    font-size: 0.9em;
+                }
+            }
 
-        /* Settings Modal */
-        .settings-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
+            /* Welcome Screen */
+            .welcome-screen {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                text-align: center;
+                padding: 20px;
+                background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 100%);
+            }
 
-        .settings-modal.open {
-            display: flex;
-        }
+            .welcome-title {
+                font-size: 3em;
+                color: #88ff00;
+                text-transform: uppercase;
+                letter-spacing: 5px;
+                margin-bottom: 20px;
+                text-shadow: 0 0 20px #88ff00;
+            }
 
-        .settings-content {
-            background: #1a1a3a;
-            border: 3px solid #00ff88;
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
+            .welcome-subtitle {
+                font-size: 1.1em;
+                color: #666;
+                max-width: 600px;
+                margin-bottom: 40px;
+                line-height: 1.8;
+            }
 
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #2a2a5a;
-        }
+            .welcome-stats {
+                display: flex;
+                gap: 30px;
+                margin-bottom: 40px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
 
-        .settings-header h2 {
-            color: #88ff00;
-            margin: 0;
-        }
+            .welcome-stat {
+                background: #2a2a5a;
+                border: 2px solid #2a2a5a;
+                padding: 20px 30px;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+            }
 
-        .settings-close {
-            background: none;
-            border: none;
-            color: #ff4444;
-            font-size: 1.5em;
-            cursor: pointer;
-            padding: 5px 10px;
-        }
+            .welcome-stat:hover {
+                border-color: #00ff88;
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+            }
 
-        .settings-close:hover {
-            color: #ff6666;
-        }
+            .welcome-stat-value {
+                font-size: 2em;
+                font-weight: bold;
+                color: #00ff88;
+            }
 
-        .settings-section {
-            margin-bottom: 25px;
-        }
+            .welcome-stat-label {
+                font-size: 0.85em;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
 
-        .settings-section h3 {
-            color: #88ff00;
-            font-size: 1em;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
+            .welcome-actions {
+                display: flex;
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
 
-        .project-setting {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            background: #0f0f23;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #2a2a5a;
-        }
+            .welcome-btn {
+                padding: 15px 30px;
+                background: #00ff88;
+                border: none;
+                color: #0f0f23;
+                font-family: "Courier New", monospace;
+                font-size: 1em;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
 
-        .project-setting.enabled {
-            border-color: #00ff88;
-        }
+            .welcome-btn:hover {
+                background: #88ff00;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(136, 255, 0, 0.3);
+            }
 
-        .project-setting-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+            .welcome-btn.secondary {
+                background: transparent;
+                border: 2px solid #00ff88;
+                color: #00ff88;
+            }
 
-        .project-setting-icon {
-            font-size: 1.5em;
-        }
+            .welcome-btn.secondary:hover {
+                background: rgba(0, 255, 136, 0.1);
+            }
 
-        .project-setting-name {
-            font-weight: bold;
-            color: #00ff88;
-        }
+            /* Settings Modal */
+            .settings-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 2000;
+                align-items: center;
+                justify-content: center;
+            }
 
-        .project-setting-desc {
-            font-size: 0.8em;
-            color: #666;
-        }
+            .settings-modal.open {
+                display: flex;
+            }
 
-        /* Connection Status */
-        .connection-status {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #1a1a3a;
-            border: 2px solid #2a2a5a;
-            border-radius: 25px;
-            font-size: 0.85em;
-            z-index: 100;
-        }
+            .settings-content {
+                background: #1a1a3a;
+                border: 3px solid #00ff88;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
 
-        .connection-status.connected {
-            border-color: #00ff88;
-        }
+            .settings-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #2a2a5a;
+            }
 
-        .connection-status.error {
-            border-color: #ff4444;
-        }
-    </style>
-</head>
+            .settings-header h2 {
+                color: #88ff00;
+                margin: 0;
+            }
 
-<body>
-    <div class="app-shell" id="appShell" style="display: none;">
-        <nav class="app-sidebar">
-            <div class="logo">🏠 HOUSE BUILD HQ</div>
+            .settings-close {
+                background: none;
+                border: none;
+                color: #ff4444;
+                font-size: 1.5em;
+                cursor: pointer;
+                padding: 5px 10px;
+            }
 
-            <div class="nav-section">
-                <div class="nav-section-title">
-                    📊 Dashboard
-                    <span style="font-size: 0.7em; cursor: pointer;" onclick="openSettings()">⚙️</span>
+            .settings-close:hover {
+                color: #ff6666;
+            }
+
+            .settings-section {
+                margin-bottom: 25px;
+            }
+
+            .settings-section h3 {
+                color: #88ff00;
+                font-size: 1em;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+            }
+
+            .project-setting {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 12px 15px;
+                background: #0f0f23;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                border: 1px solid #2a2a5a;
+            }
+
+            .project-setting.enabled {
+                border-color: #00ff88;
+            }
+
+            .project-setting-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .project-setting-icon {
+                font-size: 1.5em;
+            }
+
+            .project-setting-name {
+                font-weight: bold;
+                color: #00ff88;
+            }
+
+            .project-setting-desc {
+                font-size: 0.8em;
+                color: #666;
+            }
+
+            /* Connection Status */
+            .connection-status {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                background: #1a1a3a;
+                border: 2px solid #2a2a5a;
+                border-radius: 25px;
+                font-size: 0.85em;
+                z-index: 100;
+            }
+
+            .connection-status.connected {
+                border-color: #00ff88;
+            }
+
+            .connection-status.error {
+                border-color: #ff4444;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="app-shell" id="appShell" style="display: none">
+            <nav class="app-sidebar">
+                <div class="logo">🏠 HOUSE BUILD HQ</div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">
+                        📊 Dashboard
+                        <span
+                            style="font-size: 0.7em; cursor: pointer"
+                            onclick="openSettings()"
+                            >⚙️</span
+                        >
+                    </div>
+                    <div
+                        class="nav-item"
+                        data-view="dashboard"
+                        onclick="navigateToView('dashboard')"
+                    >
+                        📊 Project Overview
+                    </div>
                 </div>
-                <div class="nav-item" data-view="dashboard" onclick="navigateToView('dashboard')">
-                    📊 Project Overview
+
+                <div class="nav-section" id="projectsSection">
+                    <div class="nav-section-title">🏗️ Projects</div>
+
+                    <!-- Farmhouse Project (Enabled by default) -->
+                    <div
+                        class="project-group"
+                        id="farmhouse-group"
+                        data-project="farmhouse"
+                    >
+                        <div class="project-toggle enabled">
+                            <span class="status-indicator status-active"></span>
+                            <span class="project-toggle-label"
+                                >🏡 Farmhouse</span
+                            >
+                            <div
+                                class="toggle-switch active"
+                                onclick="toggleProject('farmhouse')"
+                            ></div>
+                        </div>
+                        <div
+                            class="nav-item"
+                            data-view="farmhouse-blueprint"
+                            onclick="navigateToView('farmhouse-blueprint')"
+                        >
+                            📐 Blueprints
+                        </div>
+                        <div
+                            class="nav-item"
+                            data-view="farmhouse-guide"
+                            onclick="navigateToView('farmhouse-guide')"
+                        >
+                            📋 Build Guide
+                        </div>
+                    </div>
+
+                    <!-- Bunker Project (Disabled by default) -->
+                    <div
+                        class="project-group disabled"
+                        id="bunker-group"
+                        data-project="bunker"
+                    >
+                        <div class="project-toggle">
+                            <span
+                                class="status-indicator status-disabled"
+                            ></span>
+                            <span class="project-toggle-label">🏢 Bunker</span>
+                            <div
+                                class="toggle-switch"
+                                onclick="toggleProject('bunker')"
+                            ></div>
+                        </div>
+                        <div
+                            class="nav-item disabled"
+                            data-view="bunker-blueprint"
+                            onclick="navigateToView('bunker-blueprint')"
+                        >
+                            📐 Blueprints
+                        </div>
+                        <div
+                            class="nav-item disabled"
+                            data-view="bunker-guide"
+                            onclick="navigateToView('bunker-guide')"
+                        >
+                            📋 Build Guide
+                        </div>
+                    </div>
+
+                    <!-- Cabin Project (Disabled by default) -->
+                    <div
+                        class="project-group disabled"
+                        id="cabin-group"
+                        data-project="cabin"
+                    >
+                        <div class="project-toggle">
+                            <span
+                                class="status-indicator status-disabled"
+                            ></span>
+                            <span class="project-toggle-label">🏘️ Cabin</span>
+                            <div
+                                class="toggle-switch"
+                                onclick="toggleProject('cabin')"
+                            ></div>
+                        </div>
+                        <div
+                            class="nav-item disabled"
+                            data-view="cabin-blueprint"
+                            onclick="navigateToView('cabin-blueprint')"
+                        >
+                            📐 Blueprints
+                        </div>
+                        <div
+                            class="nav-item disabled"
+                            data-view="cabin-guide"
+                            onclick="navigateToView('cabin-guide')"
+                        >
+                            📋 Build Guide
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">🔧 Tools</div>
+                    <div
+                        class="nav-item calculator"
+                        data-view="calculator"
+                        onclick="navigateToView('calculator')"
+                    >
+                        🧮 Cost Calculator
+                    </div>
+                    <div
+                        class="nav-item"
+                        data-view="scheduler"
+                        onclick="navigateToView('scheduler')"
+                    >
+                        📅 Project Scheduler
+                    </div>
+                    <div
+                        class="nav-item"
+                        data-view="generator"
+                        onclick="navigateToView('generator')"
+                    >
+                        🏗️ Floor Plan Generator
+                    </div>
+                </div>
+
+                <div class="project-info" id="projectInfo">
+                    <div class="project-info-title">🏡 Farmhouse Project</div>
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 60 60">
+                            <circle
+                                class="progress-ring-bg"
+                                cx="30"
+                                cy="30"
+                                r="25"
+                            ></circle>
+                            <circle
+                                class="progress-ring-progress"
+                                cx="30"
+                                cy="30"
+                                r="25"
+                                id="progressCircle"
+                            ></circle>
+                        </svg>
+                        <div class="progress-text" id="progressText">5%</div>
+                    </div>
+                    <div class="project-stat">
+                        <span>Status:</span>
+                        <strong style="color: #ffaa00">Planning</strong>
+                    </div>
+                    <div class="project-stat">
+                        <span>Est. Budget:</span>
+                        <strong id="currentBudget">TBD</strong>
+                    </div>
+                    <div class="project-stat">
+                        <span>Est. Size:</span>
+                        <strong id="currentSize">~5,500 sq ft</strong>
+                    </div>
+                    <div class="project-stat">
+                        <span>Bedrooms:</span>
+                        <strong>4</strong>
+                    </div>
+                    <div class="project-stat">
+                        <span>Bathrooms:</span>
+                        <strong>4.5</strong>
+                    </div>
+
+                    <div class="quick-actions">
+                        <div class="quick-btn" onclick="quickCalculator()">
+                            💰 Calculator
+                        </div>
+                        <div
+                            class="quick-btn"
+                            onclick="navigateToView('farmhouse-blueprint')"
+                        >
+                            📐 Blueprints
+                        </div>
+                        <div class="quick-btn" onclick="quickExport()">
+                            📤 Export
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <header class="app-header">
+                <div class="breadcrumb" id="breadcrumb">
+                    🏠 House Build Planner
+                </div>
+                <div class="control-buttons">
+                    <button class="btn" onclick="toggleFullscreen()">
+                        ⛶ Fullscreen
+                    </button>
+                    <button class="btn" onclick="printContent()">
+                        🖨️ Print
+                    </button>
+                    <button class="btn" onclick="openSettings()">
+                        ⚙️ Settings
+                    </button>
+                    <button class="btn btn-primary" onclick="showWelcome()">
+                        🏠 Home
+                    </button>
+                </div>
+            </header>
+
+            <main class="app-content">
+                <div class="loading" id="loading" style="display: none">
+                    <div class="spinner"></div>
+                    <div>Loading content...</div>
+                </div>
+                <iframe
+                    class="content-frame"
+                    id="contentFrame"
+                    src="about:blank"
+                ></iframe>
+            </main>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1 class="welcome-title">🏠 House Build Planner</h1>
+            <p class="welcome-subtitle">
+                Design, plan, and manage your dream home build. Complete
+                blueprints, cost calculations, and project tracking for your
+                farmhouse project.
+            </p>
+
+            <div class="welcome-stats">
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value">1</div>
+                    <div class="welcome-stat-label">Active Project</div>
+                </div>
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value">~5.5K</div>
+                    <div class="welcome-stat-label">Sq Ft Planned</div>
+                </div>
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value">4</div>
+                    <div class="welcome-stat-label">Bedrooms</div>
+                </div>
+                <div class="welcome-stat">
+                    <div class="welcome-stat-value">4.5</div>
+                    <div class="welcome-stat-label">Bathrooms</div>
                 </div>
             </div>
 
-            <div class="nav-section" id="projectsSection">
-                <div class="nav-section-title">
-                    🏗️ Projects
-                </div>
-
-                <!-- Farmhouse Project (Enabled by default) -->
-                <div class="project-group" id="farmhouse-group" data-project="farmhouse">
-                    <div class="project-toggle enabled">
-                        <span class="status-indicator status-active"></span>
-                        <span class="project-toggle-label">🏡 Farmhouse</span>
-                        <div class="toggle-switch active" onclick="toggleProject('farmhouse')"></div>
-                    </div>
-                    <div class="nav-item" data-view="farmhouse-blueprint" onclick="navigateToView('farmhouse-blueprint')">
-                        📐 Blueprints
-                    </div>
-                    <div class="nav-item" data-view="farmhouse-guide" onclick="navigateToView('farmhouse-guide')">
-                        📋 Build Guide
-                    </div>
-                </div>
-
-                <!-- Bunker Project (Disabled by default) -->
-                <div class="project-group disabled" id="bunker-group" data-project="bunker">
-                    <div class="project-toggle">
-                        <span class="status-indicator status-disabled"></span>
-                        <span class="project-toggle-label">🏢 Bunker</span>
-                        <div class="toggle-switch" onclick="toggleProject('bunker')"></div>
-                    </div>
-                    <div class="nav-item disabled" data-view="bunker-blueprint" onclick="navigateToView('bunker-blueprint')">
-                        📐 Blueprints
-                    </div>
-                    <div class="nav-item disabled" data-view="bunker-guide" onclick="navigateToView('bunker-guide')">
-                        📋 Build Guide
-                    </div>
-                </div>
-
-                <!-- Cabin Project (Disabled by default) -->
-                <div class="project-group disabled" id="cabin-group" data-project="cabin">
-                    <div class="project-toggle">
-                        <span class="status-indicator status-disabled"></span>
-                        <span class="project-toggle-label">🏘️ Cabin</span>
-                        <div class="toggle-switch" onclick="toggleProject('cabin')"></div>
-                    </div>
-                    <div class="nav-item disabled" data-view="cabin-blueprint" onclick="navigateToView('cabin-blueprint')">
-                        📐 Blueprints
-                    </div>
-                    <div class="nav-item disabled" data-view="cabin-guide" onclick="navigateToView('cabin-guide')">
-                        📋 Build Guide
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">🔧 Tools</div>
-                <div class="nav-item calculator" data-view="calculator" onclick="navigateToView('calculator')">
+            <div class="welcome-actions">
+                <button class="welcome-btn" onclick="startApp()">
+                    🚀 Launch Application
+                </button>
+                <button
+                    class="welcome-btn secondary"
+                    onclick="navigateToView('farmhouse-blueprint')"
+                >
+                    📐 View Blueprints
+                </button>
+                <button
+                    class="welcome-btn secondary"
+                    onclick="navigateToView('calculator')"
+                >
                     🧮 Cost Calculator
-                </div>
-                <div class="nav-item" data-view="scheduler" onclick="navigateToView('scheduler')">
-                    📅 Project Scheduler
-                </div>
-            </div>
-
-            <div class="project-info" id="projectInfo">
-                <div class="project-info-title">🏡 Farmhouse Project</div>
-                <div class="progress-ring">
-                    <svg viewBox="0 0 60 60">
-                        <circle class="progress-ring-bg" cx="30" cy="30" r="25"></circle>
-                        <circle class="progress-ring-progress" cx="30" cy="30" r="25" id="progressCircle"></circle>
-                    </svg>
-                    <div class="progress-text" id="progressText">5%</div>
-                </div>
-                <div class="project-stat">
-                    <span>Status:</span>
-                    <strong style="color: #ffaa00;">Planning</strong>
-                </div>
-                <div class="project-stat">
-                    <span>Est. Budget:</span>
-                    <strong id="currentBudget">TBD</strong>
-                </div>
-                <div class="project-stat">
-                    <span>Est. Size:</span>
-                    <strong id="currentSize">~5,500 sq ft</strong>
-                </div>
-                <div class="project-stat">
-                    <span>Bedrooms:</span>
-                    <strong>4</strong>
-                </div>
-                <div class="project-stat">
-                    <span>Bathrooms:</span>
-                    <strong>4.5</strong>
-                </div>
-
-                <div class="quick-actions">
-                    <div class="quick-btn" onclick="quickCalculator()">
-                        💰 Calculator
-                    </div>
-                    <div class="quick-btn" onclick="navigateToView('farmhouse-blueprint')">
-                        📐 Blueprints
-                    </div>
-                    <div class="quick-btn" onclick="quickExport()">
-                        📤 Export
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <header class="app-header">
-            <div class="breadcrumb" id="breadcrumb">
-                🏠 House Build Planner
-            </div>
-            <div class="control-buttons">
-                <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-                <button class="btn" onclick="printContent()">🖨️ Print</button>
-                <button class="btn" onclick="openSettings()">⚙️ Settings</button>
-                <button class="btn btn-primary" onclick="showWelcome()">🏠 Home</button>
-            </div>
-        </header>
-
-        <main class="app-content">
-            <div class="loading" id="loading" style="display: none;">
-                <div class="spinner"></div>
-                <div>Loading content...</div>
-            </div>
-            <iframe class="content-frame" id="contentFrame" src="about:blank"></iframe>
-        </main>
-    </div>
-
-    <!-- Welcome Screen -->
-    <div class="welcome-screen" id="welcomeScreen">
-        <h1 class="welcome-title">🏠 House Build Planner</h1>
-        <p class="welcome-subtitle">
-            Design, plan, and manage your dream home build.
-            Complete blueprints, cost calculations, and project tracking for your farmhouse project.
-        </p>
-
-        <div class="welcome-stats">
-            <div class="welcome-stat">
-                <div class="welcome-stat-value">1</div>
-                <div class="welcome-stat-label">Active Project</div>
-            </div>
-            <div class="welcome-stat">
-                <div class="welcome-stat-value">~5.5K</div>
-                <div class="welcome-stat-label">Sq Ft Planned</div>
-            </div>
-            <div class="welcome-stat">
-                <div class="welcome-stat-value">4</div>
-                <div class="welcome-stat-label">Bedrooms</div>
-            </div>
-            <div class="welcome-stat">
-                <div class="welcome-stat-value">4.5</div>
-                <div class="welcome-stat-label">Bathrooms</div>
-            </div>
-        </div>
-
-        <div class="welcome-actions">
-            <button class="welcome-btn" onclick="startApp()">
-                🚀 Launch Application
-            </button>
-            <button class="welcome-btn secondary" onclick="navigateToView('farmhouse-blueprint')">
-                📐 View Blueprints
-            </button>
-            <button class="welcome-btn secondary" onclick="navigateToView('calculator')">
-                🧮 Cost Calculator
-            </button>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h2>⚙️ Project Settings</h2>
-                <button class="settings-close" onclick="closeSettings()">×</button>
-            </div>
-
-            <div class="settings-section">
-                <h3>Enable/Disable Projects</h3>
-                <p style="color: #666; font-size: 0.85em; margin-bottom: 15px;">
-                    Toggle which projects appear in the sidebar navigation.
-                </p>
-
-                <div class="project-setting enabled" id="setting-farmhouse">
-                    <div class="project-setting-info">
-                        <span class="project-setting-icon">🏡</span>
-                        <div>
-                            <div class="project-setting-name">Farmhouse</div>
-                            <div class="project-setting-desc">Luxury farmhouse - Main project</div>
-                        </div>
-                    </div>
-                    <div class="toggle-switch active" onclick="toggleProject('farmhouse')"></div>
-                </div>
-
-                <div class="project-setting" id="setting-bunker">
-                    <div class="project-setting-info">
-                        <span class="project-setting-icon">🏢</span>
-                        <div>
-                            <div class="project-setting-name">Bunker</div>
-                            <div class="project-setting-desc">Underground shelter</div>
-                        </div>
-                    </div>
-                    <div class="toggle-switch" onclick="toggleProject('bunker')"></div>
-                </div>
-
-                <div class="project-setting" id="setting-cabin">
-                    <div class="project-setting-info">
-                        <span class="project-setting-icon">🏘️</span>
-                        <div>
-                            <div class="project-setting-name">Cabin</div>
-                            <div class="project-setting-desc">Guest cabin / retreat</div>
-                        </div>
-                    </div>
-                    <div class="toggle-switch" onclick="toggleProject('cabin')"></div>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="welcome-btn" onclick="closeSettings()" style="padding: 10px 30px;">
-                    Save & Close
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Connection Status -->
-    <div class="connection-status" id="connectionStatus">
-        🌐 Initializing...
-    </div>
+        <!-- Settings Modal -->
+        <div class="settings-modal" id="settingsModal">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h2>⚙️ Project Settings</h2>
+                    <button class="settings-close" onclick="closeSettings()">
+                        ×
+                    </button>
+                </div>
 
-    <script>
-        // Project state management
-        const projectState = {
-            farmhouse: true,  // Enabled by default
-            bunker: false,
-            cabin: false
-        };
+                <div class="settings-section">
+                    <h3>Enable/Disable Projects</h3>
+                    <p
+                        style="
+                            color: #666;
+                            font-size: 0.85em;
+                            margin-bottom: 15px;
+                        "
+                    >
+                        Toggle which projects appear in the sidebar navigation.
+                    </p>
 
-        let isAppMode = false;
-        let currentView = 'welcome';
+                    <div class="project-setting enabled" id="setting-farmhouse">
+                        <div class="project-setting-info">
+                            <span class="project-setting-icon">🏡</span>
+                            <div>
+                                <div class="project-setting-name">
+                                    Farmhouse
+                                </div>
+                                <div class="project-setting-desc">
+                                    Luxury farmhouse - Main project
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="toggle-switch active"
+                            onclick="toggleProject('farmhouse')"
+                        ></div>
+                    </div>
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏠 Initializing House Build Planner...');
+                    <div class="project-setting" id="setting-bunker">
+                        <div class="project-setting-info">
+                            <span class="project-setting-icon">🏢</span>
+                            <div>
+                                <div class="project-setting-name">Bunker</div>
+                                <div class="project-setting-desc">
+                                    Underground shelter
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="toggle-switch"
+                            onclick="toggleProject('bunker')"
+                        ></div>
+                    </div>
 
-            // Load saved project state from localStorage
-            loadProjectState();
+                    <div class="project-setting" id="setting-cabin">
+                        <div class="project-setting-info">
+                            <span class="project-setting-icon">🏘️</span>
+                            <div>
+                                <div class="project-setting-name">Cabin</div>
+                                <div class="project-setting-desc">
+                                    Guest cabin / retreat
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="toggle-switch"
+                            onclick="toggleProject('cabin')"
+                        ></div>
+                    </div>
+                </div>
 
-            // Apply project state to UI
-            applyProjectState();
+                <div style="text-align: center; margin-top: 20px">
+                    <button
+                        class="welcome-btn"
+                        onclick="closeSettings()"
+                        style="padding: 10px 30px"
+                    >
+                        Save & Close
+                    </button>
+                </div>
+            </div>
+        </div>
 
-            // Show welcome screen initially
-            showWelcome();
+        <!-- Connection Status -->
+        <div class="connection-status" id="connectionStatus">
+            🌐 Initializing...
+        </div>
 
-            // Update connection status
-            updateConnectionStatus('connected', '✅ System Ready');
+        <script>
+            // Project state management
+            const projectState = {
+                farmhouse: true, // Enabled by default
+                bunker: false,
+                cabin: false,
+            };
 
-            // Check for direct navigation from URL hash
-            checkUrlNavigation();
+            let isAppMode = false;
+            let currentView = "welcome";
 
-            // Update progress ring
-            updateProgressRing(5);
+            // Initialize the app
+            document.addEventListener("DOMContentLoaded", function () {
+                console.log("🏠 Initializing House Build Planner...");
 
-            console.log('✅ House Build Planner initialized');
-        });
+                // Load saved project state from localStorage
+                loadProjectState();
 
-        function loadProjectState() {
-            const saved = localStorage.getItem('projectState');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                Object.assign(projectState, parsed);
-            }
-        }
+                // Apply project state to UI
+                applyProjectState();
 
-        function saveProjectState() {
-            localStorage.setItem('projectState', JSON.stringify(projectState));
-        }
+                // Show welcome screen initially
+                showWelcome();
 
-        function applyProjectState() {
-            Object.keys(projectState).forEach(project => {
-                updateProjectUI(project, projectState[project]);
+                // Update connection status
+                updateConnectionStatus("connected", "✅ System Ready");
+
+                // Check for direct navigation from URL hash
+                checkUrlNavigation();
+
+                // Update progress ring
+                updateProgressRing(5);
+
+                console.log("✅ House Build Planner initialized");
             });
 
-            // Update welcome stats
-            const activeCount = Object.values(projectState).filter(v => v).length;
-            const activeCountEl = document.querySelector('.welcome-stat-value');
-            if (activeCountEl) {
-                activeCountEl.textContent = activeCount;
-            }
-        }
-
-        function toggleProject(projectName) {
-            projectState[projectName] = !projectState[projectName];
-            updateProjectUI(projectName, projectState[projectName]);
-            saveProjectState();
-
-            // Update welcome stats
-            const activeCount = Object.values(projectState).filter(v => v).length;
-            document.querySelectorAll('.welcome-stat-value')[0].textContent = activeCount;
-        }
-
-        function updateProjectUI(projectName, enabled) {
-            // Update sidebar project group
-            const group = document.getElementById(`${projectName}-group`);
-            if (group) {
-                if (enabled) {
-                    group.classList.remove('disabled');
-                    group.querySelector('.project-toggle').classList.add('enabled');
-                    group.querySelector('.toggle-switch').classList.add('active');
-                    group.querySelector('.status-indicator').classList.remove('status-disabled');
-                    group.querySelector('.status-indicator').classList.add('status-active');
-                    group.querySelectorAll('.nav-item').forEach(item => {
-                        item.classList.remove('disabled');
-                    });
-                } else {
-                    group.classList.add('disabled');
-                    group.querySelector('.project-toggle').classList.remove('enabled');
-                    group.querySelector('.toggle-switch').classList.remove('active');
-                    group.querySelector('.status-indicator').classList.add('status-disabled');
-                    group.querySelector('.status-indicator').classList.remove('status-active');
-                    group.querySelectorAll('.nav-item').forEach(item => {
-                        item.classList.add('disabled');
-                    });
+            function loadProjectState() {
+                const saved = localStorage.getItem("projectState");
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    Object.assign(projectState, parsed);
                 }
             }
 
-            // Update settings modal
-            const setting = document.getElementById(`setting-${projectName}`);
-            if (setting) {
-                if (enabled) {
-                    setting.classList.add('enabled');
-                    setting.querySelector('.toggle-switch').classList.add('active');
-                } else {
-                    setting.classList.remove('enabled');
-                    setting.querySelector('.toggle-switch').classList.remove('active');
+            function saveProjectState() {
+                localStorage.setItem(
+                    "projectState",
+                    JSON.stringify(projectState),
+                );
+            }
+
+            function applyProjectState() {
+                Object.keys(projectState).forEach((project) => {
+                    updateProjectUI(project, projectState[project]);
+                });
+
+                // Update welcome stats
+                const activeCount = Object.values(projectState).filter(
+                    (v) => v,
+                ).length;
+                const activeCountEl = document.querySelector(
+                    ".welcome-stat-value",
+                );
+                if (activeCountEl) {
+                    activeCountEl.textContent = activeCount;
                 }
             }
-        }
 
-        function openSettings() {
-            document.getElementById('settingsModal').classList.add('open');
-        }
+            function toggleProject(projectName) {
+                projectState[projectName] = !projectState[projectName];
+                updateProjectUI(projectName, projectState[projectName]);
+                saveProjectState();
 
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('open');
-        }
-
-        function startApp() {
-            isAppMode = true;
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('appShell').style.display = 'grid';
-
-            // Default to farmhouse blueprint since it's the main project
-            navigateToView('farmhouse-blueprint');
-
-            updateConnectionStatus('connected', '🔗 App Mode Active');
-        }
-
-        function showWelcome() {
-            isAppMode = false;
-            document.getElementById('welcomeScreen').style.display = 'flex';
-            document.getElementById('appShell').style.display = 'none';
-            currentView = 'welcome';
-
-            updateConnectionStatus('connected', '🏠 Welcome Mode');
-        }
-
-        function navigateToView(viewName) {
-            // Check if project is enabled for project-specific views
-            const projectMatch = viewName.match(/^(farmhouse|bunker|cabin)/);
-            if (projectMatch && !projectState[projectMatch[1]]) {
-                alert(`The ${projectMatch[1]} project is currently disabled. Enable it in Settings to access this content.`);
-                return;
+                // Update welcome stats
+                const activeCount = Object.values(projectState).filter(
+                    (v) => v,
+                ).length;
+                document.querySelectorAll(
+                    ".welcome-stat-value",
+                )[0].textContent = activeCount;
             }
 
-            if (!isAppMode) {
-                startApp();
-                // Give time for app shell to render
-                setTimeout(() => loadView(viewName), 100);
-                return;
+            function updateProjectUI(projectName, enabled) {
+                // Update sidebar project group
+                const group = document.getElementById(`${projectName}-group`);
+                if (group) {
+                    if (enabled) {
+                        group.classList.remove("disabled");
+                        group
+                            .querySelector(".project-toggle")
+                            .classList.add("enabled");
+                        group
+                            .querySelector(".toggle-switch")
+                            .classList.add("active");
+                        group
+                            .querySelector(".status-indicator")
+                            .classList.remove("status-disabled");
+                        group
+                            .querySelector(".status-indicator")
+                            .classList.add("status-active");
+                        group.querySelectorAll(".nav-item").forEach((item) => {
+                            item.classList.remove("disabled");
+                        });
+                    } else {
+                        group.classList.add("disabled");
+                        group
+                            .querySelector(".project-toggle")
+                            .classList.remove("enabled");
+                        group
+                            .querySelector(".toggle-switch")
+                            .classList.remove("active");
+                        group
+                            .querySelector(".status-indicator")
+                            .classList.add("status-disabled");
+                        group
+                            .querySelector(".status-indicator")
+                            .classList.remove("status-active");
+                        group.querySelectorAll(".nav-item").forEach((item) => {
+                            item.classList.add("disabled");
+                        });
+                    }
+                }
+
+                // Update settings modal
+                const setting = document.getElementById(
+                    `setting-${projectName}`,
+                );
+                if (setting) {
+                    if (enabled) {
+                        setting.classList.add("enabled");
+                        setting
+                            .querySelector(".toggle-switch")
+                            .classList.add("active");
+                    } else {
+                        setting.classList.remove("enabled");
+                        setting
+                            .querySelector(".toggle-switch")
+                            .classList.remove("active");
+                    }
+                }
             }
 
-            loadView(viewName);
-        }
-
-        function loadView(viewName) {
-            console.log(`🧭 Navigating to: ${viewName}`);
-
-            currentView = viewName;
-
-            updateActiveNavigation(viewName);
-            showLoading(true);
-            updateBreadcrumb(viewName);
-
-            if (viewName.includes('-guide')) {
-                loadMarkdownView(viewName);
-            } else {
-                loadHtmlView(viewName);
+            function openSettings() {
+                document.getElementById("settingsModal").classList.add("open");
             }
 
-            updateUrlHistory(viewName);
-        }
+            function closeSettings() {
+                document
+                    .getElementById("settingsModal")
+                    .classList.remove("open");
+            }
 
-        function loadHtmlView(viewName) {
-            const fileMap = {
-                'dashboard': './components/dashboard.html',
-                'calculator': './components/calculator.html',
-                'scheduler': './components/scheduler.html',
-                'bunker-blueprint': './projects/bunker/blueprint.html',
-                'farmhouse-blueprint': './projects/farmhouse/blueprint.html',
-                'cabin-blueprint': './projects/cabin/blueprint.html'
-            };
+            function startApp() {
+                isAppMode = true;
+                document.getElementById("welcomeScreen").style.display = "none";
+                document.getElementById("appShell").style.display = "grid";
 
-            const filename = fileMap[viewName];
-            if (filename) {
-                const iframe = document.getElementById('contentFrame');
-                iframe.onload = () => {
-                    showLoading(false);
+                // Default to farmhouse blueprint since it's the main project
+                navigateToView("farmhouse-blueprint");
+
+                updateConnectionStatus("connected", "🔗 App Mode Active");
+            }
+
+            function showWelcome() {
+                isAppMode = false;
+                document.getElementById("welcomeScreen").style.display = "flex";
+                document.getElementById("appShell").style.display = "none";
+                currentView = "welcome";
+
+                updateConnectionStatus("connected", "🏠 Welcome Mode");
+            }
+
+            function navigateToView(viewName) {
+                // Check if project is enabled for project-specific views
+                const projectMatch = viewName.match(
+                    /^(farmhouse|bunker|cabin)/,
+                );
+                if (projectMatch && !projectState[projectMatch[1]]) {
+                    alert(
+                        `The ${projectMatch[1]} project is currently disabled. Enable it in Settings to access this content.`,
+                    );
+                    return;
+                }
+
+                if (!isAppMode) {
+                    startApp();
+                    // Give time for app shell to render
+                    setTimeout(() => loadView(viewName), 100);
+                    return;
+                }
+
+                loadView(viewName);
+            }
+
+            function loadView(viewName) {
+                console.log(`🧭 Navigating to: ${viewName}`);
+
+                currentView = viewName;
+
+                updateActiveNavigation(viewName);
+                showLoading(true);
+                updateBreadcrumb(viewName);
+
+                if (viewName.includes("-guide")) {
+                    loadMarkdownView(viewName);
+                } else {
+                    loadHtmlView(viewName);
+                }
+
+                updateUrlHistory(viewName);
+            }
+
+            function loadHtmlView(viewName) {
+                const fileMap = {
+                    dashboard: "./components/dashboard.html",
+                    calculator: "./components/calculator.html",
+                    scheduler: "./components/scheduler.html",
+                    generator: "./components/generator.html",
+                    "bunker-blueprint": "./projects/bunker/blueprint.html",
+                    "farmhouse-blueprint":
+                        "./projects/farmhouse/blueprint.html",
+                    "cabin-blueprint": "./projects/cabin/blueprint.html",
                 };
-                iframe.onerror = () => {
-                    showError(`Failed to load: ${viewName}`);
+
+                const filename = fileMap[viewName];
+                if (filename) {
+                    const iframe = document.getElementById("contentFrame");
+                    iframe.onload = () => {
+                        showLoading(false);
+                    };
+                    iframe.onerror = () => {
+                        showError(`Failed to load: ${viewName}`);
+                        showLoading(false);
+                    };
+                    iframe.src = filename;
+                } else {
+                    showError(`Unknown view: ${viewName}`);
                     showLoading(false);
+                }
+            }
+
+            function loadMarkdownView(viewName) {
+                const fileMap = {
+                    "bunker-guide": "./projects/bunker/guide.md",
+                    "farmhouse-guide": "./projects/farmhouse/guide.md",
+                    "cabin-guide": "./projects/cabin/guide.md",
                 };
-                iframe.src = filename;
-            } else {
-                showError(`Unknown view: ${viewName}`);
-                showLoading(false);
+
+                const filename = fileMap[viewName];
+                if (filename) {
+                    fetch(filename)
+                        .then((response) => {
+                            if (!response.ok)
+                                throw new Error("Failed to load guide");
+                            return response.text();
+                        })
+                        .then((markdown) => {
+                            const iframe =
+                                document.getElementById("contentFrame");
+                            const html = createMarkdownPage(markdown, viewName);
+                            iframe.srcdoc = html;
+                            showLoading(false);
+                        })
+                        .catch((error) => {
+                            console.error("Error loading markdown:", error);
+                            showError("Failed to load construction guide");
+                            showLoading(false);
+                        });
+                } else {
+                    showError(`Unknown guide: ${viewName}`);
+                    showLoading(false);
+                }
             }
-        }
 
-        function loadMarkdownView(viewName) {
-            const fileMap = {
-                'bunker-guide': './projects/bunker/guide.md',
-                'farmhouse-guide': './projects/farmhouse/guide.md',
-                'cabin-guide': './projects/cabin/guide.md'
-            };
+            function createMarkdownPage(markdown, viewName) {
+                const projectName =
+                    viewName.replace("-guide", "").charAt(0).toUpperCase() +
+                    viewName.replace("-guide", "").slice(1);
+                let html = markdown
+                    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+                    .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+                    .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+                    .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+                    .replace(/\*(.*?)\*/gim, "<em>$1</em>")
+                    .replace(/^\- (.*$)/gim, "<li>$1</li>")
+                    .replace(/^\* (.*$)/gim, "<li>$1</li>")
+                    .replace(/\n\n/gim, "</p><p>")
+                    .replace(/\n/gim, "<br>");
 
-            const filename = fileMap[viewName];
-            if (filename) {
-                fetch(filename)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to load guide');
-                        return response.text();
-                    })
-                    .then(markdown => {
-                        const iframe = document.getElementById('contentFrame');
-                        const html = createMarkdownPage(markdown, viewName);
-                        iframe.srcdoc = html;
-                        showLoading(false);
-                    })
-                    .catch(error => {
-                        console.error('Error loading markdown:', error);
-                        showError('Failed to load construction guide');
-                        showLoading(false);
-                    });
-            } else {
-                showError(`Unknown guide: ${viewName}`);
-                showLoading(false);
-            }
-        }
-
-        function createMarkdownPage(markdown, viewName) {
-            const projectName = viewName.replace('-guide', '').charAt(0).toUpperCase() + viewName.replace('-guide', '').slice(1);
-            let html = markdown
-                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-                .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-                .replace(/^\- (.*$)/gim, '<li>$1</li>')
-                .replace(/^\* (.*$)/gim, '<li>$1</li>')
-                .replace(/\n\n/gim, '</p><p>')
-                .replace(/\n/gim, '<br>');
-
-            return `<!DOCTYPE html>
+                return `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -1163,56 +1368,64 @@
     <p>${html}</p>
 </body>
 </html>`;
-        }
-
-        function updateActiveNavigation(viewName) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            const activeItem = document.querySelector(`.nav-item[data-view="${viewName}"]`);
-            if (activeItem) {
-                activeItem.classList.add('active');
             }
-        }
 
-        function updateBreadcrumb(viewName) {
-            const titles = {
-                'dashboard': '📊 Project Dashboard',
-                'calculator': '🧮 Cost Calculator',
-                'scheduler': '📅 Project Scheduler',
-                'bunker-blueprint': '🏢 Bunker Blueprints',
-                'bunker-guide': '📋 Bunker Build Guide',
-                'farmhouse-blueprint': '🏡 Farmhouse Blueprints',
-                'farmhouse-guide': '📋 Farmhouse Build Guide',
-                'cabin-blueprint': '🏘️ Cabin Blueprints',
-                'cabin-guide': '📋 Cabin Build Guide'
-            };
+            function updateActiveNavigation(viewName) {
+                document.querySelectorAll(".nav-item").forEach((item) => {
+                    item.classList.remove("active");
+                });
 
-            document.getElementById('breadcrumb').textContent = titles[viewName] || '🏠 House Build Planner';
-        }
-
-        function updateUrlHistory(viewName) {
-            const url = new URL(window.location);
-            url.hash = viewName;
-            history.pushState({ view: viewName }, '', url);
-        }
-
-        function checkUrlNavigation() {
-            const hash = window.location.hash.substring(1);
-            if (hash && hash !== 'welcome') {
-                navigateToView(hash);
+                const activeItem = document.querySelector(
+                    `.nav-item[data-view="${viewName}"]`,
+                );
+                if (activeItem) {
+                    activeItem.classList.add("active");
+                }
             }
-        }
 
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-            document.getElementById('contentFrame').style.display = show ? 'none' : 'block';
-        }
+            function updateBreadcrumb(viewName) {
+                const titles = {
+                    dashboard: "📊 Project Dashboard",
+                    calculator: "🧮 Cost Calculator",
+                    scheduler: "📅 Project Scheduler",
+                    generator: "🏗️ Floor Plan Generator",
+                    "bunker-blueprint": "🏢 Bunker Blueprints",
+                    "bunker-guide": "📋 Bunker Build Guide",
+                    "farmhouse-blueprint": "🏡 Farmhouse Blueprints",
+                    "farmhouse-guide": "📋 Farmhouse Build Guide",
+                    "cabin-blueprint": "🏘️ Cabin Blueprints",
+                    "cabin-guide": "📋 Cabin Build Guide",
+                };
 
-        function showError(message) {
-            const iframe = document.getElementById('contentFrame');
-            iframe.srcdoc = `
+                document.getElementById("breadcrumb").textContent =
+                    titles[viewName] || "🏠 House Build Planner";
+            }
+
+            function updateUrlHistory(viewName) {
+                const url = new URL(window.location);
+                url.hash = viewName;
+                history.pushState({ view: viewName }, "", url);
+            }
+
+            function checkUrlNavigation() {
+                const hash = window.location.hash.substring(1);
+                if (hash && hash !== "welcome") {
+                    navigateToView(hash);
+                }
+            }
+
+            function showLoading(show) {
+                document.getElementById("loading").style.display = show
+                    ? "flex"
+                    : "none";
+                document.getElementById("contentFrame").style.display = show
+                    ? "none"
+                    : "block";
+            }
+
+            function showError(message) {
+                const iframe = document.getElementById("contentFrame");
+                iframe.srcdoc = `
                 <html>
                 <body style="font-family: 'Courier New', monospace; background: #1a1a2e; color: #ff4444; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
                     <div style="text-align: center;">
@@ -1223,68 +1436,72 @@
                 </body>
                 </html>
             `;
-        }
-
-        function updateConnectionStatus(status, message) {
-            const statusEl = document.getElementById('connectionStatus');
-            statusEl.textContent = message;
-            statusEl.className = 'connection-status ' + status;
-        }
-
-        function updateProgressRing(percent) {
-            const circle = document.getElementById('progressCircle');
-            const text = document.getElementById('progressText');
-            const circumference = 2 * Math.PI * 25;
-            const offset = circumference - (percent / 100) * circumference;
-
-            circle.style.strokeDasharray = circumference;
-            circle.style.strokeDashoffset = offset;
-            text.textContent = percent + '%';
-        }
-
-        function quickCalculator() {
-            navigateToView('calculator');
-        }
-
-        function quickExport() {
-            alert('Export feature coming soon!\n\nThis will export your project data as PDF or CSV.');
-        }
-
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
             }
-        }
 
-        function printContent() {
-            const iframe = document.getElementById('contentFrame');
-            if (iframe.contentWindow) {
-                iframe.contentWindow.print();
+            function updateConnectionStatus(status, message) {
+                const statusEl = document.getElementById("connectionStatus");
+                statusEl.textContent = message;
+                statusEl.className = "connection-status " + status;
             }
-        }
 
-        // Handle browser back/forward
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.view) {
-                loadView(event.state.view);
-            }
-        });
+            function updateProgressRing(percent) {
+                const circle = document.getElementById("progressCircle");
+                const text = document.getElementById("progressText");
+                const circumference = 2 * Math.PI * 25;
+                const offset = circumference - (percent / 100) * circumference;
 
-        // Close modal on escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeSettings();
+                circle.style.strokeDasharray = circumference;
+                circle.style.strokeDashoffset = offset;
+                text.textContent = percent + "%";
             }
-        });
 
-        // Close modal on background click
-        document.getElementById('settingsModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeSettings();
+            function quickCalculator() {
+                navigateToView("calculator");
             }
-        });
-    </script>
-</body>
+
+            function quickExport() {
+                alert(
+                    "Export feature coming soon!\n\nThis will export your project data as PDF or CSV.",
+                );
+            }
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            function printContent() {
+                const iframe = document.getElementById("contentFrame");
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.print();
+                }
+            }
+
+            // Handle browser back/forward
+            window.addEventListener("popstate", function (event) {
+                if (event.state && event.state.view) {
+                    loadView(event.state.view);
+                }
+            });
+
+            // Close modal on escape key
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    closeSettings();
+                }
+            });
+
+            // Close modal on background click
+            document
+                .getElementById("settingsModal")
+                .addEventListener("click", function (event) {
+                    if (event.target === this) {
+                        closeSettings();
+                    }
+                });
+        </script>
+    </body>
 </html>

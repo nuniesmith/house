@@ -1,672 +1,2143 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Farmhouse - Architectural Blueprint</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #00ff88;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
-            color: #0f0f23;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            background: #0f0f23;
-            color: #00ff88;
-            border: 2px solid #00ff88;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #00ff88;
-            color: #0f0f23;
-        }
-
-        .blueprint-container {
-            background: #0f0f23;
-            border: 3px solid #00ff88;
-            padding: 20px;
-            overflow: auto;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
-        }
-
-        .blueprint-svg {
-            display: block;
-            margin: 0 auto;
-        }
-
-        /* Room color classes */
-        .room-living {
-            fill: rgba(255, 243, 176, 0.6);
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .room-outdoor {
-            fill: rgba(176, 224, 230, 0.6);
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .room-garage {
-            fill: rgba(200, 220, 240, 0.5);
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .room-bath {
-            fill: rgba(220, 220, 220, 0.6);
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .room-closet {
-            fill: rgba(245, 245, 220, 0.5);
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .wall-exterior {
-            fill: none;
-            stroke: #0a0a0a;
-            stroke-width: 6;
-        }
-
-        .wall-interior {
-            stroke: #1a1a2e;
-            stroke-width: 3;
-        }
-
-        .room-label {
-            font-family: 'Arial', sans-serif;
-            font-size: 11px;
-            font-weight: bold;
-            fill: #1a1a2e;
-            text-anchor: middle;
-        }
-
-        .room-dimension {
-            font-family: 'Arial', sans-serif;
-            font-size: 9px;
-            fill: #333;
-            text-anchor: middle;
-        }
-
-        .ceiling-height {
-            font-family: 'Arial', sans-serif;
-            font-size: 8px;
-            fill: #555;
-            text-anchor: middle;
-        }
-
-        .dimension-line {
-            stroke: #ff4444;
-            stroke-width: 1;
-        }
-
-        .dimension-text {
-            font-family: 'Arial', sans-serif;
-            font-size: 10px;
-            fill: #ff4444;
-            text-anchor: middle;
-        }
-
-        .door {
-            fill: none;
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .door-swing {
-            fill: none;
-            stroke: #666;
-            stroke-width: 1;
-            stroke-dasharray: 3,2;
-        }
-
-        .window {
-            fill: #87CEEB;
-            stroke: #1a1a2e;
-            stroke-width: 2;
-        }
-
-        .fixture {
-            fill: #ddd;
-            stroke: #666;
-            stroke-width: 1;
-        }
-
-        .fixture-label {
-            font-family: 'Arial', sans-serif;
-            font-size: 7px;
-            fill: #666;
-            text-anchor: middle;
-        }
-
-        .stairs {
-            fill: none;
-            stroke: #666;
-            stroke-width: 1;
-        }
-
-        .legend {
-            margin-top: 20px;
-            padding: 15px;
-            background: #1a1a3a;
-            border: 2px solid #00ff88;
-            border-radius: 8px;
-        }
-
-        .legend h3 {
-            color: #88ff00;
-            margin-bottom: 10px;
-        }
-
-        .legend-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 15px;
-            border: 1px solid #333;
-        }
-
-        .specs {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .spec-card {
-            background: #1a1a3a;
-            border: 2px solid #2a2a5a;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .spec-card h4 {
-            color: #88ff00;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #2a2a5a;
-            padding-bottom: 5px;
-        }
-
-        .spec-card ul {
-            list-style: none;
-            font-size: 0.85rem;
-        }
-
-        .spec-card li {
-            padding: 3px 0;
-            border-bottom: 1px dotted #2a2a5a;
-        }
-
-        .status-badge {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #1a1a3a;
-            border: 2px solid #00ff88;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #00ff88;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    </style>
-</head>
-
-<body>
-    <header class="header">
-        <h1>🏠 Luxury Farmhouse Blueprints</h1>
-        <div class="header-buttons">
-            <button class="btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
-            <button class="btn" onclick="window.print()">🖨 PRINT</button>
-            <button class="btn" onclick="shareBlueprint()">📤 SHARE</button>
-            <button class="btn" onclick="goHome()">🏠 HOME</button>
-        </div>
-    </header>
-
-    <div class="blueprint-container">
-        <svg class="blueprint-svg" viewBox="0 0 1200 900" width="1200" height="900">
-            <!-- Background grid -->
-            <defs>
-                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a1a3a" stroke-width="0.5"/>
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="#0f0f23"/>
-            <rect width="100%" height="100%" fill="url(#grid)"/>
-
-            <!-- Overall dimension lines -->
-            <line x1="50" y1="50" x2="1100" y2="50" class="dimension-line"/>
-            <text x="575" y="40" class="dimension-text">TOTAL: ~100'-0"</text>
-
-            <!-- ==================== ROW 1: TOP ROW ==================== -->
-
-            <!-- Bath 3 (top left corner) -->
-            <rect x="70" y="80" width="50" height="60" class="room-bath"/>
-            <text x="95" y="105" class="room-label">BATH 3</text>
-            <text x="95" y="118" class="room-dimension">6' x 8'</text>
-
-            <!-- WIC (top left) -->
-            <rect x="70" y="140" width="50" height="50" class="room-closet"/>
-            <text x="95" y="168" class="room-label">WIC</text>
-
-            <!-- Bedroom 2 -->
-            <rect x="120" y="80" width="130" height="110" class="room-living"/>
-            <text x="185" y="125" class="room-label">BEDROOM 2</text>
-            <text x="185" y="140" class="room-dimension">14'-2" x 14'-5"</text>
-            <text x="185" y="152" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- Bath 2 -->
-            <rect x="250" y="80" width="60" height="55" class="room-bath"/>
-            <text x="280" y="105" class="room-label">BATH 2</text>
-
-            <!-- WIC (near bath 2) -->
-            <rect x="250" y="135" width="60" height="55" class="room-closet"/>
-            <text x="280" y="165" class="room-label">WIC</text>
-
-            <!-- Breakfast Nook -->
-            <rect x="310" y="80" width="120" height="120" class="room-living"/>
-            <text x="370" y="130" class="room-label">BREAKFAST</text>
-            <text x="370" y="143" class="room-label">NOOK</text>
-            <text x="370" y="158" class="room-dimension">14'-1" x 14'-9"</text>
-            <text x="370" y="170" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Breakfast Porch -->
-            <rect x="430" y="80" width="100" height="100" class="room-outdoor"/>
-            <text x="480" y="120" class="room-label">BREAKFAST</text>
-            <text x="480" y="133" class="room-label">PORCH</text>
-            <text x="480" y="148" class="room-dimension">13'-4" x 12'-4"</text>
-
-            <!-- Outdoor Living -->
-            <rect x="530" y="80" width="200" height="120" class="room-outdoor"/>
-            <text x="630" y="130" class="room-label">OUTDOOR LIVING</text>
-            <text x="630" y="145" class="room-dimension">28'-2" x 15'-4"</text>
-            <text x="630" y="158" class="ceiling-height">VAULTED CLG.</text>
-
-            <!-- Office Porch -->
-            <rect x="730" y="80" width="90" height="90" class="room-outdoor"/>
-            <text x="775" y="115" class="room-label">OFFICE</text>
-            <text x="775" y="128" class="room-label">PORCH</text>
-            <text x="775" y="143" class="room-dimension">11'-4" x 10'-8"</text>
-            <text x="775" y="155" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Master Porch -->
-            <rect x="920" y="80" width="130" height="90" class="room-outdoor"/>
-            <text x="985" y="115" class="room-label">MASTER PORCH</text>
-            <text x="985" y="130" class="room-dimension">19'-2" x 10'-0"</text>
-            <text x="985" y="143" class="ceiling-height">VAULTED CLG.</text>
-
-            <!-- ==================== ROW 2 ==================== -->
-
-            <!-- Bedroom 3 -->
-            <rect x="70" y="190" width="130" height="120" class="room-living"/>
-            <text x="135" y="245" class="room-label">BEDROOM 3</text>
-            <text x="135" y="260" class="room-dimension">17'-3" x 13'-4"</text>
-            <text x="135" y="272" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- WIC for Bedroom 3 -->
-            <rect x="200" y="190" width="50" height="60" class="room-closet"/>
-            <text x="225" y="223" class="room-label">WIC</text>
-
-            <!-- Laundry -->
-            <rect x="200" y="250" width="70" height="60" class="room-living"/>
-            <text x="235" y="278" class="room-label">LAUN.</text>
-            <text x="235" y="291" class="room-dimension">12'-0" CLG.</text>
-
-            <!-- Powder Room -->
-            <rect x="270" y="250" width="50" height="60" class="room-bath"/>
-            <text x="295" y="278" class="room-label">PWDR</text>
-
-            <!-- Kitchen -->
-            <rect x="320" y="200" width="110" height="110" class="room-living"/>
-            <text x="375" y="255" class="room-label">KIT.</text>
-            <!-- Kitchen fixtures -->
-            <rect x="330" y="210" width="40" height="25" class="fixture"/>
-            <rect x="380" y="210" width="40" height="25" class="fixture"/>
-
-            <!-- Pantry -->
-            <rect x="430" y="200" width="70" height="70" class="room-closet"/>
-            <text x="465" y="235" class="room-label">PAN.</text>
-
-            <!-- Family Room -->
-            <rect x="500" y="180" width="170" height="140" class="room-living"/>
-            <text x="585" y="240" class="room-label">FAMILY ROOM</text>
-            <text x="585" y="255" class="room-dimension">16'-6" x 15'-2"</text>
-            <text x="585" y="268" class="ceiling-height">7/12 VAULTED CLG.</text>
-
-            <!-- Office -->
-            <rect x="670" y="170" width="100" height="100" class="room-living"/>
-            <text x="720" y="215" class="room-label">OFFICE</text>
-            <text x="720" y="230" class="room-dimension">12'-0" x 12'-0"</text>
-            <text x="720" y="243" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Master Suite -->
-            <rect x="820" y="170" width="180" height="180" class="room-living"/>
-            <text x="910" y="250" class="room-label">MASTER SUITE</text>
-            <text x="910" y="265" class="room-dimension">17'-8" x 22'-8"</text>
-            <text x="910" y="278" class="ceiling-height">VAULTED CLG.</text>
-
-            <!-- Side Porch (right side) -->
-            <rect x="1000" y="170" width="80" height="250" class="room-outdoor"/>
-            <text x="1040" y="290" class="room-label" transform="rotate(90, 1040, 290)">SIDE PORCH</text>
-            <text x="1040" y="320" class="room-dimension">10'-0" x 32'-0"</text>
-
-            <!-- ==================== ROW 3 ==================== -->
-
-            <!-- 2 Car Garage -->
-            <rect x="70" y="310" width="180" height="220" class="room-garage"/>
-            <text x="160" y="410" class="room-label">2 CAR GARAGE</text>
-            <text x="160" y="430" class="room-dimension">25'-2" x 31'-9"</text>
-            <text x="160" y="445" class="ceiling-height">9'-8" CLG. A.F.F.</text>
-            <!-- Garage door indicators -->
-            <rect x="80" y="520" width="70" height="8" class="fixture"/>
-            <rect x="170" y="520" width="70" height="8" class="fixture"/>
-
-            <!-- Mud Room -->
-            <rect x="250" y="310" width="90" height="70" class="room-living"/>
-            <text x="295" y="340" class="room-label">MUD ROOM</text>
-            <text x="295" y="355" class="room-dimension">11'-4" x 7'-5"</text>
-            <text x="295" y="367" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- Bath 4 -->
-            <rect x="340" y="310" width="55" height="50" class="room-bath"/>
-            <text x="368" y="335" class="room-label">BATH 4</text>
-
-            <!-- WIC near Bath 4 -->
-            <rect x="395" y="310" width="50" height="50" class="room-closet"/>
-            <text x="420" y="338" class="room-label">WIC</text>
-
-            <!-- Bedroom 4 -->
-            <rect x="250" y="380" width="150" height="120" class="room-living"/>
-            <text x="325" y="435" class="room-label">BEDROOM 4</text>
-            <text x="325" y="450" class="room-dimension">18'-4" x 13'-11"</text>
-            <text x="325" y="462" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- Butler's Pantry -->
-            <rect x="400" y="360" width="100" height="80" class="room-living"/>
-            <text x="450" y="395" class="room-label">BUTLER'S</text>
-            <text x="450" y="408" class="room-label">PANTRY</text>
-            <text x="450" y="423" class="room-dimension">15'-10" x 9'-0"</text>
-
-            <!-- Front Hall -->
-            <rect x="500" y="320" width="90" height="100" class="room-living"/>
-            <text x="545" y="365" class="room-label">FRONT</text>
-            <text x="545" y="378" class="room-label">HALL</text>
-            <text x="545" y="393" class="room-dimension">10'-2" x 12'-5"</text>
-            <text x="545" y="405" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Bar -->
-            <rect x="590" y="320" width="110" height="80" class="room-living"/>
-            <text x="645" y="355" class="room-label">BAR</text>
-            <text x="645" y="370" class="room-dimension">14'-6" x 9'-0"</text>
-            <text x="645" y="383" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- WIC 1 (Master) -->
-            <rect x="700" y="350" width="60" height="70" class="room-closet"/>
-            <text x="730" y="385" class="room-label">WIC</text>
-            <text x="730" y="398" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- WIC 2 (Master) -->
-            <rect x="760" y="350" width="60" height="70" class="room-closet"/>
-            <text x="790" y="385" class="room-label">WIC</text>
-            <text x="790" y="398" class="ceiling-height">12'-0" CLG.</text>
-
-            <!-- Master Bath -->
-            <rect x="820" y="350" width="100" height="70" class="room-bath"/>
-            <text x="870" y="380" class="room-label">MASTER BATH</text>
-            <text x="870" y="395" class="ceiling-height">12'-0" CLG.</text>
-            <!-- Bath fixtures -->
-            <ellipse cx="840" cy="375" rx="12" ry="8" class="fixture"/>
-            <ellipse cx="900" cy="375" rx="12" ry="8" class="fixture"/>
-            <rect x="855" y="400" width="30" height="15" class="fixture"/>
-
-            <!-- ==================== ROW 4: BOTTOM ROW ==================== -->
-
-            <!-- Dining Room -->
-            <rect x="320" y="500" width="140" height="120" class="room-living"/>
-            <text x="390" y="555" class="room-label">DINING ROOM</text>
-            <text x="390" y="570" class="room-dimension">18'-4" x 14'-6"</text>
-            <text x="390" y="583" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Foyer -->
-            <rect x="460" y="420" width="100" height="120" class="room-living"/>
-            <text x="510" y="475" class="room-label">FOYER</text>
-            <text x="510" y="490" class="room-dimension">11'-4" x 13'-4"</text>
-            <text x="510" y="503" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Lounge -->
-            <rect x="560" y="400" width="120" height="110" class="room-living"/>
-            <text x="620" y="450" class="room-label">LOUNGE</text>
-            <text x="620" y="465" class="room-dimension">14'-2" x 12'-2"</text>
-            <text x="620" y="478" class="ceiling-height">14'-0" CLG.</text>
-
-            <!-- Front Porch (bottom, spanning width) -->
-            <rect x="250" y="620" width="500" height="100" class="room-outdoor"/>
-            <text x="500" y="665" class="room-label">FRONT PORCH</text>
-            <text x="500" y="685" class="room-dimension">56'-8" x 12'-4"</text>
-            <text x="500" y="700" class="ceiling-height">12'-8" CLG. A.F.F.</text>
-
-            <!-- Windows on Front Porch -->
-            <rect x="270" y="620" width="8" height="30" class="window"/>
-            <rect x="350" y="620" width="8" height="30" class="window"/>
-            <rect x="430" y="620" width="8" height="30" class="window"/>
-            <rect x="510" y="620" width="8" height="30" class="window"/>
-            <rect x="590" y="620" width="8" height="30" class="window"/>
-            <rect x="670" y="620" width="8" height="30" class="window"/>
-
-            <!-- Exterior walls outline -->
-            <rect x="65" y="75" width="1020" height="650" fill="none" stroke="#0a0a0a" stroke-width="4"/>
-
-            <!-- Decorative elements on outdoor areas -->
-            <line x1="530" y1="85" x2="530" y2="195" stroke="#4a9" stroke-width="2" stroke-dasharray="5,3"/>
-            <line x1="730" y1="85" x2="730" y2="165" stroke="#4a9" stroke-width="2" stroke-dasharray="5,3"/>
-
-        </svg>
-    </div>
-
-    <!-- Legend -->
-    <div class="legend">
-        <h3>📋 Room Legend</h3>
-        <div class="legend-grid">
-            <div class="legend-item">
-                <div class="legend-color" style="background: rgba(255, 243, 176, 0.8);"></div>
-                <span>Living Spaces / Bedrooms</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: rgba(176, 224, 230, 0.8);"></div>
-                <span>Outdoor / Porches</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: rgba(220, 220, 220, 0.8);"></div>
-                <span>Bathrooms</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: rgba(245, 245, 220, 0.7);"></div>
-                <span>Closets / Storage</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: rgba(200, 220, 240, 0.7);"></div>
-                <span>Garage</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Specifications -->
-    <div class="specs">
-        <div class="spec-card">
-            <h4>🛏 Bedrooms</h4>
-            <ul>
-                <li>Master Suite: 17'-8" x 22'-8"</li>
-                <li>Bedroom 2: 14'-2" x 14'-5"</li>
-                <li>Bedroom 3: 17'-3" x 13'-4"</li>
-                <li>Bedroom 4: 18'-4" x 13'-11"</li>
-            </ul>
-        </div>
-        <div class="spec-card">
-            <h4>🚿 Bathrooms</h4>
-            <ul>
-                <li>Master Bath: 12'-0" CLG.</li>
-                <li>Bath 2: Full</li>
-                <li>Bath 3: Full</li>
-                <li>Bath 4: Full</li>
-                <li>Powder Room: Half</li>
-            </ul>
-        </div>
-        <div class="spec-card">
-            <h4>🏠 Living Spaces</h4>
-            <ul>
-                <li>Family Room: 16'-6" x 15'-2"</li>
-                <li>Dining Room: 18'-4" x 14'-6"</li>
-                <li>Lounge: 14'-2" x 12'-2"</li>
-                <li>Breakfast Nook: 14'-1" x 14'-9"</li>
-                <li>Office: 12'-0" x 12'-0"</li>
-            </ul>
-        </div>
-        <div class="spec-card">
-            <h4>🌳 Outdoor Spaces</h4>
-            <ul>
-                <li>Front Porch: 56'-8" x 12'-4"</li>
-                <li>Outdoor Living: 28'-2" x 15'-4"</li>
-                <li>Master Porch: 19'-2" x 10'-0"</li>
-                <li>Breakfast Porch: 13'-4" x 12'-4"</li>
-                <li>Side Porch: 10'-0" x 32'-0"</li>
-            </ul>
-        </div>
-        <div class="spec-card">
-            <h4>🚗 Garage & Utility</h4>
-            <ul>
-                <li>2 Car Garage: 25'-2" x 31'-9"</li>
-                <li>Mud Room: 11'-4" x 7'-5"</li>
-                <li>Laundry: 12'-0" CLG.</li>
-                <li>Butler's Pantry: 15'-10" x 9'-0"</li>
-                <li>Bar: 14'-6" x 9'-0"</li>
-            </ul>
-        </div>
-        <div class="spec-card">
-            <h4>📐 Ceiling Heights</h4>
-            <ul>
-                <li>Family Room: 7/12 Vaulted</li>
-                <li>Master Suite: Vaulted</li>
-                <li>Outdoor Living: Vaulted</li>
-                <li>Main Living: 14'-0"</li>
-                <li>Bedrooms: 12'-0"</li>
-                <li>Garage: 9'-8" A.F.F.</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="status-badge">
-        <div class="status-dot"></div>
-        <span>App Mode Active</span>
-    </div>
-
-    <script>
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Luxury Farmhouse - Architectural Blueprint</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
-        }
 
-        function shareBlueprint() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Luxury Farmhouse Blueprint',
-                    text: 'Check out this floor plan!',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link copied to clipboard!');
+            body {
+                font-family: "Courier New", monospace;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: #00ff88;
+                min-height: 100vh;
+                padding: 20px;
             }
-        }
 
-        function goHome() {
-            if (window.parent !== window) {
-                window.parent.postMessage({ type: 'navigate', view: 'dashboard' }, '*');
-            } else {
-                window.location.href = '../../index.html';
+            .header {
+                background: linear-gradient(135deg, #00ff88 0%, #88ff00 100%);
+                color: #0f0f23;
+                padding: 15px 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                border-radius: 8px;
             }
-        }
 
-        // Listen for messages from parent
-        window.addEventListener('message', function(event) {
-            if (event.data.type === 'projectUpdate') {
-                console.log('Project update received:', event.data);
+            .header h1 {
+                font-size: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
             }
-        });
-    </script>
-</body>
 
+            .header-buttons {
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                background: #0f0f23;
+                color: #00ff88;
+                border: 2px solid #00ff88;
+                cursor: pointer;
+                font-family: "Courier New", monospace;
+                font-weight: bold;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                transition: all 0.3s ease;
+                border-radius: 4px;
+            }
+
+            .btn:hover {
+                background: #00ff88;
+                color: #0f0f23;
+            }
+
+            .blueprint-container {
+                background: #0f0f23;
+                border: 3px solid #00ff88;
+                padding: 20px;
+                overflow: auto;
+                box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+                border-radius: 8px;
+            }
+
+            .blueprint-svg {
+                display: block;
+                margin: 0 auto;
+            }
+
+            .floor-tabs {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .floor-tab {
+                padding: 10px 20px;
+                background: #1a1a3a;
+                border: 2px solid #333366;
+                border-radius: 6px;
+                color: #00ff88;
+                cursor: pointer;
+                font-family: "Courier New", monospace;
+                font-size: 0.9em;
+                transition: all 0.2s;
+            }
+
+            .floor-tab:hover {
+                border-color: #00ff88;
+            }
+
+            .floor-tab.active {
+                background: #00ff88;
+                color: #0f0f23;
+                border-color: #00ff88;
+                font-weight: bold;
+            }
+
+            .floor-plan {
+                display: none;
+            }
+            .floor-plan.active {
+                display: block;
+            }
+
+            .legend {
+                margin-top: 20px;
+                padding: 20px;
+                background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+                border-radius: 10px;
+                border: 2px solid #333366;
+            }
+
+            .legend h3 {
+                color: #88ff00;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .legend-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 10px;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85em;
+            }
+
+            .legend-color {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                border: 1px solid #555;
+                flex-shrink: 0;
+            }
+
+            .specs {
+                margin-top: 20px;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 15px;
+            }
+
+            .spec-card {
+                background: linear-gradient(135deg, #2a2a5a 0%, #1a1a3a 100%);
+                border-radius: 10px;
+                padding: 20px;
+                border: 2px solid #333366;
+            }
+
+            .spec-card h4 {
+                color: #88ff00;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-size: 0.9em;
+            }
+
+            .spec-card ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .spec-card li {
+                padding: 5px 0;
+                border-bottom: 1px solid #1a1a3a;
+                font-size: 0.85em;
+            }
+
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 15px;
+                background: rgba(0, 255, 136, 0.1);
+                border: 1px solid #00ff88;
+                border-radius: 20px;
+                font-size: 0.85em;
+                margin-top: 15px;
+            }
+
+            .status-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #00ff88;
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .header {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                .header-buttons {
+                    flex-wrap: wrap;
+                }
+                .floor-tabs {
+                    flex-wrap: wrap;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <header class="header">
+            <h1>🏠 Luxury Farmhouse Blueprints</h1>
+            <div class="header-buttons">
+                <button class="btn" onclick="toggleFullscreen()">
+                    ⛶ FULLSCREEN
+                </button>
+                <button class="btn" onclick="window.print()">🖨 PRINT</button>
+                <button class="btn" onclick="shareBlueprint()">📤 SHARE</button>
+                <button class="btn" onclick="goHome()">🏠 HOME</button>
+            </div>
+        </header>
+
+        <!-- Floor Tabs -->
+        <div class="floor-tabs">
+            <div class="floor-tab active" onclick="showFloor('main')">
+                🏠 Main Floor
+            </div>
+            <div class="floor-tab" onclick="showFloor('basement')">
+                🏗️ Basement
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- MAIN FLOOR PLAN - Matches config.yaml exactly                    -->
+        <!-- Config coordinate system: origin bottom-left, Y up              -->
+        <!-- SVG transform: svg_x = (x+10)*8+40, svg_y = (80-y-h)*8+40      -->
+        <!-- Scale: 8px per foot, margin: 40px                                -->
+        <!-- Figure bounds: x_min=-10, x_max=130, y_min=-20, y_max=80        -->
+        <!-- ================================================================ -->
+        <div class="floor-plan active" id="floor-main">
+            <div class="blueprint-container">
+                <svg
+                    class="blueprint-svg"
+                    viewBox="0 0 1180 820"
+                    width="1180"
+                    height="820"
+                >
+                    <!-- Background -->
+                    <defs>
+                        <pattern
+                            id="grid-main"
+                            width="16"
+                            height="16"
+                            patternUnits="userSpaceOnUse"
+                        >
+                            <path
+                                d="M 16 0 L 0 0 0 16"
+                                fill="none"
+                                stroke="#1a1a3a"
+                                stroke-width="0.5"
+                            />
+                        </pattern>
+                        <!-- Door swing arc marker -->
+                        <marker
+                            id="arrowhead"
+                            markerWidth="6"
+                            markerHeight="4"
+                            refX="0"
+                            refY="2"
+                            orient="auto"
+                        >
+                            <polygon points="0 0, 6 2, 0 4" fill="#8b4513" />
+                        </marker>
+                    </defs>
+                    <rect width="100%" height="100%" fill="#0f0f23" />
+                    <rect width="100%" height="100%" fill="url(#grid-main)" />
+
+                    <!-- Title -->
+                    <text
+                        x="590"
+                        y="30"
+                        text-anchor="middle"
+                        fill="#88ff00"
+                        font-size="16"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        REVISED MAIN FLOOR LAYOUT — ~125' × ~70'
+                    </text>
+
+                    <!-- ==================== ROOMS ==================== -->
+
+                    <!-- GARAGE: x=0,y=10,w=25,h=32 → svg(120,344,200,256) -->
+                    <rect
+                        x="120"
+                        y="344"
+                        width="200"
+                        height="256"
+                        fill="#f5f5f5"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="220"
+                        y="465"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        GARAGE
+                    </text>
+                    <text
+                        x="220"
+                        y="485"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="11"
+                        font-family="Courier New"
+                    >
+                        25' × 32'
+                    </text>
+
+                    <!-- MUD ROOM: x=25,y=10,w=12,h=12 → svg(320,504,96,96) -->
+                    <rect
+                        x="320"
+                        y="504"
+                        width="96"
+                        height="96"
+                        fill="#ffdfba"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="368"
+                        y="550"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="11"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        MUD
+                    </text>
+                    <text
+                        x="368"
+                        y="563"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="11"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        ROOM
+                    </text>
+
+                    <!-- BEDROOM 4: x=25,y=22,w=18,h=14 → svg(320,392,144,112) -->
+                    <rect
+                        x="320"
+                        y="392"
+                        width="144"
+                        height="112"
+                        fill="#fffde7"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="392"
+                        y="445"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BEDROOM 4
+                    </text>
+                    <text
+                        x="392"
+                        y="462"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        18' × 14'
+                    </text>
+
+                    <!-- BATH 4: x=25,y=36,w=10,h=8 → svg(320,328,80,64) -->
+                    <rect
+                        x="320"
+                        y="328"
+                        width="80"
+                        height="64"
+                        fill="#e0ffff"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="360"
+                        y="358"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="11"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BATH 4
+                    </text>
+                    <text
+                        x="360"
+                        y="373"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        10' × 8'
+                    </text>
+
+                    <!-- LAUNDRY: x=35,y=36,w=8,h=8 → svg(400,328,64,64) -->
+                    <rect
+                        x="400"
+                        y="328"
+                        width="64"
+                        height="64"
+                        fill="#ffdfba"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="432"
+                        y="358"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="10"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        LAUNDRY
+                    </text>
+
+                    <!-- BEDROOM 3: x=25,y=44,w=18,h=14 → svg(320,216,144,112) -->
+                    <rect
+                        x="320"
+                        y="216"
+                        width="144"
+                        height="112"
+                        fill="#fffde7"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="392"
+                        y="268"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BEDROOM 3
+                    </text>
+                    <text
+                        x="392"
+                        y="285"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        18' × 14'
+                    </text>
+
+                    <!-- BEDROOM 2: x=25,y=58,w=18,h=14 → svg(320,104,144,112) -->
+                    <rect
+                        x="320"
+                        y="104"
+                        width="144"
+                        height="112"
+                        fill="#fffde7"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="392"
+                        y="155"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BEDROOM 2
+                    </text>
+                    <text
+                        x="392"
+                        y="172"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        18' × 14'
+                    </text>
+
+                    <!-- DINING ROOM: x=43,y=0,w=18,h=15 → svg(464,560,144,120) -->
+                    <rect
+                        x="464"
+                        y="560"
+                        width="144"
+                        height="120"
+                        fill="#fff8dc"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="536"
+                        y="616"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        DINING
+                    </text>
+                    <text
+                        x="536"
+                        y="632"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        ROOM
+                    </text>
+                    <text
+                        x="536"
+                        y="649"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        18' × 15'
+                    </text>
+
+                    <!-- FOYER: x=61,y=0,w=12,h=15 → svg(608,560,96,120) -->
+                    <rect
+                        x="608"
+                        y="560"
+                        width="96"
+                        height="120"
+                        fill="#fffbeb"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="656"
+                        y="618"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        FOYER
+                    </text>
+                    <text
+                        x="656"
+                        y="635"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        12' × 15'
+                    </text>
+
+                    <!-- LOUNGE: x=73,y=0,w=14,h=15 → svg(704,560,112,120) -->
+                    <rect
+                        x="704"
+                        y="560"
+                        width="112"
+                        height="120"
+                        fill="#fff8dc"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="760"
+                        y="618"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        LOUNGE
+                    </text>
+                    <text
+                        x="760"
+                        y="635"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        14' × 15'
+                    </text>
+
+                    <!-- BUTLER'S PANTRY: x=43,y=15,w=16,h=10 → svg(464,480,128,80) -->
+                    <rect
+                        x="464"
+                        y="480"
+                        width="128"
+                        height="80"
+                        fill="#ffdfba"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="528"
+                        y="516"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="11"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BUTLER'S
+                    </text>
+                    <text
+                        x="528"
+                        y="530"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="11"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        PANTRY
+                    </text>
+                    <text
+                        x="528"
+                        y="546"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        16' × 10'
+                    </text>
+
+                    <!-- KITCHEN: x=43,y=25,w=20,h=18 → svg(464,336,160,144) -->
+                    <rect
+                        x="464"
+                        y="336"
+                        width="160"
+                        height="144"
+                        fill="#ffeebb"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="544"
+                        y="404"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        KITCHEN
+                    </text>
+                    <text
+                        x="544"
+                        y="422"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        20' × 18'
+                    </text>
+                    <!-- Kitchen fixtures -->
+                    <rect
+                        x="474"
+                        y="346"
+                        width="50"
+                        height="16"
+                        fill="#ddd"
+                        stroke="#999"
+                        stroke-width="1"
+                        rx="2"
+                    />
+                    <rect
+                        x="534"
+                        y="346"
+                        width="50"
+                        height="16"
+                        fill="#ddd"
+                        stroke="#999"
+                        stroke-width="1"
+                        rx="2"
+                    />
+                    <rect
+                        x="594"
+                        y="346"
+                        width="20"
+                        height="16"
+                        fill="#cce5ff"
+                        stroke="#999"
+                        stroke-width="1"
+                        rx="2"
+                    />
+
+                    <!-- FAMILY ROOM: x=63,y=25,w=24,h=18 → svg(624,336,192,144) -->
+                    <rect
+                        x="624"
+                        y="336"
+                        width="192"
+                        height="144"
+                        fill="#fafafa"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="720"
+                        y="404"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        FAMILY ROOM
+                    </text>
+                    <text
+                        x="720"
+                        y="422"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        24' × 18'
+                    </text>
+                    <!-- Fireplace icon in family room -->
+                    <rect
+                        x="800"
+                        y="340"
+                        width="12"
+                        height="30"
+                        fill="#888"
+                        stroke="#555"
+                        stroke-width="1"
+                    />
+
+                    <!-- OFFICE: x=87,y=25,w=14,h=14 → svg(816,368,112,112) -->
+                    <rect
+                        x="816"
+                        y="368"
+                        width="112"
+                        height="112"
+                        fill="#f5f5f5"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="872"
+                        y="420"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        OFFICE
+                    </text>
+                    <text
+                        x="872"
+                        y="437"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        14' × 14'
+                    </text>
+
+                    <!-- MASTER SUITE: x=87,y=0,w=20,h=25 → svg(816,480,160,200) -->
+                    <rect
+                        x="816"
+                        y="480"
+                        width="160"
+                        height="200"
+                        fill="#fffde7"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="896"
+                        y="570"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        MASTER
+                    </text>
+                    <text
+                        x="896"
+                        y="588"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        SUITE
+                    </text>
+                    <text
+                        x="896"
+                        y="608"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        20' × 25'
+                    </text>
+
+                    <!-- MASTER BATH: x=107,y=0,w=14,h=15 → svg(976,560,112,120) -->
+                    <rect
+                        x="976"
+                        y="560"
+                        width="112"
+                        height="120"
+                        fill="#e0ffff"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="1032"
+                        y="616"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="12"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        MASTER
+                    </text>
+                    <text
+                        x="1032"
+                        y="632"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="12"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BATH
+                    </text>
+                    <text
+                        x="1032"
+                        y="648"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        14' × 15'
+                    </text>
+                    <!-- Bath fixtures -->
+                    <ellipse
+                        cx="1000"
+                        cy="640"
+                        rx="12"
+                        ry="8"
+                        fill="#cce5ff"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <ellipse
+                        cx="1060"
+                        cy="640"
+                        rx="12"
+                        ry="8"
+                        fill="#cce5ff"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <rect
+                        x="1020"
+                        y="660"
+                        width="24"
+                        height="12"
+                        fill="#eee"
+                        stroke="#999"
+                        stroke-width="1"
+                        rx="3"
+                    />
+
+                    <!-- WIC: x=107,y=15,w=14,h=10 → svg(976,480,112,80) -->
+                    <rect
+                        x="976"
+                        y="480"
+                        width="112"
+                        height="80"
+                        fill="#f0f0f0"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="1032"
+                        y="520"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="12"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        WIC
+                    </text>
+                    <text
+                        x="1032"
+                        y="536"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        14' × 10'
+                    </text>
+
+                    <!-- FRONT PORCH: x=40,y=-10,w=50,h=10 → svg(440,680,400,80) -->
+                    <rect
+                        x="440"
+                        y="680"
+                        width="400"
+                        height="80"
+                        fill="#f0fff0"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.7"
+                        stroke-dasharray="8,4"
+                    />
+                    <text
+                        x="640"
+                        y="718"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        FRONT PORCH
+                    </text>
+                    <text
+                        x="640"
+                        y="738"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        50' × 10'
+                    </text>
+
+                    <!-- OUTDOOR LIVING: x=45,y=43,w=40,h=15 → svg(480,216,320,120) -->
+                    <rect
+                        x="480"
+                        y="216"
+                        width="320"
+                        height="120"
+                        fill="#f0fff0"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.7"
+                        stroke-dasharray="8,4"
+                    />
+                    <text
+                        x="640"
+                        y="272"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        OUTDOOR LIVING
+                    </text>
+                    <text
+                        x="640"
+                        y="292"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        40' × 15'
+                    </text>
+
+                    <!-- ==================== DOORS ==================== -->
+                    <!-- Front Entry: x=48,y=0,w=5,dir=up -->
+                    <line
+                        x1="504"
+                        y1="680"
+                        x2="544"
+                        y2="680"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+                    <path
+                        d="M 504 680 Q 504 650, 544 680"
+                        fill="none"
+                        stroke="#8b4513"
+                        stroke-width="1.5"
+                        stroke-dasharray="4,2"
+                    />
+
+                    <!-- Garage to Mud Room: x=25,y=12,w=3,dir=right -->
+                    <line
+                        x1="320"
+                        y1="584"
+                        x2="320"
+                        y2="560"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+                    <path
+                        d="M 320 584 Q 348 584, 320 560"
+                        fill="none"
+                        stroke="#8b4513"
+                        stroke-width="1.5"
+                        stroke-dasharray="4,2"
+                    />
+
+                    <!-- Mud Room to Interior: x=25,y=18,w=3,dir=right -->
+                    <line
+                        x1="320"
+                        y1="536"
+                        x2="320"
+                        y2="512"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+
+                    <!-- Master Suite Entry: x=87,y=5,w=3,dir=right -->
+                    <line
+                        x1="816"
+                        y1="640"
+                        x2="816"
+                        y2="616"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+                    <path
+                        d="M 816 640 Q 840 640, 816 616"
+                        fill="none"
+                        stroke="#8b4513"
+                        stroke-width="1.5"
+                        stroke-dasharray="4,2"
+                    />
+
+                    <!-- Office Entry: x=87,y=28,w=4,dir=right -->
+                    <line
+                        x1="816"
+                        y1="448"
+                        x2="816"
+                        y2="416"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+                    <path
+                        d="M 816 448 Q 840 448, 816 416"
+                        fill="none"
+                        stroke="#8b4513"
+                        stroke-width="1.5"
+                        stroke-dasharray="4,2"
+                    />
+
+                    <!-- Bedroom 2 Entry: x=38,y=60,w=3,dir=left -->
+                    <line
+                        x1="424"
+                        y1="200"
+                        x2="424"
+                        y2="176"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+
+                    <!-- Bedroom 3 Entry: x=38,y=46,w=3,dir=left -->
+                    <line
+                        x1="424"
+                        y1="312"
+                        x2="424"
+                        y2="288"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+
+                    <!-- Bedroom 4 Entry: x=38,y=24,w=3,dir=left -->
+                    <line
+                        x1="424"
+                        y1="488"
+                        x2="424"
+                        y2="464"
+                        stroke="#8b4513"
+                        stroke-width="3"
+                    />
+
+                    <!-- ==================== WINDOWS ==================== -->
+                    <!-- Front Facade Dining: x=45,y=0,w=6,horiz -->
+                    <rect
+                        x="480"
+                        y="676"
+                        width="48"
+                        height="8"
+                        fill="#87CEEB"
+                        stroke="#4682B4"
+                        stroke-width="1.5"
+                        rx="1"
+                    />
+                    <line
+                        x1="504"
+                        y1="676"
+                        x2="504"
+                        y2="684"
+                        stroke="#4682B4"
+                        stroke-width="0.5"
+                    />
+
+                    <!-- Front Facade Lounge: x=75,y=0,w=6,horiz -->
+                    <rect
+                        x="720"
+                        y="676"
+                        width="48"
+                        height="8"
+                        fill="#87CEEB"
+                        stroke="#4682B4"
+                        stroke-width="1.5"
+                        rx="1"
+                    />
+                    <line
+                        x1="744"
+                        y1="676"
+                        x2="744"
+                        y2="684"
+                        stroke="#4682B4"
+                        stroke-width="0.5"
+                    />
+
+                    <!-- Garage west wall: x=0,y=20,w=6,vert -->
+                    <rect
+                        x="116"
+                        y="424"
+                        width="8"
+                        height="48"
+                        fill="#87CEEB"
+                        stroke="#4682B4"
+                        stroke-width="1.5"
+                        rx="1"
+                    />
+                    <line
+                        x1="116"
+                        y1="448"
+                        x2="124"
+                        y2="448"
+                        stroke="#4682B4"
+                        stroke-width="0.5"
+                    />
+
+                    <!-- Master Bedroom east wall: x=107,y=10,w=8,vert -->
+                    <rect
+                        x="972"
+                        y="520"
+                        width="8"
+                        height="64"
+                        fill="#87CEEB"
+                        stroke="#4682B4"
+                        stroke-width="1.5"
+                        rx="1"
+                    />
+                    <line
+                        x1="972"
+                        y1="552"
+                        x2="980"
+                        y2="552"
+                        stroke="#4682B4"
+                        stroke-width="0.5"
+                    />
+
+                    <!-- Family Room rear: x=65,y=43,w=8,horiz -->
+                    <rect
+                        x="640"
+                        y="332"
+                        width="64"
+                        height="8"
+                        fill="#87CEEB"
+                        stroke="#4682B4"
+                        stroke-width="1.5"
+                        rx="1"
+                    />
+                    <line
+                        x1="672"
+                        y1="332"
+                        x2="672"
+                        y2="340"
+                        stroke="#4682B4"
+                        stroke-width="0.5"
+                    />
+
+                    <!-- Kitchen rear: x=45,y=43,w=6,horiz -->
+                    <rect
+                        x="480"
+                        y="332"
+                        width="48"
+                        height="8"
+                        fill="#87CEEB"
+                        stroke="#4682B4"
+                        stroke-width="1.5"
+                        rx="1"
+                    />
+                    <line
+                        x1="504"
+                        y1="332"
+                        x2="504"
+                        y2="340"
+                        stroke="#4682B4"
+                        stroke-width="0.5"
+                    />
+
+                    <!-- ==================== DIMENSION ARROWS ==================== -->
+                    <!-- Overall width -->
+                    <line
+                        x1="120"
+                        y1="785"
+                        x2="1088"
+                        y2="785"
+                        stroke="#888"
+                        stroke-width="1"
+                        marker-start="url(#arrowhead)"
+                    />
+                    <text
+                        x="604"
+                        y="800"
+                        text-anchor="middle"
+                        fill="#888"
+                        font-size="12"
+                        font-family="Courier New"
+                    >
+                        ~125'
+                    </text>
+
+                    <!-- Overall height -->
+                    <line
+                        x1="55"
+                        y1="104"
+                        x2="55"
+                        y2="760"
+                        stroke="#888"
+                        stroke-width="1"
+                    />
+                    <text
+                        x="45"
+                        y="432"
+                        text-anchor="middle"
+                        fill="#888"
+                        font-size="12"
+                        font-family="Courier New"
+                        transform="rotate(-90, 45, 432)"
+                    >
+                        ~70'
+                    </text>
+
+                    <!-- ==================== NORTH ARROW ==================== -->
+                    <g transform="translate(1100, 120)">
+                        <circle
+                            cx="0"
+                            cy="0"
+                            r="20"
+                            fill="none"
+                            stroke="#00ff88"
+                            stroke-width="2"
+                        />
+                        <polygon points="0,-18 -6,6 0,0 6,6" fill="#00ff88" />
+                        <text
+                            x="0"
+                            y="-24"
+                            text-anchor="middle"
+                            fill="#00ff88"
+                            font-size="14"
+                            font-weight="bold"
+                            font-family="Courier New"
+                        >
+                            N
+                        </text>
+                    </g>
+
+                    <!-- Compass directions -->
+                    <text
+                        x="1100"
+                        y="155"
+                        text-anchor="middle"
+                        fill="#555"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        S
+                    </text>
+                    <text
+                        x="1070"
+                        y="122"
+                        text-anchor="middle"
+                        fill="#555"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        W
+                    </text>
+                    <text
+                        x="1130"
+                        y="122"
+                        text-anchor="middle"
+                        fill="#555"
+                        font-size="9"
+                        font-family="Courier New"
+                    >
+                        E
+                    </text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- BASEMENT FLOOR PLAN - Matches config.yaml exactly                -->
+        <!-- Config: 100' wide × 60' tall                                     -->
+        <!-- Figure bounds: x_min=-5, x_max=110, y_min=-5, y_max=70          -->
+        <!-- SVG transform: svg_x = (x+5)*8+40, svg_y = (70-y-h)*8+40       -->
+        <!-- ================================================================ -->
+        <div class="floor-plan" id="floor-basement">
+            <div class="blueprint-container">
+                <svg
+                    class="blueprint-svg"
+                    viewBox="0 0 980 680"
+                    width="980"
+                    height="680"
+                >
+                    <defs>
+                        <pattern
+                            id="grid-bsmt"
+                            width="16"
+                            height="16"
+                            patternUnits="userSpaceOnUse"
+                        >
+                            <path
+                                d="M 16 0 L 0 0 0 16"
+                                fill="none"
+                                stroke="#1a1a3a"
+                                stroke-width="0.5"
+                            />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="#0f0f23" />
+                    <rect width="100%" height="100%" fill="url(#grid-bsmt)" />
+
+                    <!-- Title -->
+                    <text
+                        x="490"
+                        y="30"
+                        text-anchor="middle"
+                        fill="#88ff00"
+                        font-size="16"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BASEMENT FLOOR PLAN — 100' × 60' — PHASE 1 ROUGH-IN
+                    </text>
+
+                    <!-- Ceiling note -->
+                    <text
+                        x="490"
+                        y="50"
+                        text-anchor="middle"
+                        fill="#888"
+                        font-size="10"
+                        font-style="italic"
+                        font-family="Courier New"
+                    >
+                        12' Ceilings Throughout — ICF Foundation — PHASE 1:
+                        ROUGH-IN ONLY
+                    </text>
+
+                    <!-- ==================== BASEMENT ROOMS ==================== -->
+
+                    <!-- POOL / HOT TUB: x=0,y=0,w=25,h=35 → svg((0+5)*8+40, (70-0-35)*8+40) = (80, 320, 200, 280) -->
+                    <rect
+                        x="80"
+                        y="320"
+                        width="200"
+                        height="280"
+                        fill="#aeeeee"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="180"
+                        y="450"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        POOL /
+                    </text>
+                    <text
+                        x="180"
+                        y="468"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        HOT TUB
+                    </text>
+                    <text
+                        x="180"
+                        y="488"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        25' × 35'
+                    </text>
+                    <!-- Pool water -->
+                    <rect
+                        x="100"
+                        y="380"
+                        width="160"
+                        height="160"
+                        fill="#63b3ed"
+                        stroke="#0288d1"
+                        stroke-width="2"
+                        rx="8"
+                        opacity="0.6"
+                    />
+
+                    <!-- HOME THEATER: x=0,y=35,w=30,h=25 → svg(80, 120, 240, 200) -->
+                    <rect
+                        x="80"
+                        y="120"
+                        width="240"
+                        height="200"
+                        fill="#708090"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="200"
+                        y="210"
+                        text-anchor="middle"
+                        fill="#fff"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        HOME
+                    </text>
+                    <text
+                        x="200"
+                        y="228"
+                        text-anchor="middle"
+                        fill="#fff"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        THEATER
+                    </text>
+                    <text
+                        x="200"
+                        y="248"
+                        text-anchor="middle"
+                        fill="#ccc"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        30' × 25'
+                    </text>
+                    <!-- Theater screen -->
+                    <rect
+                        x="90"
+                        y="130"
+                        width="220"
+                        height="8"
+                        fill="#333"
+                        stroke="#555"
+                        stroke-width="1"
+                        rx="2"
+                    />
+                    <!-- Theater seating rows -->
+                    <rect
+                        x="110"
+                        y="175"
+                        width="180"
+                        height="10"
+                        fill="#555"
+                        stroke="#444"
+                        stroke-width="1"
+                        rx="3"
+                    />
+                    <rect
+                        x="100"
+                        y="200"
+                        width="200"
+                        height="10"
+                        fill="#555"
+                        stroke="#444"
+                        stroke-width="1"
+                        rx="3"
+                    />
+                    <rect
+                        x="95"
+                        y="225"
+                        width="210"
+                        height="10"
+                        fill="#555"
+                        stroke="#444"
+                        stroke-width="1"
+                        rx="3"
+                    />
+                    <rect
+                        x="90"
+                        y="255"
+                        width="220"
+                        height="10"
+                        fill="#555"
+                        stroke="#444"
+                        stroke-width="1"
+                        rx="3"
+                    />
+
+                    <!-- UTILITIES: x=30,y=45,w=40,h=15 → svg(320, 120, 320, 120) -->
+                    <rect
+                        x="320"
+                        y="120"
+                        width="320"
+                        height="120"
+                        fill="#ffdfba"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="480"
+                        y="180"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        UTILITIES
+                    </text>
+                    <text
+                        x="480"
+                        y="198"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        40' × 15'
+                    </text>
+
+                    <!-- STAIRS UP: x=70,y=45,w=20,h=15 → svg(640, 120, 160, 120) -->
+                    <rect
+                        x="640"
+                        y="120"
+                        width="160"
+                        height="120"
+                        fill="#deb887"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="720"
+                        y="180"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="13"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        STAIRS UP
+                    </text>
+                    <!-- Stair lines -->
+                    <line
+                        x1="660"
+                        y1="145"
+                        x2="780"
+                        y2="145"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="660"
+                        y1="155"
+                        x2="780"
+                        y2="155"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="660"
+                        y1="165"
+                        x2="780"
+                        y2="165"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="660"
+                        y1="195"
+                        x2="780"
+                        y2="195"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="660"
+                        y1="205"
+                        x2="780"
+                        y2="205"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="660"
+                        y1="215"
+                        x2="780"
+                        y2="215"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+
+                    <!-- OPEN REC AREA: x=25,y=20,w=65,h=25 → svg(280, 240, 520, 200) -->
+                    <rect
+                        x="280"
+                        y="240"
+                        width="520"
+                        height="200"
+                        fill="#fafafa"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="540"
+                        y="335"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="16"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        OPEN REC AREA
+                    </text>
+                    <text
+                        x="540"
+                        y="355"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        65' × 25'
+                    </text>
+
+                    <!-- BAR: x=65,y=25,w=10,h=6 → svg(600, 352, 80, 48) -->
+                    <rect
+                        x="600"
+                        y="352"
+                        width="80"
+                        height="48"
+                        fill="#8b4513"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="640"
+                        y="380"
+                        text-anchor="middle"
+                        fill="#fff"
+                        font-size="12"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        BAR
+                    </text>
+
+                    <!-- STORAGE / REC: x=30,y=0,w=60,h=20 → svg(320, 440, 480, 160) -->
+                    <rect
+                        x="320"
+                        y="440"
+                        width="480"
+                        height="160"
+                        fill="#f5f5dc"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="560"
+                        y="515"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="14"
+                        font-weight="bold"
+                        font-family="Courier New"
+                    >
+                        STORAGE / REC
+                    </text>
+                    <text
+                        x="560"
+                        y="535"
+                        text-anchor="middle"
+                        fill="#666"
+                        font-size="10"
+                        font-family="Courier New"
+                    >
+                        60' × 20'
+                    </text>
+
+                    <!-- STAIRS EXIT: x=90,y=0,w=10,h=60 → svg(800, 120, 80, 480) -->
+                    <rect
+                        x="800"
+                        y="120"
+                        width="80"
+                        height="480"
+                        fill="#deb887"
+                        stroke="#000"
+                        stroke-width="3"
+                        opacity="0.85"
+                    />
+                    <text
+                        x="840"
+                        y="350"
+                        text-anchor="middle"
+                        fill="#333"
+                        font-size="12"
+                        font-weight="bold"
+                        font-family="Courier New"
+                        transform="rotate(90, 840, 350)"
+                    >
+                        STAIRS EXIT
+                    </text>
+                    <!-- Stair lines -->
+                    <line
+                        x1="810"
+                        y1="150"
+                        x2="870"
+                        y2="150"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="170"
+                        x2="870"
+                        y2="170"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="190"
+                        x2="870"
+                        y2="190"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="210"
+                        x2="870"
+                        y2="210"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="230"
+                        x2="870"
+                        y2="230"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="500"
+                        x2="870"
+                        y2="500"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="520"
+                        x2="870"
+                        y2="520"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="540"
+                        x2="870"
+                        y2="540"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="560"
+                        x2="870"
+                        y2="560"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+                    <line
+                        x1="810"
+                        y1="580"
+                        x2="870"
+                        y2="580"
+                        stroke="#999"
+                        stroke-width="1"
+                    />
+
+                    <!-- ==================== DIMENSION ARROWS ==================== -->
+                    <line
+                        x1="80"
+                        y1="630"
+                        x2="880"
+                        y2="630"
+                        stroke="#888"
+                        stroke-width="1"
+                    />
+                    <text
+                        x="480"
+                        y="650"
+                        text-anchor="middle"
+                        fill="#888"
+                        font-size="12"
+                        font-family="Courier New"
+                    >
+                        100'
+                    </text>
+
+                    <line
+                        x1="50"
+                        y1="120"
+                        x2="50"
+                        y2="600"
+                        stroke="#888"
+                        stroke-width="1"
+                    />
+                    <text
+                        x="40"
+                        y="360"
+                        text-anchor="middle"
+                        fill="#888"
+                        font-size="12"
+                        font-family="Courier New"
+                        transform="rotate(-90, 40, 360)"
+                    >
+                        60'
+                    </text>
+
+                    <!-- ==================== NORTH ARROW ==================== -->
+                    <g transform="translate(910, 100)">
+                        <circle
+                            cx="0"
+                            cy="0"
+                            r="20"
+                            fill="none"
+                            stroke="#00ff88"
+                            stroke-width="2"
+                        />
+                        <polygon points="0,-18 -6,6 0,0 6,6" fill="#00ff88" />
+                        <text
+                            x="0"
+                            y="-24"
+                            text-anchor="middle"
+                            fill="#00ff88"
+                            font-size="14"
+                            font-weight="bold"
+                            font-family="Courier New"
+                        >
+                            N
+                        </text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h3>📋 Room Legend</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fffde7"></div>
+                    <span>Bedrooms / Master</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e0ffff"></div>
+                    <span>Bathrooms</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffeebb"></div>
+                    <span>Kitchen</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fff8dc"></div>
+                    <span>Dining / Lounge</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fafafa"></div>
+                    <span>Living / Family Room</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffdfba"></div>
+                    <span>Utility / Mud Room</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f0fff0"></div>
+                    <span>Porches / Outdoor</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f0f0f0"></div>
+                    <span>Closets / WIC</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f5f5f5"></div>
+                    <span>Garage / Office</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #708090"></div>
+                    <span>Home Theater</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #aeeeee"></div>
+                    <span>Pool Area</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #8b4513"></div>
+                    <span>Bar</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Specifications -->
+        <div class="specs">
+            <div class="spec-card">
+                <h4>🏠 Main Floor</h4>
+                <ul>
+                    <li>📐 4 Bedrooms + Master Suite</li>
+                    <li>🚿 Master Bath + Bath 4</li>
+                    <li>🍳 Kitchen (20' × 18')</li>
+                    <li>🛋️ Family Room (24' × 18')</li>
+                    <li>🍽️ Dining Room (18' × 15')</li>
+                    <li>💼 Office (14' × 14')</li>
+                </ul>
+            </div>
+            <div class="spec-card">
+                <h4>🏗️ Basement</h4>
+                <ul>
+                    <li>🎬 Home Theater (30' × 25')</li>
+                    <li>🏊 Pool / Hot Tub (25' × 35')</li>
+                    <li>🎮 Open Rec Area (65' × 25')</li>
+                    <li>🍸 Bar Area (10' × 6')</li>
+                    <li>📦 Storage / Rec (60' × 20')</li>
+                    <li>🔧 Utilities (40' × 15')</li>
+                </ul>
+            </div>
+            <div class="spec-card">
+                <h4>🏡 Outdoor Spaces</h4>
+                <ul>
+                    <li>🌿 Outdoor Living (40' × 15')</li>
+                    <li>🚪 Front Porch (50' × 10')</li>
+                    <li>📐 Total Outdoor: ~900 sq ft</li>
+                </ul>
+            </div>
+            <div class="spec-card">
+                <h4>📋 Structure</h4>
+                <ul>
+                    <li>🧱 ICF Foundation (Basement)</li>
+                    <li>📏 12' Basement Ceilings</li>
+                    <li>🔲 Wall Thickness: 3"</li>
+                    <li>🏗️ 2 Floors Total</li>
+                </ul>
+            </div>
+            <div class="spec-card">
+                <h4>🚪 Doors & Windows</h4>
+                <ul>
+                    <li>🚪 8 Interior Doors (config-driven)</li>
+                    <li>🪟 6 Windows (config-driven)</li>
+                    <li>📐 French Doors to Office</li>
+                    <li>🏠 Front Entry (5' wide)</li>
+                </ul>
+            </div>
+            <div class="spec-card">
+                <h4>⚙️ Generation</h4>
+                <ul>
+                    <li>🐍 Python floor plan generator</li>
+                    <li>📄 YAML config-driven layout</li>
+                    <li>🖼️ PNG / SVG / PDF output</li>
+                    <li>🧪 Automated test suite</li>
+                    <li>🐳 Docker containerized</li>
+                    <li>🌐 Web API integration</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span
+                >Blueprint synced with config.yaml — Python generator
+                ready</span
+            >
+        </div>
+
+        <script>
+            function showFloor(floor) {
+                // Hide all floor plans
+                document
+                    .querySelectorAll(".floor-plan")
+                    .forEach((el) => el.classList.remove("active"));
+                document
+                    .querySelectorAll(".floor-tab")
+                    .forEach((el) => el.classList.remove("active"));
+
+                // Show selected floor
+                document
+                    .getElementById("floor-" + floor)
+                    .classList.add("active");
+                event.target.classList.add("active");
+            }
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            function shareBlueprint() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: "Luxury Farmhouse Blueprint",
+                        text: "Check out this farmhouse floor plan!",
+                        url: window.location.href,
+                    });
+                } else {
+                    // Fallback: copy URL
+                    navigator.clipboard
+                        .writeText(window.location.href)
+                        .then(() => {
+                            alert("Blueprint URL copied to clipboard!");
+                        });
+                }
+            }
+
+            function goHome() {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage(
+                        {
+                            type: "navigate",
+                            view: "welcome",
+                        },
+                        "*",
+                    );
+                } else {
+                    window.location.href = "/";
+                }
+            }
+        </script>
+    </body>
 </html>
