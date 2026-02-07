@@ -163,16 +163,16 @@ main_floor:
 
         - x: 25
           y: 10
-          width: 12
+          width: 15
           height: 12
           label: "MUD ROOM"
           color: utility
           linewidth: 3
 
-        # --- LEFT WING: BEDROOMS (Shrunk to 14' to fit Hallway) ---
+        # --- LEFT WING: BEDROOMS (15' wide + 3' Hallway) ---
         - x: 25
           y: 22
-          width: 14
+          width: 15
           height: 14
           label: "BEDROOM 4"
           color: bedroom
@@ -180,24 +180,23 @@ main_floor:
 
         - x: 25
           y: 36
-          width: 10
+          width: 7
           height: 8
           label: "BATH 4"
           color: bathroom
           linewidth: 3
 
-        - x: 35
+        - x: 32
           y: 36
-          width: 4
+          width: 8
           height: 8
           label: "LAUNDRY"
           color: utility
           linewidth: 3
-          label_fontsize: 6
 
         - x: 25
           y: 44
-          width: 14
+          width: 15
           height: 14
           label: "BEDROOM 3"
           color: bedroom
@@ -205,17 +204,17 @@ main_floor:
 
         - x: 25
           y: 58
-          width: 14
+          width: 15
           height: 14
           label: "BEDROOM 2"
           color: bedroom
           linewidth: 3
 
-        # --- NEW: HALLWAY ---
-        - x: 39
-          y: 22
-          width: 4
-          height: 50
+        # --- HALLWAY (3' wide corridor connecting Mud Room to bedrooms) ---
+        - x: 40
+          y: 10
+          width: 3
+          height: 62
           label: "HALL"
           color: hall
           linewidth: 2
@@ -249,11 +248,20 @@ main_floor:
         # Middle / Back
         - x: 43
           y: 15
-          width: 18
+          width: 14
           height: 10
           label: "BUTLER'S\nPANTRY"
           color: utility
           linewidth: 3
+
+        # Stair alcove (dedicated space for basement stairs)
+        - x: 57
+          y: 15
+          width: 4
+          height: 10
+          label: "STAIR"
+          color: hall
+          linewidth: 2
 
         - x: 43
           y: 25
@@ -358,31 +366,31 @@ main_floor:
           direction: right
           swing: left
         # Bedroom 2 Entry
-        - x: 39
+        - x: 40
           y: 60
           width: 3
           direction: left
           swing: down
         # Bedroom 3 Entry
-        - x: 39
+        - x: 40
           y: 46
           width: 3
           direction: left
           swing: up
         # Bedroom 4 Entry
-        - x: 39
+        - x: 40
           y: 24
           width: 3
           direction: left
           swing: up
-        # Hallway to Mudroom connection
-        - x: 37
-          y: 22
-          width: 4
-          direction: up
-          swing: left
+        # Mud Room to Hallway
+        - x: 40
+          y: 14
+          width: 3
+          direction: right
+          swing: up
         # Laundry Entry (from Hall)
-        - x: 39
+        - x: 40
           y: 38
           width: 3
           direction: left
@@ -509,8 +517,8 @@ main_floor:
           label: "Gas Fireplace"
 
     stairs:
-        # Stairs down to basement (between Butler's Pantry and Kitchen)
-        - x: 59
+        # Stairs down to basement (in dedicated stair alcove)
+        - x: 57
           y: 15
           width: 4
           height: 10
@@ -593,15 +601,6 @@ basement:
           color: utility
           linewidth: 3
 
-        # Stairs Up
-        - x: 70
-          y: 45
-          width: 20
-          height: 15
-          label: "STAIRS UP"
-          color: hammock # Using hammock color for wood look
-          linewidth: 3
-
         # --- CENTER / OPEN AREA ---
         # Open Rec Area (trimmed to stop at exit stairs column)
         - x: 25
@@ -619,6 +618,15 @@ basement:
           height: 20
           label: "STORAGE / REC"
           color: storage
+          linewidth: 3
+
+        # --- FAR RIGHT: Exit Stairs container ---
+        - x: 90
+          y: 0
+          width: 10
+          height: 60
+          label: ""
+          color: hall
           linewidth: 3
 
         # --- FEATURES ---
@@ -643,13 +651,13 @@ basement:
             label_fontsize: 12
         seating:
             start_x: 3
-            start_y: 37
+            start_y: 38
             rows: 3
-            seats_per_row: 5
+            seats_per_row: 4
             chair_width: 3
             chair_height: 2.5
             row_spacing: 5
-            seat_spacing: 4
+            seat_spacing: 5
             chair_color: chair
             edge_color: gray
         false_wall:
@@ -694,15 +702,17 @@ basement:
           y: 45
           width: 20
           height: 15
-          label: "STAIRS UP"
+          num_steps: 12
+          orientation: horizontal
+          label: "UP"
 
         - x: 90
           y: 0
           width: 10
           height: 60
-          num_steps: 20
+          num_steps: 40
           orientation: vertical
-          label: "EXIT STAIRS"
+          label: "EXIT\nSTAIRS"
     furniture: []
     text_annotations: []
     line_annotations: []

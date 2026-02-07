@@ -313,7 +313,9 @@ def resolve_color(color_name: str, config: DrawingConfig | None = None) -> str:
     return config.get_color(color_name)
 
 
-def update_colors(new_colors: dict[str, str], config: DrawingConfig | None = None) -> None:
+def update_colors(
+    new_colors: dict[str, str], config: DrawingConfig | None = None
+) -> None:
     """Update the colors dictionary with new colors."""
     if config is None:
         config = _default_config
@@ -646,7 +648,8 @@ def normalize_room_positions(rooms: list[dict]) -> list[dict]:
     min_x, min_y, _, _ = get_bounding_box(rooms)
 
     return [
-        {**room, "x": room.get("x", 0) - min_x, "y": room.get("y", 0) - min_y} for room in rooms
+        {**room, "x": room.get("x", 0) - min_x, "y": room.get("y", 0) - min_y}
+        for room in rooms
     ]
 
 
@@ -684,10 +687,16 @@ def validate_config(config: dict[str, Any]) -> list[str]:
     # Check for invalid grid_spacing before normalization
     raw_grid_spacing = settings.get("grid_spacing")
     if raw_grid_spacing is not None and raw_grid_spacing <= 0:
-        warnings.append(f"Invalid grid_spacing value {raw_grid_spacing}, will be normalized to 10")
+        warnings.append(
+            f"Invalid grid_spacing value {raw_grid_spacing}, will be normalized to 10"
+        )
 
     floor_settings = FloorPlanSettings(
-        **{k: v for k, v in settings.items() if k in FloorPlanSettings.__dataclass_fields__}
+        **{
+            k: v
+            for k, v in settings.items()
+            if k in FloorPlanSettings.__dataclass_fields__
+        }
     )
     warnings.extend(floor_settings.validate())
 
@@ -718,7 +727,9 @@ def _validate_rooms(rooms_data: list[dict], floor_name: str) -> list[str]:
             missing = [f for f in required if f not in room_data]
             if missing:
                 label = room_data.get("label", f"Room {i}")
-                warnings.append(f"{floor_name}: '{label}' missing required fields: {missing}")
+                warnings.append(
+                    f"{floor_name}: '{label}' missing required fields: {missing}"
+                )
                 continue
 
             # Check for invalid dimensions before Room normalization
@@ -727,9 +738,42 @@ def _validate_rooms(rooms_data: list[dict], floor_name: str) -> list[str]:
             label = room_data.get("label", f"Room {i}")
 
             if raw_width <= 0:
-                warnings.append(f"{floor_name}: '{label}' has invalid width {raw_width}")
+                warnings.append(
+                    f"{floor_name}: '{label}' has invalid width {raw_width}"
+                )
             if raw_height <= 0:
-                warnings.append(f"{floor_name}: '{label}' has invalid height {raw_height}")
+                warnings.append(
+                    f"{floor_name}: '{label}' has invalid height {raw_height}"
+                )
+
+            # Warn on unrealistically narrow/short rooms (< 5')
+            # Exempt hallways, corridors, stairs, and closets — these are
+            # legitimately narrow by design.
+            _exempt_patterns = (
+                "hall",
+                "corridor",
+                "stair",
+                "closet",
+                "wic",
+                "passage",
+                "vestibule",
+                "alcove",
+            )
+            _label_lower = label.lower().strip()
+            _exempt = _label_lower == "" or any(
+                p in _label_lower for p in _exempt_patterns
+            )
+            if not _exempt:
+                if 0 < raw_width < 5:
+                    warnings.append(
+                        f"{floor_name}: '{label}' is only {raw_width}' wide"
+                        " — minimum functional room width is 5'"
+                    )
+                if 0 < raw_height < 5:
+                    warnings.append(
+                        f"{floor_name}: '{label}' is only {raw_height}' deep"
+                        " — minimum functional room depth is 5'"
+                    )
 
             room = Room(
                 x=room_data.get("x", 0),
@@ -757,16 +801,32 @@ def _check_room_overlaps(rooms_data: list[dict], floor_name: str) -> list[str]:
             # Check if rooms overlap significantly (more than 50% of smaller room)
             x_overlap = max(
                 0,
-                min(r1["x"] + r1["width"], r2["x"] + r2["width"]) - max(r1["x"], r2["x"]),
+                min(r1["x"] + r1["width"], r2["x"] + r2["width"])
+                - max(r1["x"], r2["x"]),
             )
             y_overlap = max(
                 0,
-                min(r1["y"] + r1["height"], r2["y"] + r2["height"]) - max(r1["y"], r2["y"]),
+                min(r1["y"] + r1["height"], r2["y"] + r2["height"])
+                - max(r1["y"], r2["y"]),
             )
             overlap_area = x_overlap * y_overlap
 
             min_area = min(r1["width"] * r1["height"], r2["width"] * r2["height"])
             if min_area > 0 and overlap_area / min_area > 0.5:
+                # Skip warning when the smaller room is fully contained
+                # within the larger one — this is intentional nesting
+                # (e.g. a Bar feature inside an Open Rec Area).
+                def _contains(outer: dict, inner: dict) -> bool:
+                    return (
+                        outer["x"] <= inner["x"]
+                        and outer["y"] <= inner["y"]
+                        and outer["x"] + outer["width"] >= inner["x"] + inner["width"]
+                        and outer["y"] + outer["height"] >= inner["y"] + inner["height"]
+                    )
+
+                if _contains(r1, r2) or _contains(r2, r1):
+                    continue
+
                 label1 = r1.get("label", f"Room {i}")
                 label2 = r2.get("label", f"Room {j}")
                 warnings.append(
