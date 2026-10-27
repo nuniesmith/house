@@ -6,19 +6,17 @@ $fn = 24;
 // ---- floor plates
 color([0.6823529411764706, 0.9333333333333333, 0.9333333333333333]) translate([0, 0, -0.15]) cube([25, 35, 0.15]);
 color([0.15,0.15,0.15]) translate([12.5, 17.5, 0.01]) linear_extrude(0.05) text("POOL / HOT TUB", size=2.30, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([25, 0, -0.15]) cube([5, 35, 0.15]);
-color([0.15,0.15,0.15]) translate([27.5, 17.5, 0.01]) linear_extrude(0.05) text("HALL", size=1.62, halign="center", valign="center");
+color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([25, 0, -0.15]) cube([21, 20, 0.15]);
+color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([25, 20, -0.15]) cube([5, 15, 0.15]);
 color([0.4392156862745098, 0.5019607843137255, 0.5647058823529412]) translate([0, 35, -0.15]) cube([30, 25, 0.15]);
 color([0.15,0.15,0.15]) translate([15.0, 47.5, 0.01]) linear_extrude(0.05) text("HOME THEATER", size=2.30, halign="center", valign="center");
 color([1.0, 0.8745098039215686, 0.7294117647058823]) translate([30, 45, -0.15]) cube([40, 15, 0.15]);
 color([0.15,0.15,0.15]) translate([50.0, 52.5, 0.01]) linear_extrude(0.05) text("UTILITIES", size=2.30, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([30, 20, -0.15]) cube([5, 25, 0.15]);
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([35, 20, -0.15]) cube([45, 25, 0.15]);
-color([0.15,0.15,0.15]) translate([57.5, 32.5, 0.01]) linear_extrude(0.05) text("OPEN REC AREA", size=2.30, halign="center", valign="center");
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([35, 0, -0.15]) cube([11, 20, 0.15]);
-color([0.15,0.15,0.15]) translate([40.5, 10.0, 0.01]) linear_extrude(0.05) text("OPEN FLOOR", size=1.43, halign="center", valign="center");
+color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([30, 20, -0.15]) cube([70, 25, 0.15]);
+color([0.15,0.15,0.15]) translate([65.0, 32.5, 0.01]) linear_extrude(0.05) text("OPEN REC AREA", size=2.30, halign="center", valign="center");
 color([0.9607843137254902, 0.9607843137254902, 0.8627450980392157]) translate([46, 0, -0.15]) cube([54, 20, 0.15]);
 color([0.15,0.15,0.15]) translate([73.0, 10.0, 0.01]) linear_extrude(0.05) text("STORAGE / REC", size=2.30, halign="center", valign="center");
+color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([70, 45, -0.15]) cube([30, 15, 0.15]);
 color([1.0, 0.984313725490196, 0.9215686274509803]) translate([100, 20, -0.15]) cube([10, 40, 0.15]);
 color([0.15,0.15,0.15]) translate([105.0, 40.0, 0.01]) linear_extrude(0.05) text("EXIT STAIRS", size=1.18, halign="center", valign="center");
 
@@ -29,10 +27,6 @@ color([0.93, 0.91, 0.87]) difference() {
     translate([-0.17, 34.83, 0]) cube([25.34, 0.34, 12.0]);
     translate([-0.25, -0.25, 0]) cube([0.50, 35.50, 12.0]);
     translate([24.83, -0.17, 0]) cube([0.34, 35.34, 12.0]);
-    translate([24.75, -0.25, 0]) cube([5.50, 0.50, 12.0]);
-    translate([24.83, 34.83, 0]) cube([5.34, 0.34, 12.0]);
-    translate([24.83, -0.17, 0]) cube([0.34, 35.34, 12.0]);
-    translate([29.83, -0.17, 0]) cube([0.34, 35.34, 12.0]);
     translate([-0.17, 34.83, 0]) cube([30.34, 0.34, 12.0]);
     translate([-0.25, 59.75, 0]) cube([30.50, 0.50, 12.0]);
     translate([-0.25, 34.75, 0]) cube([0.50, 25.50, 12.0]);
@@ -40,44 +34,24 @@ color([0.93, 0.91, 0.87]) difference() {
     translate([29.83, 44.83, 0]) cube([40.34, 0.34, 12.0]);
     translate([29.75, 59.75, 0]) cube([40.50, 0.50, 12.0]);
     translate([29.83, 44.83, 0]) cube([0.34, 15.34, 12.0]);
-    translate([69.75, 44.75, 0]) cube([0.50, 15.50, 12.0]);
-    translate([29.75, 19.75, 0]) cube([5.50, 0.50, 12.0]);
-    translate([29.83, 44.83, 0]) cube([5.34, 0.34, 12.0]);
-    translate([29.83, 19.83, 0]) cube([0.34, 25.34, 12.0]);
-    translate([34.83, 19.83, 0]) cube([0.34, 25.34, 12.0]);
-    translate([34.83, 19.83, 0]) cube([45.34, 0.34, 12.0]);
-    translate([34.83, 44.83, 0]) cube([45.34, 0.34, 12.0]);
-    translate([34.83, 19.83, 0]) cube([0.34, 25.34, 12.0]);
-    translate([79.75, 19.75, 0]) cube([0.50, 25.50, 12.0]);
-    translate([34.75, -0.25, 0]) cube([11.50, 0.50, 12.0]);
-    translate([34.83, 19.83, 0]) cube([11.34, 0.34, 12.0]);
-    translate([34.75, -0.25, 0]) cube([0.50, 20.50, 12.0]);
-    translate([45.83, -0.17, 0]) cube([0.34, 20.34, 12.0]);
-    translate([45.75, -0.25, 0]) cube([54.50, 0.50, 12.0]);
-    translate([45.83, 19.83, 0]) cube([54.34, 0.34, 12.0]);
-    translate([45.83, -0.17, 0]) cube([0.34, 20.34, 12.0]);
-    translate([99.75, -0.25, 0]) cube([0.50, 20.50, 12.0]);
+    translate([69.83, 44.83, 0]) cube([0.34, 15.34, 12.0]);
     translate([99.75, 19.75, 0]) cube([10.50, 0.50, 12.0]);
     translate([99.75, 59.75, 0]) cube([10.50, 0.50, 12.0]);
-    translate([99.75, 19.75, 0]) cube([0.50, 40.50, 12.0]);
+    translate([99.83, 19.83, 0]) cube([0.34, 40.34, 12.0]);
     translate([109.75, 19.75, 0]) cube([0.50, 40.50, 12.0]);
   }
   translate([26, 34.2, -0.1]) cube([3, 1.6, 7.1]);
   translate([24.2, 29, -0.1]) cube([1.6, 3, 7.1]);
-  translate([29.2, 40, -0.1]) cube([1.6, 3, 7.1]);
-  translate([54, 44.2, -0.1]) cube([3, 1.6, 7.1]);
+  translate([63, 44.2, -0.1]) cube([3, 1.6, 7.1]);
   translate([99.2, 52, -0.1]) cube([1.6, 3, 7.1]);
-  translate([84, 19.2, -0.1]) cube([3, 1.6, 7.1]);
 }
 
 // ---- door leaves (ajar 30 deg)
 color([0.55, 0.35, 0.2]) {
   translate([26, 35, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
   translate([25, 29, 0]) rotate([0,0,60]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([30, 40, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([54, 45, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
+  translate([63, 45, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
   translate([100, 52, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([84, 20, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
 }
 
 // ---- furniture
