@@ -23,6 +23,11 @@ are doubled, and open-plan zones are fitted rectangles (see
 - `exploded` — levels separated by `explode_gap` for inspection
 - `basement_only`, `main_only`
 
+A porch with `columns: true` renders posts (on the plan's bay rhythm)
+and a roof slab at `roof_ft` instead of a railing, and `steps` adds
+entry steps. The front porch uses this at its printed 12'-8" line; the
+slab is massing only — the real roof form is decided in the roof pass.
+
 The basement is modelled open-plan the way Jordan's sketch draws it
 (only the theater, pool room and utilities are walled), and on the
 main floor the kitchen, family room and bar are open to each other
