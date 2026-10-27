@@ -82,6 +82,8 @@ class Room:
     notes: str = ""
     ceiling_ft: float = 0.0  # 0 = unspecified; used by the OpenSCAD generator
     vaulted: bool = False
+    open_edges: list = field(default_factory=list)  # N/S/E/W sides left open in 3D
+    open_plan: bool = False  # floor plate only in 3D (open-plan zone)
 
     def __post_init__(self) -> None:
         """Validate room dimensions after initialization."""

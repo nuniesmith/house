@@ -412,6 +412,7 @@ main_floor:
           width: 14.5
           height: 9
           label: "BAR"
+          open_edges: [N]
           color: bar
           linewidth: 3
           ceiling_ft: 14
@@ -424,6 +425,7 @@ main_floor:
           width: 14
           height: 15
           label: "KITCHEN"
+          open_edges: [E]
           color: kitchen
           linewidth: 3
           ceiling_ft: 14
@@ -433,6 +435,7 @@ main_floor:
           width: 16.5
           height: 15.17
           label: "FAMILY ROOM"
+          open_edges: [W, S]
           color: living
           linewidth: 3
           ceiling_ft: 12
@@ -890,7 +893,13 @@ main_floor:
           orientation: horizontal
           label: "DN"
 
-    furniture: []
+    furniture:
+        # Kitchen island (the plan's island with cooktop)
+        - x: 65
+          y: 30
+          width: 3
+          height: 8
+          label: "ISLAND"
 
 # =============================================================================
 # BASEMENT FLOOR PLAN - Corrected to the hand-drawn sketch (2026-10-27)
@@ -956,16 +965,29 @@ basement:
           auto_dimension: true
           dimension_text: "25' x 35'"
 
-        # 5' hall strip east of the pool (the sketch's unlabeled strip)
+        # Open floor, bottom band west (incl. the strip east of the pool).
+        # Jordan's sketch is open plan: only theater, pool and utilities
+        # are walled rooms down here (open_plan = floor plate only in 3D).
         - x: 25
           y: 0
-          width: 5
-          height: 35
-          label: "HALL"
-          color: hall
-          linewidth: 3
+          width: 21
+          height: 20
+          label: ""
+          color: living
+          linewidth: 2
           ceiling_ft: 12
-          label_fontsize: 6
+          open_plan: true
+
+        # Pool deck strip, east of the pool room
+        - x: 25
+          y: 20
+          width: 5
+          height: 15
+          label: ""
+          color: living
+          linewidth: 2
+          ceiling_ft: 12
+          open_plan: true
 
         # Home Theater (Top Left)
         - x: 0
@@ -990,36 +1012,16 @@ basement:
           linewidth: 3
           ceiling_ft: 12
 
-        # Corridor junction between theater, utilities and the rec area
+        # Open Rec Area (Center) - one open floor with the zones around it
         - x: 30
           y: 20
-          width: 5
-          height: 25
-          label: ""
-          color: hall
-          linewidth: 2
-          ceiling_ft: 12
-
-        # Open Rec Area (Center)
-        - x: 35
-          y: 20
-          width: 45
+          width: 70
           height: 25
           label: "OPEN REC AREA"
           color: living
           linewidth: 3
           ceiling_ft: 12
-
-        # Open floor, bottom center (continuous with the rec area)
-        - x: 35
-          y: 0
-          width: 11
-          height: 20
-          label: "OPEN FLOOR"
-          color: living
-          linewidth: 3
-          ceiling_ft: 12
-          label_fontsize: 6
+          open_plan: true
 
         # Storage / Rec block (Bottom Right, the sketch's ~54' block)
         - x: 46
@@ -1030,6 +1032,18 @@ basement:
           color: storage
           linewidth: 3
           ceiling_ft: 12
+          open_plan: true
+
+        # Open area east of utilities (top right of the sketch)
+        - x: 70
+          y: 45
+          width: 30
+          height: 15
+          label: ""
+          color: living
+          linewidth: 2
+          ceiling_ft: 12
+          open_plan: true
 
         # Exit stair tower, attached OUTSIDE the east foundation wall
         - x: 100
@@ -1107,20 +1121,14 @@ basement:
           width: 3
           direction: up
           swing: right
-        # Pool room, east wall into the hall strip
+        # Pool room, east wall onto the pool deck
         - x: 25
           y: 29
           width: 3
           direction: left
           swing: up
-        # Hall junction to the rec area
-        - x: 30
-          y: 40
-          width: 3
-          direction: right
-          swing: up
-        # Utilities, south wall at the stair landing
-        - x: 54
+        # Utilities, south wall near the east end
+        - x: 63
           y: 45
           width: 3
           direction: up
@@ -1131,12 +1139,6 @@ basement:
           width: 3
           direction: right
           swing: up
-        # Storage / rec block, north wall
-        - x: 84
-          y: 20
-          width: 3
-          direction: up
-          swing: right
 
     stairs:
         # Main stairs UP - lands at the main floor's left-wing DN flight

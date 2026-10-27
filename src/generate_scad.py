@@ -20,8 +20,11 @@ Data / assumptions:
     frame on each room edge, so shared walls appear doubled — this is a
     visualisation model, not construction documents)
 
-Usage:  python3 src/generate_scad.py [floorplan.yaml] [out_dir]
-Defaults resolve relative to the repo root (config/floorplan.yaml -> output/).
+Usage:  python3 src/generate_scad.py [--stl] [floorplan.yaml] [scad_dir]
+Defaults resolve relative to the repo root (config/floorplan.yaml ->
+models/). Emits main_floor.scad, basement.scad and house_combined.scad
+(both levels in one file; see its mode parameter). With --stl it also
+exports binary STLs next to the SCAD files via the openscad CLI.
 """
 
 import sys
@@ -90,7 +93,12 @@ class Level:
                 wh = float(r.get("ceiling_ft") or self.ceiling)
                 if r.get("vaulted"):
                     wh += 4.0  # raised vault above the eave line
+            if r.get("open_plan"):
+                continue  # open-plan zone: floor plate only, no walls
+            open_sides = set(r.get("open_edges") or [])
             for side in "SNWE":
+                if side in open_sides:
+                    continue  # open-plan edge (e.g. kitchen to family room)
                 ext = self.is_exterior(r, side)
                 t = EXT_T if ext else INT_T
                 if side == "S":
@@ -253,19 +261,32 @@ def basement_extras(cfg, colors):
     return "\n".join(L)
 
 
+def wrap_module(name, body):
+    """Wrap a level's statements in a module for the combined model."""
+    lines = [ln for ln in body.split("\n")]
+    inner = "\n".join(("  " + ln) if ln.strip() else ln for ln in lines)
+    return f"module {name}() {{\n{inner}}}\n"
+
+
 def main():
     import os
+    import subprocess
+    import sys as _sys
+    args = [a for a in _sys.argv[1:] if not a.startswith("--")]
+    want_stl = "--stl" in _sys.argv
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(repo_root, "config", "floorplan.yaml")
-    out_dir = sys.argv[2] if len(sys.argv) > 2 else os.path.join(repo_root, "output")
+    src = args[0] if len(args) > 0 else os.path.join(repo_root, "config", "floorplan.yaml")
+    out_dir = args[1] if len(args) > 1 else os.path.join(repo_root, "models")
+    os.makedirs(out_dir, exist_ok=True)
     with open(src) as fh:
         doc = yaml.safe_load(fh)
     colors = {k: v for k, v in doc["colors"].items() if isinstance(v, str)}
 
     main_lvl = Level(doc["main_floor"], colors,
                      float(doc["main_floor"].get("ceiling_ft", MAIN_CEILING_FT)), "Main floor")
+    main_body = main_lvl.render()
     with open(f"{out_dir}/main_floor.scad", "w") as fh:
-        fh.write(main_lvl.render())
+        fh.write(main_body)
 
     bs = Level(doc["basement"], colors,
                float(doc["basement"].get("ceiling_ft", BASEMENT_CEILING_FT)), "Basement")
@@ -283,15 +304,56 @@ def main():
     shell.append(f"  translate([{x0}, {y0}, -1.15]) cube([{x1 - x0}, {y1 - y0}, 1.0]);")
     shell.append("}")
     shell.append(f"color([0.45,0.45,0.45]) {{")
-    shell.append(f"  translate([{x0 - 0.5}, {y0 - 0.5}, 0]) cube([{x1 - x0 + 1}, 1.0, {BASEMENT_CEILING_FT}]);")
-    shell.append(f"  translate([{x0 - 0.5}, {y1 - 0.5}, 0]) cube([{x1 - x0 + 1}, 1.0, {BASEMENT_CEILING_FT}]);")
-    shell.append(f"  translate([{x0 - 0.5}, {y0}, 0]) cube([1.0, {y1 - y0}, {BASEMENT_CEILING_FT}]);")
-    shell.append(f"  translate([{x1 - 0.5}, {y0}, 0]) cube([1.0, {y1 - y0}, {BASEMENT_CEILING_FT}]);")
+    shell.append(f"  translate([{x0 - 0.5}, {y0 - 0.5}, 0]) cube([{x1 - x0 + 1}, 1.0, {bs.ceiling}]);")
+    shell.append(f"  translate([{x0 - 0.5}, {y1 - 0.5}, 0]) cube([{x1 - x0 + 1}, 1.0, {bs.ceiling}]);")
+    shell.append(f"  translate([{x0 - 0.5}, {y0}, 0]) cube([1.0, {y1 - y0}, {bs.ceiling}]);")
+    shell.append(f"  translate([{x1 - 0.5}, {y0}, 0]) cube([1.0, {y1 - y0}, {bs.ceiling}]);")
     shell.append("}")
-    body += "\n".join(shell) + "\n" + basement_extras(doc["basement"], colors)
+    basement_body = body + "\n".join(shell) + "\n" + basement_extras(doc["basement"], colors)
     with open(f"{out_dir}/basement.scad", "w") as fh:
-        fh.write(body)
-    print("wrote main_floor.scad and basement.scad")
+        fh.write(basement_body)
+
+    # ---- combined model: both levels, one file
+    combined = []
+    C = combined.append
+    C("// house_combined.scad - generated from config/floorplan.yaml by generate_scad.py")
+    C("// Both levels in one model. Units: feet. Dollhouse view (no roof).")
+    C("// mode: assembled | exploded | basement_only | main_only")
+    C("// Alignment assumption (docs/original-plan-data.md): the basement")
+    C("// foundation's south edge sits on the main floor's south wall line")
+    C("// (y=0) and its east edge on the master suite's east wall, which")
+    C("// puts the exit-stair tower under the side porch.")
+    C('mode = "assembled";')
+    C("basement_dx = 18.59;")
+    C("basement_dy = 0;")
+    C("explode_gap = 14;")
+    C("")
+    C(wrap_module("basement_level", basement_body))
+    C(wrap_module("main_level", main_body))
+    C("basement_z = (mode == \"exploded\") ? -12 - explode_gap : -12;")
+    C("main_z = (mode == \"exploded\") ? explode_gap / 2 : 0;")
+    C('if (mode != "main_only")')
+    C("  translate([basement_dx, basement_dy, basement_z]) basement_level();")
+    C('if (mode != "basement_only")')
+    C("  translate([0, 0, main_z]) main_level();")
+    C("")
+    with open(f"{out_dir}/house_combined.scad", "w") as fh:
+        fh.write("\n".join(combined))
+    print("wrote main_floor.scad, basement.scad and house_combined.scad")
+
+    if want_stl:
+        jobs = [("main_floor", []), ("basement", []),
+                ("house_combined", []),
+                ("house_combined_exploded", ['-D', 'mode="exploded"'])]
+        for name, extra in jobs:
+            scad = f"{out_dir}/{name.replace('_exploded', '')}.scad"
+            out = f"{out_dir}/{name}.stl"
+            cmd = ["openscad", "--export-format", "binstl", "-o", out, *extra, scad]
+            try:
+                subprocess.run(cmd, check=True, capture_output=True)
+                print(f"wrote {out}")
+            except (OSError, subprocess.CalledProcessError) as e:
+                print(f"STL export failed for {name}: {e}")
 
 
 if __name__ == "__main__":
