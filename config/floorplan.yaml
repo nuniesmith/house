@@ -118,329 +118,660 @@ colors:
     wall: "#000000"
 
 # =============================================================================
-# MAIN FLOOR PLAN - Matching Reference Image
+# MAIN FLOOR PLAN - Corrected to the original architectural plan
 # =============================================================================
-# Updated Layout:
-# - Left Wing: Garage (x=0) and Bedrooms
-# - Center: Living, Dining, Kitchen
-# - Right Wing: Master Suite and Office (x=80+)
+# Data pass 2026-10-27 (see docs/original-plan-data.md):
+# - Every room on the original plan is present, including the breakfast
+#   nook/porch, bar, front hall, powder room, Bath 2/3 and their WICs, the
+#   office/master/side porches and the second master WIC.
+# - Enclosed-room rectangles use the dimensions printed on the plan;
+#   dimension_text quotes the plan exactly. Open-plan zones (kitchen,
+#   family room, halls) are rectangles fitted between their neighbours,
+#   so a zone rectangle can differ slightly from its printed clear
+#   dimension. Rectangles are schematic, not construction geometry.
+# - ceiling_ft / vaulted come from the plan's ceiling notes (12' bedroom
+#   wing, 14' front rooms, vaulted family/master/outdoor living).
+# - Doors use the OpenSCAD convention: direction up/down = the opening
+#   sits in a horizontal wall and spans x; left/right = vertical wall,
+#   spans y. The 2D door symbols are approximate.
 # =============================================================================
 main_floor:
     figure:
         width: 24
         height: 18
-        title: "Revised Main Floor Layout"
-        x_min: -10
-        x_max: 130
-        y_min: -20
-        y_max: 80
+        title: "Main Floor Plan - Original Plan Data"
+        x_min: -8
+        x_max: 140
+        y_min: -18
+        y_max: 66
 
     dimensions:
-        width_label: "~125'"
-        height_label: "~70'"
+        width_label: "~132'"
+        height_label: "~71'"
         width_arrow_y: -15
         height_arrow_x: -5
 
     north_arrow:
-        x: 120
-        y: 70
+        x: 128
+        y: 60
         size: 6
 
     # =========================================================================
     # ROOMS
     # =========================================================================
     rooms:
-        # --- LEFT WING: SERVICE & GARAGE ---
+        # --- GARAGE ---
         - x: 0
-          y: 10
-          width: 25
-          height: 32
+          y: 0
+          width: 25.17
+          height: 31.75
           label: "GARAGE"
           color: garage
           linewidth: 3
+          ceiling_ft: 9.67
           auto_dimension: true
-          dimension_text: "25' x 32'"
+          dimension_text: "25'-2\" x 31'-9\""
 
-        - x: 25
-          y: 10
-          width: 15
-          height: 12
-          label: "MUD ROOM"
-          color: utility
-          linewidth: 3
-
-        # --- LEFT WING: BEDROOMS (15' wide + 3' Hallway) ---
-        - x: 25
-          y: 22
-          width: 15
-          height: 14
+        # --- LEFT WING: BEDROOM 4 / BATH 4 / MUD (south to north) ---
+        - x: 25.17
+          y: 0
+          width: 18.08
+          height: 13.92
           label: "BEDROOM 4"
           color: bedroom
           linewidth: 3
+          ceiling_ft: 12
+          auto_dimension: true
+          dimension_text: "18'-1\" x 13'-11\""
 
-        - x: 25
-          y: 36
-          width: 7
-          height: 8
+        - x: 25.17
+          y: 13.92
+          width: 7.5
+          height: 6
           label: "BATH 4"
           color: bathroom
           linewidth: 3
+          ceiling_ft: 12.5
+          label_fontsize: 6
 
-        - x: 32
-          y: 36
-          width: 8
-          height: 8
-          label: "LAUNDRY"
-          color: utility
-          linewidth: 3
-
-        - x: 25
-          y: 44
-          width: 15
-          height: 14
-          label: "BEDROOM 3"
-          color: bedroom
-          linewidth: 3
-
-        - x: 25
-          y: 58
-          width: 15
-          height: 14
-          label: "BEDROOM 2"
-          color: bedroom
-          linewidth: 3
-
-        # --- HALLWAY (3' wide corridor connecting Mud Room to bedrooms) ---
-        - x: 40
-          y: 10
-          width: 3
-          height: 62
-          label: "HALL"
-          color: hall
-          linewidth: 2
-
-        # --- CENTER: LIVING CORE ---
-        # Front
-        - x: 43
-          y: 0
-          width: 18
-          height: 15
-          label: "DINING ROOM"
-          color: dining
-          linewidth: 3
-
-        - x: 61
-          y: 0
-          width: 12
-          height: 15
-          label: "FOYER"
-          color: hall
-          linewidth: 3
-
-        - x: 73
-          y: 0
-          width: 14
-          height: 15
-          label: "LOUNGE"
-          color: dining
-          linewidth: 3
-
-        # Middle / Back
-        - x: 43
-          y: 15
-          width: 14
-          height: 10
-          label: "BUTLER'S\nPANTRY"
-          color: utility
-          linewidth: 3
-
-        # Stair alcove (dedicated space for basement stairs)
-        - x: 57
-          y: 15
-          width: 4
-          height: 10
-          label: "STAIR"
-          color: hall
-          linewidth: 2
-
-        - x: 43
-          y: 25
-          width: 20
-          height: 18
-          label: "KITCHEN"
-          color: kitchen
-          linewidth: 3
-
-        - x: 63
-          y: 25
-          width: 24
-          height: 18
-          label: "FAMILY ROOM"
-          color: living
-          linewidth: 3
-
-        # --- RIGHT WING: MASTER ---
-        - x: 87
-          y: 25
-          width: 14
-          height: 14
-          label: "OFFICE"
-          color: office
-          linewidth: 3
-
-        - x: 87
-          y: 0
-          width: 20
-          height: 25
-          label: "MASTER\nSUITE"
-          color: bedroom
-          linewidth: 3
-
-        - x: 107
-          y: 0
-          width: 14
-          height: 15
-          label: "MASTER\nBATH"
-          color: bathroom
-          linewidth: 3
-
-        - x: 107
-          y: 15
-          width: 14
-          height: 10
+        - x: 32.67
+          y: 13.92
+          width: 10.58
+          height: 6
           label: "WIC"
           color: closet
           linewidth: 3
+          ceiling_ft: 12.5
+          label_fontsize: 6
+
+        - x: 25.17
+          y: 19.92
+          width: 11.08
+          height: 7.42
+          label: "MUD ROOM"
+          color: utility
+          linewidth: 3
+          ceiling_ft: 12
+          auto_dimension: true
+          dimension_text: "11'-1\" x 7'-5\""
+
+        - x: 36.25
+          y: 19.92
+          width: 7
+          height: 7.42
+          label: "HALL"
+          color: hall
+          linewidth: 2
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        # Stair landing strip (the DN stairs feature sits on this)
+        - x: 25.17
+          y: 27.34
+          width: 27.25
+          height: 3.5
+          label: ""
+          color: hall
+          linewidth: 2
+          ceiling_ft: 12
+
+        # --- LEFT WING: BEDROOM 3 / LAUNDRY / POWDER / PANTRY ---
+        - x: 25.17
+          y: 30.84
+          width: 17.25
+          height: 13.33
+          label: "BEDROOM 3"
+          color: bedroom
+          linewidth: 3
+          ceiling_ft: 12
+          auto_dimension: true
+          dimension_text: "17'-3\" x 13'-4\""
+
+        - x: 42.42
+          y: 30.84
+          width: 10
+          height: 13.33
+          label: "LAUNDRY"
+          color: utility
+          linewidth: 3
+          ceiling_ft: 12.5
+          label_fontsize: 7
+
+        - x: 52.42
+          y: 30.84
+          width: 6
+          height: 6.5
+          label: "PWDR"
+          color: powder
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        - x: 52.42
+          y: 37.34
+          width: 6
+          height: 6.83
+          label: "PANTRY"
+          color: utility
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        # --- NORTH-WEST BAND: BATH 3 / WIC / BEDROOM 2 / BATH 2 / NOOK ---
+        - x: 25.17
+          y: 44.17
+          width: 7
+          height: 7
+          label: "WIC"
+          color: closet
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        - x: 25.17
+          y: 51.17
+          width: 7
+          height: 7
+          label: "BATH 3"
+          color: bathroom
+          linewidth: 3
+          ceiling_ft: 12.5
+          label_fontsize: 6
+
+        - x: 32.17
+          y: 44.17
+          width: 14.17
+          height: 14.42
+          label: "BEDROOM 2"
+          color: bedroom
+          linewidth: 3
+          ceiling_ft: 12
+          auto_dimension: true
+          dimension_text: "14'-2\" x 14'-5\""
+
+        - x: 46.34
+          y: 44.17
+          width: 4
+          height: 4
+          label: "WIC"
+          color: closet
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 5
+
+        - x: 46.34
+          y: 48.17
+          width: 4
+          height: 10.42
+          label: "BATH 2"
+          color: bathroom
+          linewidth: 3
+          ceiling_ft: 12.5
+          label_fontsize: 6
+
+        - x: 50.34
+          y: 44.17
+          width: 14.08
+          height: 14.75
+          label: "BREAKFAST\nNOOK"
+          color: kitchen
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "14'-1\" x 14'-9\""
+
+        # --- FRONT ROW: DINING / FOYER / LOUNGE ---
+        - x: 43.25
+          y: 0
+          width: 18.33
+          height: 14.5
+          label: "DINING ROOM"
+          color: dining
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "18'-4\" x 14'-6\""
+
+        - x: 61.58
+          y: 0
+          width: 11.33
+          height: 13.33
+          label: "FOYER"
+          color: hall
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "11'-4\" x 13'-4\""
+
+        - x: 72.92
+          y: 0
+          width: 14.17
+          height: 12.17
+          label: "LOUNGE"
+          color: dining
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "14'-2\" x 12'-2\""
+
+        # --- SERVICE / ENTRY BAND ---
+        - x: 43.25
+          y: 14.5
+          width: 3.33
+          height: 9
+          label: "CLOSET"
+          color: closet
+          linewidth: 2
+          ceiling_ft: 12
+          label_fontsize: 5
+
+        - x: 46.58
+          y: 14.5
+          width: 15
+          height: 9
+          label: "BUTLER'S\nPANTRY"
+          color: utility
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "15'-0\" x 9'-0\""
+
+        - x: 61.58
+          y: 13.33
+          width: 10.17
+          height: 12.42
+          label: "FRONT\nHALL"
+          color: hall
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "10'-2\" x 12'-5\""
+
+        - x: 71.75
+          y: 14.5
+          width: 14.5
+          height: 9
+          label: "BAR"
+          color: bar
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "14'-6\" x 9'-0\""
+
+        # --- LIVING CORE ---
+        - x: 58.42
+          y: 25.75
+          width: 14
+          height: 15
+          label: "KITCHEN"
+          color: kitchen
+          linewidth: 3
+          ceiling_ft: 14
+
+        - x: 72.42
+          y: 25.75
+          width: 16.5
+          height: 15.17
+          label: "FAMILY ROOM"
+          color: living
+          linewidth: 3
+          ceiling_ft: 12
+          vaulted: true
+          auto_dimension: true
+          dimension_text: "16'-6\" x 15'-2\""
+
+        # --- RIGHT WING: OFFICE / MASTER ---
+        - x: 88.92
+          y: 16.5
+          width: 12
+          height: 12.42
+          label: "HALL"
+          color: hall
+          linewidth: 2
+          ceiling_ft: 14
+          label_fontsize: 6
+
+        - x: 88.92
+          y: 28.92
+          width: 12
+          height: 12
+          label: "OFFICE"
+          color: office
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "12'-0\" x 12'-0\""
+
+        - x: 100.92
+          y: 18.25
+          width: 17.67
+          height: 22.67
+          label: "MASTER\nSUITE"
+          color: bedroom
+          linewidth: 3
+          ceiling_ft: 12
+          vaulted: true
+          auto_dimension: true
+          dimension_text: "17'-8\" x 22'-8\""
+
+        - x: 87.09
+          y: 0
+          width: 8.83
+          height: 16.5
+          label: "WIC"
+          color: closet
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        - x: 95.92
+          y: 0
+          width: 8.83
+          height: 16.5
+          label: "WIC"
+          color: closet
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        - x: 104.75
+          y: 0
+          width: 13.84
+          height: 16.5
+          label: "MASTER\nBATH"
+          color: bathroom
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 7
 
         # --- PORCHES ---
         - x: 40
-          y: -10
-          width: 50
-          height: 10
+          y: -12.33
+          width: 56.67
+          height: 12.33
           label: "FRONT PORCH"
           color: porch
           linewidth: 3
-          # style: dashed # Assuming your parser handles 'style'
+          ceiling_ft: 12.67
+          auto_dimension: true
+          dimension_text: "56'-8\" x 12'-4\""
 
-        - x: 43
-          y: 43
-          width: 44
-          height: 15
+        - x: 64.42
+          y: 46.67
+          width: 13.33
+          height: 12.25
+          label: "BREAKFAST\nPORCH"
+          color: porch
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "13'-4\" x 12'-4\""
+
+        # Rectangle ends where the office porch begins; the printed
+        # 28'-2" dimension spans the combined outdoor-living frontage.
+        - x: 77.75
+          y: 40.92
+          width: 24
+          height: 15.33
           label: "OUTDOOR\nLIVING"
           color: porch
           linewidth: 3
-          # style: dashed
+          ceiling_ft: 12
+          vaulted: true
+          auto_dimension: true
+          dimension_text: "28'-2\" x 15'-4\""
+
+        - x: 101.75
+          y: 40.92
+          width: 11.33
+          height: 10.67
+          label: "OFFICE\nPORCH"
+          color: porch
+          linewidth: 3
+          ceiling_ft: 14
+          auto_dimension: true
+          dimension_text: "11'-4\" x 10'-8\""
+
+        - x: 113.08
+          y: 40.92
+          width: 19.17
+          height: 10
+          label: "MASTER\nPORCH"
+          color: porch
+          linewidth: 3
+          ceiling_ft: 12
+          vaulted: true
+          auto_dimension: true
+          dimension_text: "19'-2\" x 10'-0\""
+
+        - x: 118.59
+          y: 8.92
+          width: 10
+          height: 32
+          label: "SIDE\nPORCH"
+          color: porch
+          linewidth: 3
+          ceiling_ft: 12
+          auto_dimension: true
+          dimension_text: "10'-0\" x 32'-0\""
 
     # =========================================================================
-    # DOORS
+    # DOORS (direction: up/down = opening in a horizontal wall, spans x;
+    #        left/right = opening in a vertical wall, spans y)
     # =========================================================================
     doors:
-        # Front Entry
-        - x: 48
+        # Front entry (double) into the foyer
+        - x: 64
           y: 0
           width: 5
           direction: up
           swing: right
-        # Garage to Mud Room
-        - x: 25
-          y: 12
-          width: 3
-          direction: right
-          swing: down
-        # Mud Room to Interior
-        - x: 25
-          y: 18
-          width: 3
-          direction: right
-          swing: up
-        # Master Suite Entry
-        - x: 87
-          y: 5
-          width: 3
-          direction: right
-          swing: up
-        # Office Entry (French doors)
-        - x: 87
-          y: 28
-          width: 4
-          direction: right
-          swing: left
-        # Bedroom 2 Entry
-        - x: 40
-          y: 60
-          width: 3
-          direction: left
-          swing: down
-        # Bedroom 3 Entry
-        - x: 40
-          y: 46
-          width: 3
-          direction: left
-          swing: up
-        # Bedroom 4 Entry
-        - x: 40
-          y: 24
-          width: 3
-          direction: left
-          swing: up
-        # Mud Room to Hallway
-        - x: 40
-          y: 14
-          width: 3
-          direction: right
-          swing: up
-        # Laundry Entry (from Hall)
-        - x: 40
-          y: 38
-          width: 3
-          direction: left
-          swing: down
-        # Butler's Pantry to Kitchen
-        - x: 50
-          y: 25
-          width: 3
-          direction: down
-          swing: right
-        # Kitchen to Family Room
-        - x: 63
-          y: 30
-          width: 4
-          direction: right
-          swing: up
-        # Dining Room Entry (from Foyer)
-        - x: 61
-          y: 5
-          width: 4
-          direction: right
-          swing: down
-        # Lounge Entry (from Foyer)
-        - x: 73
-          y: 5
-          width: 3
-          direction: right
-          swing: up
-        # Master Bath Entry
-        - x: 107
-          y: 5
-          width: 3
-          direction: right
-          swing: up
-        # Walk-In Closet Entry
-        - x: 107
-          y: 18
-          width: 3
-          direction: right
-          swing: down
-        # Outdoor Living (from Kitchen/Family Room)
-        - x: 55
-          y: 43
-          width: 5
-          direction: down
-          swing: right
-        # Front Porch side entry
-        - x: 65
+        # Dining room to front porch (two pairs)
+        - x: 46
           y: 0
           width: 4
+          direction: up
+          swing: right
+        - x: 54
+          y: 0
+          width: 4
+          direction: up
+          swing: left
+        # Lounge to front porch
+        - x: 76
+          y: 0
+          width: 4
+          direction: up
+          swing: right
+        - x: 82
+          y: 0
+          width: 4
+          direction: up
+          swing: left
+        # Garage to mud room
+        - x: 25.17
+          y: 22
+          width: 3
+          direction: right
+          swing: up
+        # Mud room to hall
+        - x: 36.25
+          y: 22
+          width: 3
+          direction: right
+          swing: up
+        # Stair landing door (south end of the DN flight)
+        - x: 27
+          y: 27.34
+          width: 3
+          direction: up
+          swing: right
+        # Bedroom 4 (from the bath/hall side)
+        - x: 38
+          y: 13.92
+          width: 3
+          direction: up
+          swing: right
+        # Bedroom 4 to Bath 4
+        - x: 28
+          y: 13.92
+          width: 2.5
+          direction: up
+          swing: left
+        # Bedroom 3 (from the landing/hall)
+        - x: 38
+          y: 30.84
+          width: 3
+          direction: up
+          swing: right
+        # Laundry (from the landing/hall)
+        - x: 46
+          y: 30.84
+          width: 3
+          direction: up
+          swing: right
+        # Pantry to kitchen
+        - x: 55.42
+          y: 37.34
+          width: 3
+          direction: up
+          swing: right
+        # Bedroom 2 (from the hall below)
+        - x: 38
+          y: 44.17
+          width: 3
+          direction: up
+          swing: right
+        # Bath 2
+        - x: 47
+          y: 44.17
+          width: 2.5
+          direction: up
+          swing: right
+        # Bath 3 (east wall, from Bedroom 2 side)
+        - x: 32.17
+          y: 53
+          width: 2.5
+          direction: left
+          swing: up
+        # Breakfast nook to breakfast porch
+        - x: 64.42
+          y: 50
+          width: 4
+          direction: left
+          swing: up
+        # Dining room to butler's pantry
+        - x: 50
+          y: 14.5
+          width: 3
+          direction: up
+          swing: right
+        # Foyer to front hall (open cased opening)
+        - x: 63
+          y: 13.33
+          width: 5
+          direction: up
+          swing: right
+        # Front hall to family room (open)
+        - x: 63
+          y: 25.75
+          width: 5
+          direction: up
+          swing: right
+        # Bar to family room (open)
+        - x: 76
+          y: 23.5
+          width: 4
+          direction: up
+          swing: right
+        # Kitchen to family room (open)
+        - x: 72.42
+          y: 30
+          width: 5
+          direction: right
+          swing: up
+        # Kitchen to outdoor living
+        - x: 62
+          y: 40.75
+          width: 4
+          direction: up
+          swing: right
+        # Family room to outdoor living (sliders)
+        - x: 78
+          y: 40.92
+          width: 6
+          direction: up
+          swing: right
+        # Office entry (from the entry hall)
+        - x: 94
+          y: 28.92
+          width: 3
+          direction: up
+          swing: right
+        # Office to office porch
+        - x: 95
+          y: 40.92
+          width: 3
+          direction: up
+          swing: right
+        # Master suite entry (from the entry hall)
+        - x: 104
+          y: 18.25
+          width: 4
+          direction: up
+          swing: right
+        # Master suite to master porch
+        - x: 108
+          y: 40.92
+          width: 5
+          direction: up
+          swing: right
+        # Master suite to side porch (two doors)
+        - x: 118.59
+          y: 24
+          width: 5
+          direction: right
+          swing: up
+        - x: 118.59
+          y: 33
+          width: 4
+          direction: right
+          swing: up
+        # Master bath entry
+        - x: 110
+          y: 16.5
+          width: 3
+          direction: up
+          swing: right
+        # Master WIC entries (from the dressing passage)
+        - x: 90
+          y: 16.5
+          width: 3
+          direction: up
+          swing: right
+        - x: 99
+          y: 16.5
+          width: 3
           direction: up
           swing: left
 
@@ -448,8 +779,12 @@ main_floor:
     # WINDOWS
     # =========================================================================
     windows:
-        # Front Facade (Dining/Lounge)
-        - x: 45
+        # Front facade
+        - x: 46
+          y: 0
+          width: 6
+          orientation: horizontal
+        - x: 53
           y: 0
           width: 6
           orientation: horizontal
@@ -457,82 +792,117 @@ main_floor:
           y: 0
           width: 6
           orientation: horizontal
-        # Garage
-        - x: 0
-          y: 20
-          width: 6
-          orientation: vertical
-        # Master Bedroom (Right Wall)
-        - x: 107
-          y: 10
-          width: 8
-          orientation: vertical
-        # Family Room (Rear)
-        - x: 65
-          y: 43
-          width: 8
-          orientation: horizontal
-        # Kitchen (Rear)
-        - x: 45
-          y: 43
-          width: 6
-          orientation: horizontal
-        # Bedroom 2 (north wall)
-        - x: 30
-          y: 72
-          width: 6
-          orientation: horizontal
-        # Bedroom 3 (west wall)
-        - x: 25
-          y: 48
-          width: 5
-          orientation: vertical
-        # Bedroom 4 (west wall)
-        - x: 25
-          y: 28
-          width: 5
-          orientation: vertical
-        # Master Suite (south wall)
-        - x: 92
+        - x: 82
           y: 0
-          width: 8
+          width: 5
           orientation: horizontal
-        # Lounge (rear/north wall)
-        - x: 77
-          y: 15
+        # Bedroom 4 (south)
+        - x: 30
+          y: 0
           width: 6
           orientation: horizontal
-        # Kitchen (west wall toward hallway)
-        - x: 43
-          y: 35
+        # Master bath (south)
+        - x: 108
+          y: 0
+          width: 6
+          orientation: horizontal
+        # Garage (west + south)
+        - x: 0
+          y: 10
+          width: 6
+          orientation: vertical
+        - x: 0
+          y: 22
+          width: 6
+          orientation: vertical
+        - x: 8
+          y: 0
+          width: 6
+          orientation: horizontal
+        # Bedroom 3 (west)
+        - x: 25.17
+          y: 34
+          width: 6
+          orientation: vertical
+        # Bath 3 (west)
+        - x: 25.17
+          y: 53
+          width: 3
+          orientation: vertical
+        # Bedroom 2 (north)
+        - x: 36
+          y: 58.59
+          width: 6
+          orientation: horizontal
+        # Breakfast nook (north)
+        - x: 54
+          y: 58.92
+          width: 6
+          orientation: horizontal
+        # Kitchen (north, under the outdoor living roof)
+        - x: 62
+          y: 40.75
+          width: 5
+          orientation: horizontal
+        # Family room (north)
+        - x: 76
+          y: 40.92
+          width: 8
+          orientation: horizontal
+        # Office (north)
+        - x: 92
+          y: 40.92
+          width: 6
+          orientation: horizontal
+        # Master suite (north)
+        - x: 106
+          y: 40.92
+          width: 6
+          orientation: horizontal
+        # Lounge (east)
+        - x: 87.09
+          y: 4
           width: 5
           orientation: vertical
 
     fireplaces:
-        # Gas fireplace on Family Room north wall
-        - x: 75
-          y: 25
-          width: 4
-          height: 3
-          label: "Gas Fireplace"
+        # Dining room, west wall (from the original plan)
+        - x: 43.25
+          y: 10
+          width: 3
+          height: 4
+          label: "Fireplace"
+        # Family room, east wall by the office (from the original plan)
+        - x: 86.42
+          y: 31
+          width: 2.5
+          height: 4
+          label: "Fireplace"
 
     stairs:
-        # Stairs down to basement (in dedicated stair alcove)
-        - x: 57
-          y: 15
-          width: 4
-          height: 10
-          num_steps: 10
-          orientation: vertical
+        # Stairs down to the basement, in the left wing by the mud room
+        # (matches the original plan; the basement UP flight lands here)
+        - x: 25.17
+          y: 27.34
+          width: 10
+          height: 3.5
+          num_steps: 12
+          orientation: horizontal
           label: "DN"
 
     furniture: []
 
 # =============================================================================
-# BASEMENT FLOOR PLAN - Ultra-Precise (100' x 60' ICF Foundation)
+# BASEMENT FLOOR PLAN - Corrected to the hand-drawn sketch (2026-10-27)
 # =============================================================================
-# Layout from hand-drawn sketch with precise decimal coordinates:
-# - Total: 100.00' wide x 60.00' tall
+# - 100' x 60' ICF foundation (see foundation: below), 12' ceilings.
+# - The sketch's five doors are now defined (the old data had none).
+# - The exit stairs are the sketch's attached tower OUTSIDE the east
+#   foundation wall (~30-40' of run at the north end), not a full-height
+#   strip inside the 100' width.
+# - The bar is a freestanding counter (furniture), not a walled room.
+# - The bottom band follows the sketch's segments: pool 25' + hall 5' +
+#   open floor + the ~54' storage/rec block.
 # =============================================================================
 basement:
     figure:
@@ -540,7 +910,7 @@ basement:
         height: 14
         title: "Basement Floor Plan - Phase 1 Rough-In"
         x_min: -5
-        x_max: 110
+        x_max: 115
         y_min: -5
         y_max: 70
 
@@ -559,15 +929,21 @@ basement:
         color: gray
 
     north_arrow:
-        x: 100
+        x: 106
         y: 62
         size: 6
+
+    # ICF foundation footprint (the exit-stair tower sits outside it)
+    foundation:
+        x: 0
+        y: 0
+        width: 100
+        height: 60
 
     # =========================================================================
     # ROOMS
     # =========================================================================
     rooms:
-        # --- LEFT SECTION ---
         # Pool / Hot Tub (Bottom Left)
         - x: 0
           y: 0
@@ -576,8 +952,20 @@ basement:
           label: "POOL / HOT TUB"
           color: pool_area
           linewidth: 3
+          ceiling_ft: 12
           auto_dimension: true
           dimension_text: "25' x 35'"
+
+        # 5' hall strip east of the pool (the sketch's unlabeled strip)
+        - x: 25
+          y: 0
+          width: 5
+          height: 35
+          label: "HALL"
+          color: hall
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
 
         # Home Theater (Top Left)
         - x: 0
@@ -588,11 +976,11 @@ basement:
           color: theater
           label_color: white
           linewidth: 3
+          ceiling_ft: 12
           auto_dimension: true
           dimension_text: "30' x 25'"
 
-        # --- CENTER / TOP ROW ---
-        # Utilities
+        # Utilities (Top Center)
         - x: 30
           y: 45
           width: 40
@@ -600,45 +988,59 @@ basement:
           label: "UTILITIES"
           color: utility
           linewidth: 3
+          ceiling_ft: 12
 
-        # --- CENTER / OPEN AREA ---
-        # Open Rec Area (trimmed to stop at exit stairs column)
-        - x: 25
+        # Corridor junction between theater, utilities and the rec area
+        - x: 30
           y: 20
-          width: 55
+          width: 5
+          height: 25
+          label: ""
+          color: hall
+          linewidth: 2
+          ceiling_ft: 12
+
+        # Open Rec Area (Center)
+        - x: 35
+          y: 20
+          width: 45
           height: 25
           label: "OPEN REC AREA"
           color: living
           linewidth: 3
+          ceiling_ft: 12
 
-        # Storage / Rec (Bottom Center)
-        - x: 30
+        # Open floor, bottom center (continuous with the rec area)
+        - x: 35
           y: 0
-          width: 60
+          width: 11
+          height: 20
+          label: "OPEN FLOOR"
+          color: living
+          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 6
+
+        # Storage / Rec block (Bottom Right, the sketch's ~54' block)
+        - x: 46
+          y: 0
+          width: 54
           height: 20
           label: "STORAGE / REC"
           color: storage
           linewidth: 3
+          ceiling_ft: 12
 
-        # --- FAR RIGHT: Exit Stairs container ---
-        - x: 90
-          y: 0
+        # Exit stair tower, attached OUTSIDE the east foundation wall
+        - x: 100
+          y: 20
           width: 10
-          height: 60
-          label: ""
+          height: 40
+          label: "EXIT\nSTAIRS"
           color: hall
           linewidth: 3
-
-        # --- FEATURES ---
-        # Bar
-        - x: 65
-          y: 25
-          width: 10
-          height: 6
-          label: "BAR"
-          color: bar
-          label_color: white
-          linewidth: 3
+          ceiling_ft: 12
+          label_fontsize: 7
 
     theater:
         room:
@@ -696,23 +1098,75 @@ basement:
             edge_color: "#0288d1"
             label: "Hot\nTub"
 
-    doors: []
-    stairs:
-        - x: 70
+    # The sketch's five doors (plus the corridor junction door).
+    # Direction convention matches the main floor (see its header note).
+    doors:
+        # Home theater, south wall near the east end
+        - x: 26
+          y: 35
+          width: 3
+          direction: up
+          swing: right
+        # Pool room, east wall into the hall strip
+        - x: 25
+          y: 29
+          width: 3
+          direction: left
+          swing: up
+        # Hall junction to the rec area
+        - x: 30
+          y: 40
+          width: 3
+          direction: right
+          swing: up
+        # Utilities, south wall at the stair landing
+        - x: 54
           y: 45
+          width: 3
+          direction: up
+          swing: right
+        # Rec area to the exit stair tower (east foundation wall)
+        - x: 100
+          y: 52
+          width: 3
+          direction: right
+          swing: up
+        # Storage / rec block, north wall
+        - x: 84
+          y: 20
+          width: 3
+          direction: up
+          swing: right
+
+    stairs:
+        # Main stairs UP - lands at the main floor's left-wing DN flight
+        - x: 52
+          y: 35
           width: 20
-          height: 15
+          height: 10
           num_steps: 12
           orientation: horizontal
           label: "UP"
 
-        - x: 90
-          y: 0
+        # Exit stairs in the attached tower (outside the foundation)
+        - x: 100
+          y: 20
           width: 10
-          height: 60
-          num_steps: 40
+          height: 40
+          num_steps: 27
           orientation: vertical
           label: "EXIT\nSTAIRS"
-    furniture: []
+
+    # The sketch's bar is a freestanding counter in the open area
+    furniture:
+        - type: rectangle
+          x: 62
+          y: 28
+          width: 4
+          height: 10
+          color: bar
+          label: "BAR / COFFEE / SINK"
+          label_fontsize: 6
+
     text_annotations: []
     line_annotations: []

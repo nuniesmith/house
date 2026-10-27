@@ -80,6 +80,8 @@ class Room:
     auto_dimension: bool = False
     dimension_text: str = ""
     notes: str = ""
+    ceiling_ft: float = 0.0  # 0 = unspecified; used by the OpenSCAD generator
+    vaulted: bool = False
 
     def __post_init__(self) -> None:
         """Validate room dimensions after initialization."""
@@ -671,6 +673,8 @@ class FloorPlan:
                     "auto_dimension": r.auto_dimension,
                     "dimension_text": r.dimension_text,
                     "notes": r.notes,
+                    "ceiling_ft": r.ceiling_ft,
+                    "vaulted": r.vaulted,
                 }
                 for r in self.rooms
             ],
@@ -717,6 +721,8 @@ class FloorPlanBuilder:
         auto_dimension: bool = False,
         dimension_text: str = "",
         notes: str = "",
+        ceiling_ft: float = 0.0,
+        vaulted: bool = False,
     ) -> "FloorPlanBuilder":
         """Add a room to the floor plan."""
         room = Room(
@@ -733,6 +739,8 @@ class FloorPlanBuilder:
             auto_dimension=auto_dimension,
             dimension_text=dimension_text,
             notes=notes,
+            ceiling_ft=ceiling_ft,
+            vaulted=vaulted,
         )
         self._plan.rooms.append(room)
         return self

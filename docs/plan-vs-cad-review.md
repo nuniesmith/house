@@ -81,3 +81,22 @@ originals: add the missing rooms/porches/baths, correct the sizes above,
 add the basement doors, per-room ceiling heights, and the second
 fireplace. Both generators (2D PNG and 3D SCAD) then re-render from the
 same corrected data.
+
+---
+
+## Resolution — follow-up data pass (2026-10-27)
+
+Addressed in the `feat/original-plan-data` PR; details and conventions
+in `docs/original-plan-data.md`:
+
+- All missing main-floor rooms, baths, WICs and porches added; both
+  fireplaces placed as drawn; stairs moved to the left wing.
+- Printed dimensions applied to enclosed rooms; `ceiling_ft` /
+  `vaulted` added per room and honoured by the OpenSCAD generator.
+- Basement doors added (the sketch's five, plus the corridor door);
+  exit stairs moved to an attached tower outside the foundation, with
+  the true 100 × 60 footprint recorded as `foundation:`; stairs UP
+  repositioned; the bar remodelled as a freestanding counter.
+- Remaining known gaps (unchanged by this pass): fixtures/appliances
+  are not modelled, and open-plan zones are fitted rectangles rather
+  than the plan's exact L-shapes.

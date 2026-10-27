@@ -149,6 +149,8 @@ rooms:
     auto_dimension: true
     dimension_text: "25' x 29'"
     notes: "2 Car"     # Optional additional notes
+    ceiling_ft: 12     # Optional ceiling height (used by the OpenSCAD generator)
+    vaulted: false     # Optional vaulted ceiling (OpenSCAD models +4' over eave)
 ```
 
 #### Doors
