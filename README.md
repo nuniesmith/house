@@ -5,6 +5,8 @@ visualisation (no roof), not construction documents.
 
 - `main_floor.scad` — main level: all rooms from the architectural
   plan, open-plan kitchen / family room / bar, columned front porch
+  and four columned rear porches (breakfast, outdoor living,
+  office, master) with yard steps
 - `basement.scad` — lower level: open-plan rec floor with a walled
   theater, pool room and utilities, plus the exit-stair tower
 - `house_combined.scad` — both levels stacked; set `mode` to
