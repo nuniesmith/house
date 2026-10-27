@@ -84,6 +84,9 @@ class Room:
     vaulted: bool = False
     open_edges: list = field(default_factory=list)  # N/S/E/W sides left open in 3D
     open_plan: bool = False  # floor plate only in 3D (open-plan zone)
+    columns: bool = False  # porch with posts + roof slab instead of a railing
+    roof_ft: float = 0.0  # porch roof line in feet (0 = use ceiling_ft)
+    steps: list = field(default_factory=list)  # porch entry steps (dicts)
 
     def __post_init__(self) -> None:
         """Validate room dimensions after initialization."""

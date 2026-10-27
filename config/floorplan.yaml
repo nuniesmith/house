@@ -516,6 +516,13 @@ main_floor:
           color: porch
           linewidth: 3
           ceiling_ft: 12.67
+          columns: true
+          roof_ft: 12.67
+          steps:
+            - side: "S"
+              center: 67.25
+              width: 8
+              treads: 4
           auto_dimension: true
           dimension_text: "56'-8\" x 12'-4\""
 

@@ -95,6 +95,8 @@ class Level:
                     wh += 4.0  # raised vault above the eave line
             if r.get("open_plan"):
                 continue  # open-plan zone: floor plate only, no walls
+            if r.get("columns"):
+                continue  # columned porch: posts + roof slab, no railing
             open_sides = set(r.get("open_edges") or [])
             for side in "SNWE":
                 if side in open_sides:
@@ -109,6 +111,67 @@ class Level:
                     out.append((x, y + h / 2, h + t, t, False, wh))
                 else:
                     out.append((x + w, y + h / 2, h + t, t, False, wh))
+        return out
+
+    def porch_structures(self):
+        """SCAD lines for columned porches: posts, roof slab, entry steps."""
+        out = []
+        A = out.append
+        post = 0.75  # 9 in square posts
+        for r in self.rooms:
+            if not r.get("columns"):
+                continue
+            x, y, w, h = r["x"], r["y"], r["width"], r["height"]
+            roof_ft = float(r.get("roof_ft") or r.get("ceiling_ft") or self.ceiling)
+            posts = set()
+            for side in "SNWE":
+                if not self.is_exterior(r, side):
+                    continue
+                length = w if side in "SN" else h
+                bays = max(1, round(length / 9.5))
+                for i in range(bays + 1):
+                    t = i / bays
+                    if side == "S":
+                        px, py = x + t * w, y
+                    elif side == "N":
+                        px, py = x + t * w, y + h
+                    elif side == "W":
+                        px, py = x, y + t * h
+                    else:
+                        px, py = x + w, y + t * h
+                    posts.add((round(px, 2), round(py, 2)))
+            A(f"// ---- porch columns + roof: {label_of(r) or 'porch'}")
+            A("color([0.96, 0.95, 0.92]) {")
+            for px, py in sorted(posts):
+                A(f"  translate([{px - post / 2:.2f}, {py - post / 2:.2f}, 0]) "
+                  f"cube([{post}, {post}, {roof_ft}]);")
+            A("}")
+            x0 = x - (1.0 if self.is_exterior(r, "W") else 0.0)
+            x1 = x + w + (1.0 if self.is_exterior(r, "E") else 0.0)
+            y0 = y - (1.0 if self.is_exterior(r, "S") else 0.0)
+            y1 = y + h + (1.0 if self.is_exterior(r, "N") else 0.0)
+            A("color([0.30, 0.30, 0.32]) {")
+            A(f"  translate([{x0:.2f}, {y0:.2f}, {roof_ft}]) "
+              f"cube([{x1 - x0:.2f}, {y1 - y0:.2f}, 0.75]);")
+            A("}")
+            for st in r.get("steps") or []:
+                side = st.get("side", "S")
+                c = float(st["center"])
+                sw = float(st.get("width", 8))
+                treads = int(st.get("treads", 4))
+                A("color([0.80, 0.80, 0.78]) {")
+                for i in range(treads):
+                    z = -0.5 * (i + 1)
+                    if side == "S":
+                        A(f"  translate([{c - sw / 2:.2f}, {y - (i + 1):.2f}, {z:.2f}]) cube([{sw}, 1.0, 0.5]);")
+                    elif side == "N":
+                        A(f"  translate([{c - sw / 2:.2f}, {y + h + i:.2f}, {z:.2f}]) cube([{sw}, 1.0, 0.5]);")
+                    elif side == "W":
+                        A(f"  translate([{x - (i + 1):.2f}, {c - sw / 2:.2f}, {z:.2f}]) cube([1.0, {sw}, 0.5]);")
+                    else:
+                        A(f"  translate([{x + w + i:.2f}, {c - sw / 2:.2f}, {z:.2f}]) cube([1.0, {sw}, 0.5]);")
+                A("}")
+            A("")
         return out
 
     def render(self):
@@ -204,6 +267,9 @@ class Level:
             A(f"color([0.05,0.05,0.05]) translate([{f['x'] + 0.7}, {f['y'] - 0.05}, 0.6]) "
               f"cube([{f['width'] - 1.4}, 0.3, 1.8]);")
             A("")
+        # ---- porch structures (columns, roof slabs, steps)
+        for ln in self.porch_structures():
+            A(ln)
         # ---- stairs
         for s in self.cfg.get("stairs", []):
             A(f"// stairs: {(s.get('label') or '').replace(chr(10), ' ')}")
