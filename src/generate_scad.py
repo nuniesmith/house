@@ -10,8 +10,11 @@ stairs, fireplace, pool, hot tub and theater seating as simple solids.
 Units are FEET (1 OpenSCAD unit = 1 ft), matching the YAML. To print the
 model, scale in your slicer (e.g. 1:87) or set model_scale below.
 
-Assumptions (the YAML does not carry these):
-  - main-floor ceiling 9 ft (basement is 12 ft, from the YAML note)
+Data / assumptions:
+  - ceiling heights come from each room's ceiling_ft in the YAML
+    (level ceiling_ft, else 12 ft, is the fallback); vaulted rooms are
+    modelled 4 ft taller than their eave height; porches get a 3 ft
+    railing instead of full-height walls
   - door leaf height 7 ft, window sill 2.5 ft, window height 4 ft
   - exterior walls 0.5 ft, interior 0.34 ft (rooms are drawn with a wall
     frame on each room edge, so shared walls appear doubled — this is a
@@ -24,7 +27,7 @@ Defaults resolve relative to the repo root (config/floorplan.yaml -> output/).
 import sys
 import yaml
 
-MAIN_CEILING_FT = 9.0
+MAIN_CEILING_FT = 12.0  # fallback only; rooms carry ceiling_ft
 BASEMENT_CEILING_FT = 12.0  # "12' Ceilings Throughout" in the YAML
 DOOR_H = 7.0
 WIN_SILL = 2.5
@@ -81,7 +84,12 @@ class Level:
         out = []
         for r in self.rooms:
             x, y, w, h = r["x"], r["y"], r["width"], r["height"]
-            wh = 3.0 if r.get("color") == "porch" else self.ceiling
+            if r.get("color") == "porch":
+                wh = 3.0  # railing
+            else:
+                wh = float(r.get("ceiling_ft") or self.ceiling)
+                if r.get("vaulted"):
+                    wh += 4.0  # raised vault above the eave line
             for side in "SNWE":
                 ext = self.is_exterior(r, side)
                 t = EXT_T if ext else INT_T
@@ -167,6 +175,19 @@ class Level:
                   f"translate([0, -0.09, 0]) cube([{w}, 0.18, {DOOR_H}]);")
             A("}")
             A("")
+        # ---- furniture (counters and other low solids, 3.5 ft)
+        furn = self.cfg.get("furniture", [])
+        if furn:
+            A("// ---- furniture")
+            for fu in furn:
+                col = hex_rgb(self.colors.get(fu.get("color", "wood"), "#8b4513"))
+                if fu.get("type") == "circle":
+                    A(f"color({col}) translate([{fu['x']}, {fu['y']}, 0]) "
+                      f"cylinder(r={fu['width'] / 2}, h=3.5);")
+                else:
+                    A(f"color({col}) translate([{fu['x']}, {fu['y']}, 0]) "
+                      f"cube([{fu['width']}, {fu['height']}, 3.5]);")
+            A("")
         # ---- fireplaces
         for f in self.cfg.get("fireplaces", []):
             A(f"// fireplace: {f.get('label', '')}")
@@ -227,7 +248,7 @@ def basement_extras(cfg, colors):
         A("}")
         fw = th["false_wall"]
         A(f"color([0.6, 0.1, 0.1]) translate([{fw['x1']}, {fw['y1'] - 0.25}, 0]) "
-          f"cube([{fw['x2'] - fw['x1']}, 0.5, {BASEMENT_CEILING_FT - 1}]);  // false wall")
+          f"cube([{fw['x2'] - fw['x1']}, 0.5, 11]);  // false wall, 1 ft below the 12 ft ceiling")
         A("")
     return "\n".join(L)
 
@@ -241,14 +262,22 @@ def main():
         doc = yaml.safe_load(fh)
     colors = {k: v for k, v in doc["colors"].items() if isinstance(v, str)}
 
-    main_lvl = Level(doc["main_floor"], colors, MAIN_CEILING_FT, "Main floor")
+    main_lvl = Level(doc["main_floor"], colors,
+                     float(doc["main_floor"].get("ceiling_ft", MAIN_CEILING_FT)), "Main floor")
     with open(f"{out_dir}/main_floor.scad", "w") as fh:
         fh.write(main_lvl.render())
 
-    bs = Level(doc["basement"], colors, BASEMENT_CEILING_FT, "Basement")
+    bs = Level(doc["basement"], colors,
+               float(doc["basement"].get("ceiling_ft", BASEMENT_CEILING_FT)), "Basement")
     body = bs.render()
-    # ICF foundation shell around the 100x60 footprint
-    x0, y0, x1, y1 = bs.bounds
+    # ICF foundation shell around the foundation footprint (the exit
+    # stair tower is attached outside it, so bounds alone would wrap it)
+    fnd = doc["basement"].get("foundation")
+    if fnd:
+        x0, y0 = fnd["x"], fnd["y"]
+        x1, y1 = x0 + fnd["width"], y0 + fnd["height"]
+    else:
+        x0, y0, x1, y1 = bs.bounds
     shell = ["// ---- ICF foundation shell (1 ft)",
              "difference() {"]
     shell.append(f"  translate([{x0}, {y0}, -1.15]) cube([{x1 - x0}, {y1 - y0}, 1.0]);")
