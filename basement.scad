@@ -1,136 +1,109 @@
 // Basement - OpenSCAD model of the lower level.
-// Units: feet. Dollhouse view (no roof). NOT construction documents.
-wall_h = 12.0;
-$fn = 24;
+// Units: feet. Visualisation only - NOT construction documents.
+//
+// Follows the hand-drawn 100' x 60' sketch: home theater (NW), pool +
+// hot tub (SW), utilities (N), open rec room with the bar / coffee /
+// sink counter, a 10' x 30' room (NE) and a 40' x 20' room (SE), both
+// unlabelled in the sketch, and the exit stair outside the east wall.
+// Positions come from the photo with its perspective corrected; the
+// labelled dimensions win where the drawing disagrees with them.
+// x = east, y = north in basement coordinates; house_lib's
+// basement_offset() maps them onto the main floor.
+//
+// stair = "proposed": the stair comes down from the main floor's
+// former bar into the rec room (it lines up with main_floor.scad).
+// "as_drawn": the sketch's straight stair beside the utilities, which
+// lands under the office / master suite upstairs (see REVIEW.md).
 
-// ---- floor plates
-color([0.6823529411764706, 0.9333333333333333, 0.9333333333333333]) translate([0, 0, -0.15]) cube([25, 35, 0.15]);
-color([0.15,0.15,0.15]) translate([12.5, 17.5, 0.01]) linear_extrude(0.05) text("POOL / HOT TUB", size=2.30, halign="center", valign="center");
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([25, 0, -0.15]) cube([21, 20, 0.15]);
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([25, 20, -0.15]) cube([5, 15, 0.15]);
-color([0.4392156862745098, 0.5019607843137255, 0.5647058823529412]) translate([0, 35, -0.15]) cube([30, 25, 0.15]);
-color([0.15,0.15,0.15]) translate([15.0, 47.5, 0.01]) linear_extrude(0.05) text("HOME THEATER", size=2.30, halign="center", valign="center");
-color([1.0, 0.8745098039215686, 0.7294117647058823]) translate([30, 45, -0.15]) cube([40, 15, 0.15]);
-color([0.15,0.15,0.15]) translate([50.0, 52.5, 0.01]) linear_extrude(0.05) text("UTILITIES", size=2.30, halign="center", valign="center");
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([30, 20, -0.15]) cube([70, 25, 0.15]);
-color([0.15,0.15,0.15]) translate([65.0, 32.5, 0.01]) linear_extrude(0.05) text("OPEN REC AREA", size=2.30, halign="center", valign="center");
-color([0.9607843137254902, 0.9607843137254902, 0.8627450980392157]) translate([46, 0, -0.15]) cube([54, 20, 0.15]);
-color([0.15,0.15,0.15]) translate([73.0, 10.0, 0.01]) linear_extrude(0.05) text("STORAGE / REC", size=2.30, halign="center", valign="center");
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([70, 45, -0.15]) cube([30, 15, 0.15]);
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([100, 20, -0.15]) cube([10, 40, 0.15]);
-color([0.15,0.15,0.15]) translate([105.0, 40.0, 0.01]) linear_extrude(0.05) text("EXIT STAIRS", size=1.18, halign="center", valign="center");
+use <house_lib.scad>
 
-// ---- walls (openings cut)
-color([0.93, 0.91, 0.87]) difference() {
-  union() {
-    translate([-0.25, -0.25, 0]) cube([25.50, 0.50, 12.0]);
-    translate([-0.17, 34.83, 0]) cube([25.34, 0.34, 12.0]);
-    translate([-0.25, -0.25, 0]) cube([0.50, 35.50, 12.0]);
-    translate([24.83, -0.17, 0]) cube([0.34, 35.34, 12.0]);
-    translate([-0.17, 34.83, 0]) cube([30.34, 0.34, 12.0]);
-    translate([-0.25, 59.75, 0]) cube([30.50, 0.50, 12.0]);
-    translate([-0.25, 34.75, 0]) cube([0.50, 25.50, 12.0]);
-    translate([29.83, 34.83, 0]) cube([0.34, 25.34, 12.0]);
-    translate([29.83, 44.83, 0]) cube([40.34, 0.34, 12.0]);
-    translate([29.75, 59.75, 0]) cube([40.50, 0.50, 12.0]);
-    translate([29.83, 44.83, 0]) cube([0.34, 15.34, 12.0]);
-    translate([69.83, 44.83, 0]) cube([0.34, 15.34, 12.0]);
-    translate([99.75, 19.75, 0]) cube([10.50, 0.50, 12.0]);
-    translate([99.75, 59.75, 0]) cube([10.50, 0.50, 12.0]);
-    translate([99.83, 19.83, 0]) cube([0.34, 40.34, 12.0]);
-    translate([109.75, 19.75, 0]) cube([0.50, 40.50, 12.0]);
-  }
-  translate([26, 34.2, -0.1]) cube([3, 1.6, 7.1]);
-  translate([24.2, 29, -0.1]) cube([1.6, 3, 7.1]);
-  translate([63, 44.2, -0.1]) cube([3, 1.6, 7.1]);
-  translate([99.2, 52, -0.1]) cube([1.6, 3, 7.1]);
+stair = "proposed";    // [proposed, as_drawn]
+audit = false;         // echo the tables for the layout checker
+
+basement_level(stair, audit);
+
+/* [Hidden] */
+water  = [0.39, 0.70, 0.93];
+spa    = [0.51, 0.90, 0.85];
+seat   = [0.29, 0.29, 0.29];
+riser  = [0.40, 0.33, 0.30];
+fabric = [0.45, 0.10, 0.12];
+screen = [0.96, 0.96, 0.96];
+wood   = [0.55, 0.38, 0.22];
+
+// exit stair areaway outside the east foundation wall [x0, y0, x1, y1]
+function exit_areaway() = [100, 12, 105, 50];
+
+// [label, x0, y0, x1, y1, ceiling, kind, z0, tag, label_at]
+function base_rooms() = [
+    [["HOME", "THEATER"], 0,  35, 30,  60, 12, "living", 0, "", [15, 53.6, 1.6]],
+    [["POOL /", "HOT TUB"], 0, 0, 25,  35, 12, "pool",   0, "", [20.5, 29, 1.1]],
+    [["POOL", "EQUIP."],  25, 0,  30,  31, 12, "utility"],
+    ["",                  25, 31, 30,  35, 0,  "rec"],      // vestibule at the theater / pool doors
+    ["UTILITIES",         30, 45, 70,  60, 12, "utility"],
+    ["STORAGE",           70, 50, 100, 60, 12, "closet"],   // unlabelled in the sketch
+    ["FLEX ROOM",         60, 0,  100, 20, 12, "living"],   // unlabelled in the sketch
+    ["REC ROOM",          30, 20, 100, 45, 0,  "rec",    0, "", [42, 38, 2.2]],
+    ["",                  30, 0,  60,  20, 0,  "rec"],
+    ["",                  70, 45, 100, 50, 0,  "rec"],
+    ["STAIR UP",          52.2, 21, 67.1, 31.4, 12, "stairwell", 0, "stair_new", [59.6, 33.3, 1.4]],
+    ["STAIR UP",          70, 45, 90.7, 50, 12, "stairwell", 0, "stair_old", [80.3, 42.6, 1.4]],
+    concat([["EXIT", "STAIR"]], exit_areaway(), [11, "stair"]),   // areaway outside the foundation
+];
+
+// [x, y, axis, width, type, swing, tag]
+function base_doors() = [
+    [26,   35,   "x", 3,   "door",  1],                 // theater
+    [25,   31.5, "y", 3,   "door", -1],                 // pool room
+    [26,   31,   "x", 3,   "door", -1],                 // pool equipment
+    [30,   31.3, "y", 3.4, "full"],                     // vestibule / rec room
+    [30.3, 20,   "x", 29.4, "full"],                    // rec room is one open floor:
+    [70.3, 45,   "x", 29.4, "full", 1, "stair_new"],    //   its three plates join here
+    [91,   45,   "x", 8.7, "full", 1, "stair_old"],
+    [64,   45,   "x", 3,   "door",  1],                 // utilities
+    [95,   50,   "x", 3,   "door",  1],                 // storage
+    [88,   20,   "x", 3,   "door", -1],                 // flex room (no door in the sketch)
+    [100,  22,   "y", 3,   "door",  1],                 // exit door, opens outward
+    [52.2, 21.2, "y", 4.4, "full",  1, "stair_new"],    // foot of the stair
+    [90.7, 45.3, "y", 4.4, "full",  1, "stair_old"],
+];
+
+// [x0, y0, x1, y1, z0, z1, colour]
+function base_fixtures() = [
+    [5,    3,    17,   23,   -0.3, 0.02, water],        // pool
+    [1.5,  36,   28.5, 40.5, 0,    1.33, riser],        // theater risers, rows 2 + 3
+    [1.5,  41,   28.5, 45.5, 0,    0.67, riser],
+    [0.4,  57.6, 29.6, 58.2, 0,    11,   fabric],       // false wall at the screen end
+    [3,    57.4, 27,   57.6, 2,    10.5, screen],
+    [77.2, 29,   81.7, 39,   0,    3.5,  wood],         // bar / coffee / sink
+];
+
+module basement_level(stair = "proposed", audit = false) {
+    tags = [stair == "proposed" ? "stair_new" : "stair_old"];
+    rooms = active(base_rooms(), 8, tags);
+    doors = active(base_doors(), 6, tags);
+    if (audit) echo(rooms = rooms, doors = doors, windows = []);
+
+    // ICF foundation walls up to the main floor; passed into draw_level
+    // so the exit door is cut through them too
+    draw_level(rooms, doors, []) foundation_walls(0, 0, 100, 60, floor_to_floor());
+    foundation_slab(0, 0, 100, 60);
+
+    fixtures(base_fixtures());
+    color(spa) translate([11, 28.5, 0]) cylinder(r = 3.5, h = 1.5, $fn = 48);   // hot tub
+    // theater seating: three rows of four facing the screen (north),
+    // the back rows on the risers
+    color(seat)
+        for (row = [[47, 0], [42, 0.67], [37, 1.33]], x = [6, 11, 16, 21])
+            translate([x, row[0], row[1]]) cube([3, 2.5, 2.6]);
+
+    // stairs: up to the main floor, and the exit stair up to grade
+    // (2 ft below the main floor) along the outside of the east wall
+    off = basement_offset();
+    if (stair == "proposed")
+        translate([-off[0], -off[1], 0]) bar_stair(floor_to_floor(), upper = false);
+    else
+        flight(70.5, 45.5, 90.7, 49.5, "+x", floor_to_floor(), 0, 21, 0);
+    flight(100.5, 27, 104.5, 44, "-y", floor_to_floor() - 2, 0, 18, 0);
+    landing(100.5, 44, 104.5, 50, 0, floor_to_floor() - 2);
 }
-
-// ---- door leaves (ajar 30 deg)
-color([0.55, 0.35, 0.2]) {
-  translate([26, 35, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([25, 29, 0]) rotate([0,0,60]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([63, 45, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([100, 52, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-}
-
-// ---- furniture
-color([0.5450980392156862, 0.27058823529411763, 0.07450980392156863]) translate([62, 28, 0]) cube([4, 10, 3.5]);
-
-// stairs: UP
-color([0.75, 0.72, 0.68]) {
-  translate([52.00, 35, 0]) cube([1.67, 10, 1.00]);
-  translate([53.67, 35, 0]) cube([1.67, 10, 2.00]);
-  translate([55.33, 35, 0]) cube([1.67, 10, 3.00]);
-  translate([57.00, 35, 0]) cube([1.67, 10, 4.00]);
-  translate([58.67, 35, 0]) cube([1.67, 10, 5.00]);
-  translate([60.33, 35, 0]) cube([1.67, 10, 6.00]);
-  translate([62.00, 35, 0]) cube([1.67, 10, 7.00]);
-  translate([63.67, 35, 0]) cube([1.67, 10, 8.00]);
-  translate([65.33, 35, 0]) cube([1.67, 10, 9.00]);
-  translate([67.00, 35, 0]) cube([1.67, 10, 10.00]);
-  translate([68.67, 35, 0]) cube([1.67, 10, 11.00]);
-  translate([70.33, 35, 0]) cube([1.67, 10, 12.00]);
-}
-
-// stairs: EXIT STAIRS
-color([0.75, 0.72, 0.68]) {
-  translate([100, 20.00, 0]) cube([10, 1.48, 0.44]);
-  translate([100, 21.48, 0]) cube([10, 1.48, 0.89]);
-  translate([100, 22.96, 0]) cube([10, 1.48, 1.33]);
-  translate([100, 24.44, 0]) cube([10, 1.48, 1.78]);
-  translate([100, 25.93, 0]) cube([10, 1.48, 2.22]);
-  translate([100, 27.41, 0]) cube([10, 1.48, 2.67]);
-  translate([100, 28.89, 0]) cube([10, 1.48, 3.11]);
-  translate([100, 30.37, 0]) cube([10, 1.48, 3.56]);
-  translate([100, 31.85, 0]) cube([10, 1.48, 4.00]);
-  translate([100, 33.33, 0]) cube([10, 1.48, 4.44]);
-  translate([100, 34.81, 0]) cube([10, 1.48, 4.89]);
-  translate([100, 36.30, 0]) cube([10, 1.48, 5.33]);
-  translate([100, 37.78, 0]) cube([10, 1.48, 5.78]);
-  translate([100, 39.26, 0]) cube([10, 1.48, 6.22]);
-  translate([100, 40.74, 0]) cube([10, 1.48, 6.67]);
-  translate([100, 42.22, 0]) cube([10, 1.48, 7.11]);
-  translate([100, 43.70, 0]) cube([10, 1.48, 7.56]);
-  translate([100, 45.19, 0]) cube([10, 1.48, 8.00]);
-  translate([100, 46.67, 0]) cube([10, 1.48, 8.44]);
-  translate([100, 48.15, 0]) cube([10, 1.48, 8.89]);
-  translate([100, 49.63, 0]) cube([10, 1.48, 9.33]);
-  translate([100, 51.11, 0]) cube([10, 1.48, 9.78]);
-  translate([100, 52.59, 0]) cube([10, 1.48, 10.22]);
-  translate([100, 54.07, 0]) cube([10, 1.48, 10.67]);
-  translate([100, 55.56, 0]) cube([10, 1.48, 11.11]);
-  translate([100, 57.04, 0]) cube([10, 1.48, 11.56]);
-  translate([100, 58.52, 0]) cube([10, 1.48, 12.00]);
-}
-
-// ---- ICF foundation shell (1 ft)
-difference() {
-  translate([0, 0, -1.15]) cube([100, 60, 1.0]);
-}
-color([0.45,0.45,0.45]) {
-  translate([-0.5, -0.5, 0]) cube([101, 1.0, 12.0]);
-  translate([-0.5, 59.5, 0]) cube([101, 1.0, 12.0]);
-  translate([-0.5, 0, 0]) cube([1.0, 60, 12.0]);
-  translate([99.5, 0, 0]) cube([1.0, 60, 12.0]);
-}
-// ---- pool + hot tub
-color([0.38823529411764707, 0.7019607843137254, 0.9294117647058824]) translate([5, 3, 0.02]) cube([12, 22, 0.35]);
-color([0.5058823529411764, 0.9019607843137255, 0.8509803921568627]) translate([8, 27, 0.4]) cylinder(r=4, h=1.6);
-
-// ---- theater seating
-color([0.2901960784313726, 0.2901960784313726, 0.2901960784313726]) {
-  translate([3, 38, 1.20]) cube([3, 2.5, 2.6]);
-  translate([8, 38, 1.20]) cube([3, 2.5, 2.6]);
-  translate([13, 38, 1.20]) cube([3, 2.5, 2.6]);
-  translate([18, 38, 1.20]) cube([3, 2.5, 2.6]);
-  translate([3, 43, 0.80]) cube([3, 2.5, 2.6]);
-  translate([8, 43, 0.80]) cube([3, 2.5, 2.6]);
-  translate([13, 43, 0.80]) cube([3, 2.5, 2.6]);
-  translate([18, 43, 0.80]) cube([3, 2.5, 2.6]);
-  translate([3, 48, 0.40]) cube([3, 2.5, 2.6]);
-  translate([8, 48, 0.40]) cube([3, 2.5, 2.6]);
-  translate([13, 48, 0.40]) cube([3, 2.5, 2.6]);
-  translate([18, 48, 0.40]) cube([3, 2.5, 2.6]);
-}
-color([0.6, 0.1, 0.1]) translate([0, 34.75, 0]) cube([30, 0.5, 11]);  // false wall, 1 ft below the 12 ft ceiling
