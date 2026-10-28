@@ -9,9 +9,12 @@
 // dining room / lounge and x = 0 the garage's west wall.
 //
 // changes = true applies the proposed changes (Kayla's review): direct
-// bedroom -> closet doors (green leaves), a second laundry door from the
-// bedroom hall, a kitchen work zone with no through traffic and a
-// larger master shower. changes = false shows the plan as drawn.
+// bedroom -> closet doors (green leaves), a hall to bedrooms 2 + 3 that
+// doesn't pass through the laundry, a master laundry by the closet, a
+// hall from the kitchen to the dining room beside the butler's pantry,
+// a kitchen work zone with no through traffic (fridge included), a
+// wider nook-to-kitchen opening and a larger master shower.
+// changes = false shows the plan as drawn.
 // stair = "proposed" puts the basement stair in the former bar so it
 // lands in the basement rec room; "as_drawn" keeps both drawings'
 // stairs where they are drawn (they do not meet - see REVIEW.md).
@@ -60,7 +63,9 @@ function main_rooms() = [
     ["BATH 2",          36.25, 56.1, 41.4,  66.1, 12,   "bath"],
     ["HALL",            29.9,  47,   41.4,  51.3, 12,   "hall"],
     ["",                29.9,  51.3, 36.25, 53.1, 12,   "hall"],
-    ["LAUNDRY",         29.9,  35.5, 43.1,  47,   12,   "utility"],
+    ["LAUNDRY",         29.9,  35.5, 39.6,  47,   12,   "utility", 0, "new"],
+    ["HALL",            39.6,  35.5, 43.1,  47,   12,   "hall", 0, "new"],   // to bedrooms 2 + 3
+    ["LAUNDRY",         29.9,  35.5, 43.1,  47,   12,   "utility", 0, "old"],
     ["PWDR",            43.1,  35.5, 48.7,  41.8, 12,   "bath"],
     ["LINEN",           43.1,  41.8, 48.7,  47,   12,   "closet"],
     ["PANTRY",          48.7,  35.5, 55.2,  47,   12,   "utility"],
@@ -69,7 +74,9 @@ function main_rooms() = [
     ["KITCHEN",         55.2,  29.5, 71.3,  52.6, 14,   "kitchen", 0, "", [63.25, 32.5, 1.8]],
     ["FAMILY ROOM",     71.3,  31.4, 97.2,  52.6, 14,   "living"],
     ["DINING ROOM",     55.2,  0,    71.3,  19.6, 14,   "dining", 0, "", [64, 14.5, 1.5]],
-    [["BUTLER'S", "PANTRY"], 55.2, 19.6, 71.3, 29.5, 14, "utility"],
+    [["BUTLER'S", "PANTRY"], 55.2, 19.6, 67.3, 29.5, 14, "utility", 0, "new"],
+    ["HALL",            67.3,  19.6, 71.3,  29.5, 14,   "hall", 0, "new"],   // kitchen to dining
+    [["BUTLER'S", "PANTRY"], 55.2, 19.6, 71.3, 29.5, 14, "utility", 0, "old"],
     ["FOYER",           71.3,  2.9,  82.3,  17.7, 14,   "hall"],
     [["FRONT", "HALL"], 71.3, 17.7, 82.3, 31.4, 14,   "hall"],
     ["LOUNGE",          82.3,  0,    97.2,  21,   14,   "living"],
@@ -79,7 +86,9 @@ function main_rooms() = [
     ["GALLERY",         97.2,  30.6, 109.7, 36.5, 14,   "hall"],
     ["OFFICE",          97.2,  36.5, 109.7, 49.1, 14,   "office"],
     [["MASTER", "SUITE"], 109.7, 30.6, 127.9, 53.5, 14, "bed"],
-    ["WIC",             97.2,  21.5, 108.7, 30.6, 12,   "closet"],
+    ["W / D",           97.2,  21.5, 102.2, 30.6, 12,   "utility", 0, "new"],  // master laundry
+    ["WIC",             102.2, 21.5, 108.7, 30.6, 12,   "closet", 0, "new"],
+    ["WIC",             97.2,  21.5, 108.7, 30.6, 12,   "closet", 0, "old"],
     ["WIC",             108.7, 21.5, 117.1, 30.6, 12,   "closet"],
     ["DRESSING",        97.2,  17.3, 117.1, 21.5, 12,   "hall"],
     ["WC",              97.2,  11.6, 105.4, 17.3, 12,   "bath"],
@@ -128,14 +137,19 @@ function main_doors() = [
     [58,    19.6, "x", 3,    "door",    1],            // dining / butler's pantry
     [56.5,  29.5, "x", 3.5,  "open"],                  // butler's pantry / kitchen
     [55.2,  31.4, "y", 3.8,  "full"],                  // hall into the kitchen
-    [55.2,  47.3, "y", 3.9,  "open"],                  // nook / kitchen
+    [55.2,  47.3, "y", 5,    "open",    1, "new"],     // nook / kitchen, widened
+    [55.2,  47.3, "y", 3.9,  "open",    1, "old"],     // nook / kitchen (as drawn)
+    [67.6,  29.5, "x", 3.4,  "full",    1, "new"],     // kitchen / dining hall
+    [67.6,  19.6, "x", 3.4,  "full",    1, "new"],     // dining hall / dining room
     // ---- bedroom wing
     [41.4,  47.3, "y", 3.7,  "open"],                  // nook / bedroom hall
     [30.2,  51.3, "x", 5.75, "full"],                  // bedroom hall alcove
     [32.7,  53.1, "x", 3,    "door",    1],            // bedroom 2
     [29.9,  47.9, "y", 2.8,  "door",   -1],            // bedroom 3
-    [36.5,  47,   "x", 3,    "door",   -1, "new"],     // laundry, bedroom-hall side
-    [36.2,  35.5, "x", 3,    "door",    1],            // laundry, garage-hall side
+    [36.2,  35.5, "x", 3,    "door",    1, "old"],     // laundry (as drawn)
+    [39.6,  40,   "y", 2.8,  "door",   -1, "new"],     // laundry off the bedroom hall
+    [39.9,  35.5, "x", 2.9,  "full",    1, "new"],     // bedroom hall from the garage hall
+    [39.9,  47,   "x", 2.9,  "full",    1, "new"],     // bedroom hall to bedrooms 2 + 3
     [45.4,  35.5, "x", 2.6,  "door",    1],            // powder room
     [45,    47,   "x", 2.4,  "door",    1],            // linen
     [49.6,  47,   "x", 2.6,  "door",   -1],            // pantry, nook side
@@ -162,6 +176,7 @@ function main_doors() = [
     [111,   30.6, "x", 2.6,  "door",   -1, "new"],     // master suite -> WIC
     [120.8, 30.6, "x", 5,    "double", -1],            // master suite / bath
     [103.8, 21.5, "x", 2.5,  "open"],                  // WIC / dressing
+    [98.3,  21.5, "x", 2.6,  "door",    1, "new"],     // master laundry
     [111.3, 21.5, "x", 2.5,  "open"],                  // WIC / dressing
     [117.1, 17.6, "y", 3.6,  "open"],                  // dressing / master bath
     [101.8, 17.3, "x", 2.5,  "door",   -1],            // WC
@@ -201,18 +216,18 @@ function main_windows() = [
 
 // [x0, y0, x1, y1, z0, z1, colour, tag]
 function main_fixtures() = [
-    // kitchen as proposed: one work aisle (range wall / island sink),
-    // closed at the south by a counter return, fridge at its north end;
-    // traffic passes north of it (nook <-> family room) and south of it
-    // (garage hall / butler's pantry <-> family room)
-    [55.2, 37.5, 57.2, 46.5, 0, 3,    counter, "new"],   // range wall
-    [55.4, 40.5, 57.1, 43.5, 3, 3.05, dark,    "new"],   // range
+    // kitchen as proposed: one work aisle - wall ovens, range and fridge
+    // on the west wall facing the island sink - closed at the south by a
+    // counter return. Nothing sits on the north wall, so the nook <->
+    // family room path and the garage hall <-> family room path both pass
+    // outside the work zone and never between the fridge and the cook.
+    [55.2, 37.5, 57.2, 43.4, 0, 3,    counter, "new"],   // range wall
+    [55.2, 37.5, 57.2, 39.8, 0, 7,    steel,   "new"],   // wall ovens
+    [55.4, 40.4, 57.1, 43.2, 3, 3.05, dark,    "new"],   // range
+    [55.2, 43.5, 57.5, 46.5, 0, 7,    steel,   "new"],   // fridge, facing the aisle
     [55.2, 35.5, 61.2, 37.5, 0, 3,    counter, "new"],   // counter return
     [61.2, 37.5, 65.2, 46.0, 0, 3,    wood,    "new"],   // island
     [61.4, 40.5, 62.8, 43.5, 3, 3.05, basin,   "new"],   // island sink
-    [56.7, 50.6, 66.7, 52.6, 0, 3,    counter, "new"],   // north counter
-    [56.7, 50.3, 59.7, 52.6, 0, 7,    steel,   "new"],   // fridge
-    [59.7, 50.6, 62.2, 52.6, 0, 7,    steel,   "new"],   // wall ovens
     // kitchen as drawn: cooktop wall, island across both entries
     [55.2, 35.5, 57.6, 47.0, 0, 3,    counter, "old"],
     [55.4, 39.5, 57.4, 43.0, 3, 3.05, dark,    "old"],
@@ -220,7 +235,9 @@ function main_fixtures() = [
     [60.9, 40.0, 62.3, 43.0, 3, 3.05, basin,   "old"],
     [56.5, 50.6, 69.0, 52.6, 0, 3,    counter, "old"],
     [59.4, 50.3, 66.3, 52.6, 0, 7,    steel,   "old"],
-    // laundry: washer + dryer
+    // laundry: washer + dryer; master laundry beside the closet
+    [97.5, 28.1, 99.8, 30.3, 0, 3.2,  steel, "new"],
+    [99.8, 28.1, 102.0, 30.3, 0, 3.2, steel, "new"],
     [30.4, 44.6, 32.9, 46.8, 0, 3.2,  steel],
     [33.1, 44.6, 35.6, 46.8, 0, 3.2,  steel],
     // fireplaces: dining (west wall), family room (east wall), lounge gas
