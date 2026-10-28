@@ -45,8 +45,8 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 
 | Note | In the model (`changes = true`) |
 |---|---|
-| *Get to Bedrooms 2 & 3 from a central hallway, not through the laundry* | The east end of the old laundry is now a **3½ ft hall** that runs straight from the main hall by the kitchen and mud room to the bedroom hall (Bedrooms 2 and 3, Bath 2). Both ends are full-height openings. |
-| *That laundry becomes the extra one for those three bedrooms* | The laundry keeps its washer and dryer, gets about 10 × 11½ ft, and has one door off the new hall. It is no longer a through-route. |
+| *Get to Bedrooms 2 & 3 from a central hallway, not through the laundry* | The east end of the old laundry is now a **4 ft hall** that runs straight from the main hall by the kitchen and mud room into the end of the bedroom hall (Bedrooms 2 and 3, Bath 2). Its east wall continues the breakfast nook's wall, so it lines up with the bedroom hall instead of jogging past it. Both ends are full-height openings. The powder room and linen closet take the leftover 1.7 ft. |
+| *That laundry becomes the extra one for those three bedrooms* | The laundry keeps its washer and dryer, gets about 7½ × 11½ ft, and has one door off the new hall. It is no longer a through-route. |
 | *Master suite gets its own laundry with the walk-in closet and the bathroom* | The west 5 ft of the master closet becomes a **master laundry** (labelled W / D) with a side-by-side washer and dryer. Its door opens off the dressing area, between the closets and the master bath. The walk-in closet keeps its door from the master suite. |
 | *Breakfast nook: outside to the deck (it does) and access to the kitchen* | The deck door stays. The nook-to-kitchen opening is widened to **5 ft** and lands at the north end of the work aisle. |
 | *Don't like going through the butler's pantry to get to the dining room* | The butler's pantry is 4 ft shorter. That frees a **4 ft hall from the kitchen straight to the dining room**, with full-height openings at both ends. The pantry is still next to the dining room, but you no longer walk through it. |

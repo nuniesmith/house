@@ -63,11 +63,13 @@ function main_rooms() = [
     ["BATH 2",          36.25, 56.1, 41.4,  66.1, 12,   "bath"],
     ["HALL",            29.9,  47,   41.4,  51.3, 12,   "hall"],
     ["",                29.9,  51.3, 36.25, 53.1, 12,   "hall"],
-    ["LAUNDRY",         29.9,  35.5, 39.6,  47,   12,   "utility", 0, "new"],
-    ["HALL",            39.6,  35.5, 43.1,  47,   12,   "hall", 0, "new"],   // to bedrooms 2 + 3
+    ["LAUNDRY",         29.9,  35.5, 37.4,  47,   12,   "utility", 0, "new"],
+    ["HALL",            37.4,  35.5, 41.4,  47,   12,   "hall", 0, "new"],   // to bedrooms 2 + 3, in line with the bedroom hall
     ["LAUNDRY",         29.9,  35.5, 43.1,  47,   12,   "utility", 0, "old"],
-    ["PWDR",            43.1,  35.5, 48.7,  41.8, 12,   "bath"],
-    ["LINEN",           43.1,  41.8, 48.7,  47,   12,   "closet"],
+    ["PWDR",            41.4,  35.5, 48.7,  41.8, 12,   "bath", 0, "new"],
+    ["LINEN",           41.4,  41.8, 48.7,  47,   12,   "closet", 0, "new"],
+    ["PWDR",            43.1,  35.5, 48.7,  41.8, 12,   "bath", 0, "old"],
+    ["LINEN",           43.1,  41.8, 48.7,  47,   12,   "closet", 0, "old"],
     ["PANTRY",          48.7,  35.5, 55.2,  47,   12,   "utility"],
     [["BREAKFAST", "NOOK"], 41.4, 47, 55.2, 66.2, 14, "dining"],
     // ---- kitchen, family room, front rooms
@@ -147,9 +149,9 @@ function main_doors() = [
     [32.7,  53.1, "x", 3,    "door",    1],            // bedroom 2
     [29.9,  47.9, "y", 2.8,  "door",   -1],            // bedroom 3
     [36.2,  35.5, "x", 3,    "door",    1, "old"],     // laundry (as drawn)
-    [39.6,  40,   "y", 2.8,  "door",   -1, "new"],     // laundry off the bedroom hall
-    [39.9,  35.5, "x", 2.9,  "full",    1, "new"],     // bedroom hall from the garage hall
-    [39.9,  47,   "x", 2.9,  "full",    1, "new"],     // bedroom hall to bedrooms 2 + 3
+    [37.4,  40,   "y", 2.8,  "door",   -1, "new"],     // laundry off the bedroom hall
+    [37.7,  35.5, "x", 3.4,  "full",    1, "new"],     // bedroom hall from the garage hall
+    [37.7,  47,   "x", 3.4,  "full",    1, "new"],     // bedroom hall to bedrooms 2 + 3
     [45.4,  35.5, "x", 2.6,  "door",    1],            // powder room
     [45,    47,   "x", 2.4,  "door",    1],            // linen
     [49.6,  47,   "x", 2.6,  "door",   -1],            // pantry, nook side
