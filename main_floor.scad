@@ -1,415 +1,306 @@
 // Main floor - OpenSCAD model of the main level.
-// Units: feet. Dollhouse view (no roof). NOT construction documents.
-wall_h = 12.0;
-$fn = 24;
+// Units: feet. Visualisation only - NOT construction documents.
+//
+// Geometry is measured off the architect's plan image (about 11.55 px
+// per ft, +/- 0.3 ft): rooms are wall-centre-line rectangles, so they
+// run larger than the printed clear sizes, which also leave out the
+// walkways (e.g. the family room's printed 16'-6" x 15'-2" is its
+// seating area). x = east, y = north; y = 0 is the front wall of the
+// dining room / lounge and x = 0 the garage's west wall.
+//
+// changes = true applies the proposed changes (Kayla's review): direct
+// bedroom -> closet doors (green leaves), a second laundry door from the
+// bedroom hall, a kitchen work zone with no through traffic and a
+// larger master shower. changes = false shows the plan as drawn.
+// stair = "proposed" puts the basement stair in the former bar so it
+// lands in the basement rec room; "as_drawn" keeps both drawings'
+// stairs where they are drawn (they do not meet - see REVIEW.md).
 
-// ---- floor plates
-color([0.9607843137254902, 0.9607843137254902, 0.9607843137254902]) translate([0, 0, -0.15]) cube([25.17, 31.75, 0.15]);
-color([0.15,0.15,0.15]) translate([12.585, 15.875, 0.01]) linear_extrude(0.05) text("GARAGE", size=2.30, halign="center", valign="center");
-color([1.0, 0.9921568627450981, 0.9058823529411765]) translate([25.17, 0, -0.15]) cube([18.08, 13.92, 0.15]);
-color([0.15,0.15,0.15]) translate([34.21, 6.96, 0.01]) linear_extrude(0.05) text("BEDROOM 4", size=2.30, halign="center", valign="center");
-color([0.8784313725490196, 1.0, 1.0]) translate([25.17, 13.92, -0.15]) cube([7.5, 6, 0.15]);
-color([0.15,0.15,0.15]) translate([28.92, 16.92, 0.01]) linear_extrude(0.05) text("BATH 4", size=1.62, halign="center", valign="center");
-color([0.9411764705882353, 0.9411764705882353, 0.9411764705882353]) translate([32.67, 13.92, -0.15]) cube([10.58, 6, 0.15]);
-color([0.15,0.15,0.15]) translate([37.96, 16.92, 0.01]) linear_extrude(0.05) text("WIC", size=2.30, halign="center", valign="center");
-color([1.0, 0.8745098039215686, 0.7294117647058823]) translate([25.17, 19.92, -0.15]) cube([11.08, 7.42, 0.15]);
-color([0.15,0.15,0.15]) translate([30.71, 23.630000000000003, 0.01]) linear_extrude(0.05) text("MUD ROOM", size=1.80, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([36.25, 19.92, -0.15]) cube([7, 7.42, 0.15]);
-color([0.15,0.15,0.15]) translate([39.75, 23.630000000000003, 0.01]) linear_extrude(0.05) text("HALL", size=2.27, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([25.17, 27.34, -0.15]) cube([27.25, 3.5, 0.15]);
-color([1.0, 0.9921568627450981, 0.9058823529411765]) translate([25.17, 30.84, -0.15]) cube([17.25, 13.33, 0.15]);
-color([0.15,0.15,0.15]) translate([33.795, 37.505, 0.01]) linear_extrude(0.05) text("BEDROOM 3", size=2.30, halign="center", valign="center");
-color([1.0, 0.8745098039215686, 0.7294117647058823]) translate([42.42, 30.84, -0.15]) cube([10, 13.33, 0.15]);
-color([0.15,0.15,0.15]) translate([47.42, 37.505, 0.01]) linear_extrude(0.05) text("LAUNDRY", size=1.86, halign="center", valign="center");
-color([1.0, 0.9921568627450981, 0.9058823529411765]) translate([52.42, 30.84, -0.15]) cube([6, 6.5, 0.15]);
-color([0.15,0.15,0.15]) translate([55.42, 34.09, 0.01]) linear_extrude(0.05) text("PWDR", size=1.95, halign="center", valign="center");
-color([1.0, 0.8745098039215686, 0.7294117647058823]) translate([52.42, 37.34, -0.15]) cube([6, 6.83, 0.15]);
-color([0.15,0.15,0.15]) translate([55.42, 40.755, 0.01]) linear_extrude(0.05) text("PANTRY", size=1.30, halign="center", valign="center");
-color([0.9411764705882353, 0.9411764705882353, 0.9411764705882353]) translate([25.17, 44.17, -0.15]) cube([7, 7, 0.15]);
-color([0.15,0.15,0.15]) translate([28.67, 47.67, 0.01]) linear_extrude(0.05) text("WIC", size=2.30, halign="center", valign="center");
-color([0.8784313725490196, 1.0, 1.0]) translate([25.17, 51.17, -0.15]) cube([7, 7, 0.15]);
-color([0.15,0.15,0.15]) translate([28.67, 54.67, 0.01]) linear_extrude(0.05) text("BATH 3", size=1.52, halign="center", valign="center");
-color([1.0, 0.9921568627450981, 0.9058823529411765]) translate([32.17, 44.17, -0.15]) cube([14.17, 14.42, 0.15]);
-color([0.15,0.15,0.15]) translate([39.255, 51.38, 0.01]) linear_extrude(0.05) text("BEDROOM 2", size=2.05, halign="center", valign="center");
-color([0.9411764705882353, 0.9411764705882353, 0.9411764705882353]) translate([46.34, 44.17, -0.15]) cube([4, 4, 0.15]);
-color([0.15,0.15,0.15]) translate([48.34, 46.17, 0.01]) linear_extrude(0.05) text("WIC", size=1.73, halign="center", valign="center");
-color([0.8784313725490196, 1.0, 1.0]) translate([46.34, 48.17, -0.15]) cube([4, 10.42, 0.15]);
-color([0.15,0.15,0.15]) translate([48.34, 53.38, 0.01]) linear_extrude(0.05) text("BATH 2", size=0.87, halign="center", valign="center");
-color([1.0, 0.9333333333333333, 0.7333333333333333]) translate([50.34, 44.17, -0.15]) cube([14.08, 14.75, 0.15]);
-color([0.15,0.15,0.15]) translate([57.38, 51.545, 0.01]) linear_extrude(0.05) text("BREAKFAST NOOK", size=1.31, halign="center", valign="center");
-color([1.0, 0.9725490196078431, 0.8627450980392157]) translate([43.25, 0, -0.15]) cube([18.33, 14.5, 0.15]);
-color([0.15,0.15,0.15]) translate([52.415, 7.25, 0.01]) linear_extrude(0.05) text("DINING ROOM", size=2.17, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([61.58, 0, -0.15]) cube([11.33, 13.33, 0.15]);
-color([0.15,0.15,0.15]) translate([67.245, 6.665, 0.01]) linear_extrude(0.05) text("FOYER", size=2.30, halign="center", valign="center");
-color([1.0, 0.9725490196078431, 0.8627450980392157]) translate([72.92, 0, -0.15]) cube([14.17, 12.17, 0.15]);
-color([0.15,0.15,0.15]) translate([80.005, 6.085, 0.01]) linear_extrude(0.05) text("LOUNGE", size=2.30, halign="center", valign="center");
-color([0.9411764705882353, 0.9411764705882353, 0.9411764705882353]) translate([43.25, 14.5, -0.15]) cube([3.33, 9, 0.15]);
-color([0.15,0.15,0.15]) translate([44.915, 19.0, 0.01]) linear_extrude(0.05) text("CLOSET", size=0.72, halign="center", valign="center");
-color([1.0, 0.8745098039215686, 0.7294117647058823]) translate([46.58, 14.5, -0.15]) cube([15, 9, 0.15]);
-color([0.15,0.15,0.15]) translate([54.08, 19.0, 0.01]) linear_extrude(0.05) text("BUTLER'S PANTRY", size=1.30, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([61.58, 13.33, -0.15]) cube([10.17, 12.42, 0.15]);
-color([0.15,0.15,0.15]) translate([66.66499999999999, 19.54, 0.01]) linear_extrude(0.05) text("FRONT HALL", size=1.32, halign="center", valign="center");
-color([0.5450980392156862, 0.27058823529411763, 0.07450980392156863]) translate([71.75, 14.5, -0.15]) cube([14.5, 9, 0.15]);
-color([0.15,0.15,0.15]) translate([79.0, 19.0, 0.01]) linear_extrude(0.05) text("BAR", size=2.30, halign="center", valign="center");
-color([1.0, 0.9333333333333333, 0.7333333333333333]) translate([58.42, 25.75, -0.15]) cube([14, 15, 0.15]);
-color([0.15,0.15,0.15]) translate([65.42, 33.25, 0.01]) linear_extrude(0.05) text("KITCHEN", size=2.30, halign="center", valign="center");
-color([0.9803921568627451, 0.9803921568627451, 0.9803921568627451]) translate([72.42, 25.75, -0.15]) cube([16.5, 15.17, 0.15]);
-color([0.15,0.15,0.15]) translate([80.67, 33.335, 0.01]) linear_extrude(0.05) text("FAMILY ROOM", size=1.95, halign="center", valign="center");
-color([1.0, 0.984313725490196, 0.9215686274509803]) translate([88.92, 16.5, -0.15]) cube([12, 12.42, 0.15]);
-color([0.15,0.15,0.15]) translate([94.92, 22.71, 0.01]) linear_extrude(0.05) text("HALL", size=2.30, halign="center", valign="center");
-color([0.9607843137254902, 0.9607843137254902, 0.9607843137254902]) translate([88.92, 28.92, -0.15]) cube([12, 12, 0.15]);
-color([0.15,0.15,0.15]) translate([94.92, 34.92, 0.01]) linear_extrude(0.05) text("OFFICE", size=2.30, halign="center", valign="center");
-color([1.0, 0.9921568627450981, 0.9058823529411765]) translate([100.92, 18.25, -0.15]) cube([17.67, 22.67, 0.15]);
-color([0.15,0.15,0.15]) translate([109.755, 29.585, 0.01]) linear_extrude(0.05) text("MASTER SUITE", size=1.91, halign="center", valign="center");
-color([0.9411764705882353, 0.9411764705882353, 0.9411764705882353]) translate([87.09, 0, -0.15]) cube([8.83, 16.5, 0.15]);
-color([0.15,0.15,0.15]) translate([91.50500000000001, 8.25, 0.01]) linear_extrude(0.05) text("WIC", size=2.30, halign="center", valign="center");
-color([0.9411764705882353, 0.9411764705882353, 0.9411764705882353]) translate([95.92, 0, -0.15]) cube([8.83, 16.5, 0.15]);
-color([0.15,0.15,0.15]) translate([100.33500000000001, 8.25, 0.01]) linear_extrude(0.05) text("WIC", size=2.30, halign="center", valign="center");
-color([0.8784313725490196, 1.0, 1.0]) translate([104.75, 0, -0.15]) cube([13.84, 16.5, 0.15]);
-color([0.15,0.15,0.15]) translate([111.67, 8.25, 0.01]) linear_extrude(0.05) text("MASTER BATH", size=1.64, halign="center", valign="center");
-color([0.9411764705882353, 1.0, 0.9411764705882353]) translate([40, -12.33, -0.15]) cube([56.67, 12.33, 0.15]);
-color([0.15,0.15,0.15]) translate([68.33500000000001, -6.165, 0.01]) linear_extrude(0.05) text("FRONT PORCH", size=2.30, halign="center", valign="center");
-color([0.9411764705882353, 1.0, 0.9411764705882353]) translate([64.42, 46.67, -0.15]) cube([13.33, 12.25, 0.15]);
-color([0.15,0.15,0.15]) translate([71.08500000000001, 52.795, 0.01]) linear_extrude(0.05) text("BREAKFAST PORCH", size=1.16, halign="center", valign="center");
-color([0.9411764705882353, 1.0, 0.9411764705882353]) translate([77.75, 40.92, -0.15]) cube([24, 15.33, 0.15]);
-color([0.15,0.15,0.15]) translate([89.75, 48.585, 0.01]) linear_extrude(0.05) text("OUTDOOR LIVING", size=2.23, halign="center", valign="center");
-color([0.9411764705882353, 1.0, 0.9411764705882353]) translate([101.75, 40.92, -0.15]) cube([11.33, 10.67, 0.15]);
-color([0.15,0.15,0.15]) translate([107.415, 46.255, 0.01]) linear_extrude(0.05) text("OFFICE PORCH", size=1.23, halign="center", valign="center");
-color([0.9411764705882353, 1.0, 0.9411764705882353]) translate([113.08, 40.92, -0.15]) cube([19.17, 10, 0.15]);
-color([0.15,0.15,0.15]) translate([122.66499999999999, 45.92, 0.01]) linear_extrude(0.05) text("MASTER PORCH", size=2.08, halign="center", valign="center");
-color([0.9411764705882353, 1.0, 0.9411764705882353]) translate([118.59, 8.92, -0.15]) cube([10, 32, 0.15]);
-color([0.15,0.15,0.15]) translate([123.59, 24.92, 0.01]) linear_extrude(0.05) text("SIDE PORCH", size=1.30, halign="center", valign="center");
+use <house_lib.scad>
 
-// ---- walls (openings cut)
-color([0.93, 0.91, 0.87]) difference() {
-  union() {
-    translate([-0.25, -0.25, 0]) cube([25.67, 0.50, 9.67]);
-    translate([-0.25, 31.50, 0]) cube([25.67, 0.50, 9.67]);
-    translate([-0.25, -0.25, 0]) cube([0.50, 32.25, 9.67]);
-    translate([25.00, -0.17, 0]) cube([0.34, 32.09, 9.67]);
-    translate([25.00, -0.17, 0]) cube([18.42, 0.34, 12.0]);
-    translate([25.00, 13.75, 0]) cube([18.42, 0.34, 12.0]);
-    translate([25.00, -0.17, 0]) cube([0.34, 14.26, 12.0]);
-    translate([43.08, -0.17, 0]) cube([0.34, 14.26, 12.0]);
-    translate([25.00, 13.75, 0]) cube([7.84, 0.34, 12.5]);
-    translate([25.00, 19.75, 0]) cube([7.84, 0.34, 12.5]);
-    translate([25.00, 13.75, 0]) cube([0.34, 6.34, 12.5]);
-    translate([32.50, 13.75, 0]) cube([0.34, 6.34, 12.5]);
-    translate([32.50, 13.75, 0]) cube([10.92, 0.34, 12.5]);
-    translate([32.50, 19.75, 0]) cube([10.92, 0.34, 12.5]);
-    translate([32.50, 13.75, 0]) cube([0.34, 6.34, 12.5]);
-    translate([43.08, 13.75, 0]) cube([0.34, 6.34, 12.5]);
-    translate([25.00, 19.75, 0]) cube([11.42, 0.34, 12.0]);
-    translate([25.00, 27.17, 0]) cube([11.42, 0.34, 12.0]);
-    translate([25.00, 19.75, 0]) cube([0.34, 7.76, 12.0]);
-    translate([36.08, 19.75, 0]) cube([0.34, 7.76, 12.0]);
-    translate([36.08, 19.75, 0]) cube([7.34, 0.34, 12.0]);
-    translate([36.08, 27.17, 0]) cube([7.34, 0.34, 12.0]);
-    translate([36.08, 19.75, 0]) cube([0.34, 7.76, 12.0]);
-    translate([43.08, 19.75, 0]) cube([0.34, 7.76, 12.0]);
-    translate([25.00, 27.17, 0]) cube([27.59, 0.34, 12.0]);
-    translate([25.00, 30.67, 0]) cube([27.59, 0.34, 12.0]);
-    translate([25.00, 27.17, 0]) cube([0.34, 3.84, 12.0]);
-    translate([52.17, 27.09, 0]) cube([0.50, 4.00, 12.0]);
-    translate([25.00, 30.67, 0]) cube([17.59, 0.34, 12.0]);
-    translate([25.00, 44.00, 0]) cube([17.59, 0.34, 12.0]);
-    translate([25.00, 30.67, 0]) cube([0.34, 13.67, 12.0]);
-    translate([42.25, 30.67, 0]) cube([0.34, 13.67, 12.0]);
-    translate([42.25, 30.67, 0]) cube([10.34, 0.34, 12.5]);
-    translate([42.25, 44.00, 0]) cube([10.34, 0.34, 12.5]);
-    translate([42.25, 30.67, 0]) cube([0.34, 13.67, 12.5]);
-    translate([52.25, 30.67, 0]) cube([0.34, 13.67, 12.5]);
-    translate([52.17, 30.59, 0]) cube([6.50, 0.50, 12.0]);
-    translate([52.25, 37.17, 0]) cube([6.34, 0.34, 12.0]);
-    translate([52.25, 30.67, 0]) cube([0.34, 6.84, 12.0]);
-    translate([58.25, 30.67, 0]) cube([0.34, 6.84, 12.0]);
-    translate([52.25, 37.17, 0]) cube([6.34, 0.34, 12.0]);
-    translate([52.25, 44.00, 0]) cube([6.34, 0.34, 12.0]);
-    translate([52.25, 37.17, 0]) cube([0.34, 7.17, 12.0]);
-    translate([58.25, 37.17, 0]) cube([0.34, 7.17, 12.0]);
-    translate([25.00, 44.00, 0]) cube([7.34, 0.34, 12.0]);
-    translate([25.00, 51.00, 0]) cube([7.34, 0.34, 12.0]);
-    translate([24.92, 43.92, 0]) cube([0.50, 7.50, 12.0]);
-    translate([32.00, 44.00, 0]) cube([0.34, 7.34, 12.0]);
-    translate([25.00, 51.00, 0]) cube([7.34, 0.34, 12.5]);
-    translate([24.92, 57.92, 0]) cube([7.50, 0.50, 12.5]);
-    translate([24.92, 50.92, 0]) cube([0.50, 7.50, 12.5]);
-    translate([32.00, 51.00, 0]) cube([0.34, 7.34, 12.5]);
-    translate([32.00, 44.00, 0]) cube([14.51, 0.34, 12.0]);
-    translate([31.92, 58.34, 0]) cube([14.67, 0.50, 12.0]);
-    translate([32.00, 44.00, 0]) cube([0.34, 14.76, 12.0]);
-    translate([46.17, 44.00, 0]) cube([0.34, 14.76, 12.0]);
-    translate([46.17, 44.00, 0]) cube([4.34, 0.34, 12.0]);
-    translate([46.17, 48.00, 0]) cube([4.34, 0.34, 12.0]);
-    translate([46.17, 44.00, 0]) cube([0.34, 4.34, 12.0]);
-    translate([50.17, 44.00, 0]) cube([0.34, 4.34, 12.0]);
-    translate([46.17, 48.00, 0]) cube([4.34, 0.34, 12.5]);
-    translate([46.09, 58.34, 0]) cube([4.50, 0.50, 12.5]);
-    translate([46.17, 48.00, 0]) cube([0.34, 10.76, 12.5]);
-    translate([50.17, 48.00, 0]) cube([0.34, 10.76, 12.5]);
-    translate([50.17, 44.00, 0]) cube([14.42, 0.34, 14.0]);
-    translate([50.09, 58.67, 0]) cube([14.58, 0.50, 14.0]);
-    translate([50.17, 44.00, 0]) cube([0.34, 15.09, 14.0]);
-    translate([64.25, 44.00, 0]) cube([0.34, 15.09, 14.0]);
-    translate([43.08, -0.17, 0]) cube([18.67, 0.34, 14.0]);
-    translate([43.08, 14.33, 0]) cube([18.67, 0.34, 14.0]);
-    translate([43.08, -0.17, 0]) cube([0.34, 14.84, 14.0]);
-    translate([61.41, -0.17, 0]) cube([0.34, 14.84, 14.0]);
-    translate([61.41, -0.17, 0]) cube([11.67, 0.34, 14.0]);
-    translate([61.41, 13.16, 0]) cube([11.67, 0.34, 14.0]);
-    translate([61.41, -0.17, 0]) cube([0.34, 13.67, 14.0]);
-    translate([72.66, -0.25, 0]) cube([0.50, 13.83, 14.0]);
-    translate([72.75, -0.17, 0]) cube([14.51, 0.34, 14.0]);
-    translate([72.67, 11.92, 0]) cube([14.67, 0.50, 14.0]);
-    translate([72.67, -0.25, 0]) cube([0.50, 12.67, 14.0]);
-    translate([86.92, -0.17, 0]) cube([0.34, 12.51, 14.0]);
-    translate([43.08, 14.33, 0]) cube([3.67, 0.34, 12.0]);
-    translate([43.00, 23.25, 0]) cube([3.83, 0.50, 12.0]);
-    translate([43.08, 14.33, 0]) cube([0.34, 9.34, 12.0]);
-    translate([46.41, 14.33, 0]) cube([0.34, 9.34, 12.0]);
-    translate([46.41, 14.33, 0]) cube([15.34, 0.34, 14.0]);
-    translate([46.33, 23.25, 0]) cube([15.50, 0.50, 14.0]);
-    translate([46.41, 14.33, 0]) cube([0.34, 9.34, 14.0]);
-    translate([61.41, 14.33, 0]) cube([0.34, 9.34, 14.0]);
-    translate([61.41, 13.16, 0]) cube([10.51, 0.34, 14.0]);
-    translate([61.41, 25.58, 0]) cube([10.51, 0.34, 14.0]);
-    translate([61.41, 13.16, 0]) cube([0.34, 12.76, 14.0]);
-    translate([71.58, 13.16, 0]) cube([0.34, 12.76, 14.0]);
-    translate([71.50, 14.25, 0]) cube([15.00, 0.50, 14.0]);
-    translate([71.58, 14.33, 0]) cube([0.34, 9.34, 14.0]);
-    translate([86.00, 14.25, 0]) cube([0.50, 9.50, 14.0]);
-    translate([58.25, 25.58, 0]) cube([14.34, 0.34, 14.0]);
-    translate([58.17, 40.50, 0]) cube([14.50, 0.50, 14.0]);
-    translate([58.25, 25.58, 0]) cube([0.34, 15.34, 14.0]);
-    translate([72.25, 40.75, 0]) cube([16.84, 0.34, 16.0]);
-    translate([88.75, 25.58, 0]) cube([0.34, 15.51, 16.0]);
-    translate([88.75, 16.33, 0]) cube([12.34, 0.34, 14.0]);
-    translate([88.75, 28.75, 0]) cube([12.34, 0.34, 14.0]);
-    translate([88.75, 16.33, 0]) cube([0.34, 12.76, 14.0]);
-    translate([100.75, 16.33, 0]) cube([0.34, 12.76, 14.0]);
-    translate([88.75, 28.75, 0]) cube([12.34, 0.34, 14.0]);
-    translate([88.75, 40.75, 0]) cube([12.34, 0.34, 14.0]);
-    translate([88.75, 28.75, 0]) cube([0.34, 12.34, 14.0]);
-    translate([100.75, 28.75, 0]) cube([0.34, 12.34, 14.0]);
-    translate([100.67, 18.00, 0]) cube([18.17, 0.50, 16.0]);
-    translate([100.75, 40.75, 0]) cube([18.01, 0.34, 16.0]);
-    translate([100.75, 18.08, 0]) cube([0.34, 23.01, 16.0]);
-    translate([118.42, 18.08, 0]) cube([0.34, 23.01, 16.0]);
-    translate([86.92, -0.17, 0]) cube([9.17, 0.34, 12.0]);
-    translate([86.92, 16.33, 0]) cube([9.17, 0.34, 12.0]);
-    translate([86.92, -0.17, 0]) cube([0.34, 16.84, 12.0]);
-    translate([95.75, -0.17, 0]) cube([0.34, 16.84, 12.0]);
-    translate([95.75, -0.17, 0]) cube([9.17, 0.34, 12.0]);
-    translate([95.75, 16.33, 0]) cube([9.17, 0.34, 12.0]);
-    translate([95.75, -0.17, 0]) cube([0.34, 16.84, 12.0]);
-    translate([104.58, -0.17, 0]) cube([0.34, 16.84, 12.0]);
-    translate([104.50, -0.25, 0]) cube([14.34, 0.50, 12.0]);
-    translate([104.50, 16.25, 0]) cube([14.34, 0.50, 12.0]);
-    translate([104.58, -0.17, 0]) cube([0.34, 16.84, 12.0]);
-    translate([118.42, -0.17, 0]) cube([0.34, 16.84, 12.0]);
-    translate([118.34, 8.67, 0]) cube([10.50, 0.50, 3.0]);
-    translate([118.42, 8.75, 0]) cube([0.34, 32.34, 3.0]);
-    translate([128.34, 8.67, 0]) cube([0.50, 32.50, 3.0]);
-  }
-  translate([64, -0.8, -0.1]) cube([5, 1.6, 7.1]);
-  translate([46, -0.8, -0.1]) cube([4, 1.6, 7.1]);
-  translate([54, -0.8, -0.1]) cube([4, 1.6, 7.1]);
-  translate([76, -0.8, -0.1]) cube([4, 1.6, 7.1]);
-  translate([82, -0.8, -0.1]) cube([4, 1.6, 7.1]);
-  translate([24.37, 22, -0.1]) cube([1.6, 3, 7.1]);
-  translate([35.45, 22, -0.1]) cube([1.6, 3, 7.1]);
-  translate([27, 26.54, -0.1]) cube([3, 1.6, 7.1]);
-  translate([38, 13.12, -0.1]) cube([3, 1.6, 7.1]);
-  translate([28, 13.12, -0.1]) cube([2.5, 1.6, 7.1]);
-  translate([38, 30.04, -0.1]) cube([3, 1.6, 7.1]);
-  translate([46, 30.04, -0.1]) cube([3, 1.6, 7.1]);
-  translate([55.42, 36.540000000000006, -0.1]) cube([3, 1.6, 7.1]);
-  translate([38, 43.370000000000005, -0.1]) cube([3, 1.6, 7.1]);
-  translate([47, 43.370000000000005, -0.1]) cube([2.5, 1.6, 7.1]);
-  translate([31.37, 53, -0.1]) cube([1.6, 2.5, 7.1]);
-  translate([63.620000000000005, 50, -0.1]) cube([1.6, 4, 7.1]);
-  translate([50, 13.7, -0.1]) cube([3, 1.6, 7.1]);
-  translate([63, 12.53, -0.1]) cube([5, 1.6, 7.1]);
-  translate([63, 24.95, -0.1]) cube([5, 1.6, 7.1]);
-  translate([76, 22.7, -0.1]) cube([4, 1.6, 7.1]);
-  translate([71.62, 30, -0.1]) cube([1.6, 5, 7.1]);
-  translate([62, 39.95, -0.1]) cube([4, 1.6, 7.1]);
-  translate([78, 40.120000000000005, -0.1]) cube([6, 1.6, 7.1]);
-  translate([94, 28.12, -0.1]) cube([3, 1.6, 7.1]);
-  translate([95, 40.120000000000005, -0.1]) cube([3, 1.6, 7.1]);
-  translate([104, 17.45, -0.1]) cube([4, 1.6, 7.1]);
-  translate([108, 40.120000000000005, -0.1]) cube([5, 1.6, 7.1]);
-  translate([117.79, 24, -0.1]) cube([1.6, 5, 7.1]);
-  translate([117.79, 33, -0.1]) cube([1.6, 4, 7.1]);
-  translate([110, 15.7, -0.1]) cube([3, 1.6, 7.1]);
-  translate([90, 15.7, -0.1]) cube([3, 1.6, 7.1]);
-  translate([99, 15.7, -0.1]) cube([3, 1.6, 7.1]);
-  translate([46, -0.8, 2.5]) cube([6, 1.6, 4.0]);
-  translate([53, -0.8, 2.5]) cube([6, 1.6, 4.0]);
-  translate([75, -0.8, 2.5]) cube([6, 1.6, 4.0]);
-  translate([82, -0.8, 2.5]) cube([5, 1.6, 4.0]);
-  translate([30, -0.8, 2.5]) cube([6, 1.6, 4.0]);
-  translate([108, -0.8, 2.5]) cube([6, 1.6, 4.0]);
-  translate([-0.8, 10, 2.5]) cube([1.6, 6, 4.0]);
-  translate([-0.8, 22, 2.5]) cube([1.6, 6, 4.0]);
-  translate([8, -0.8, 2.5]) cube([6, 1.6, 4.0]);
-  translate([24.37, 34, 2.5]) cube([1.6, 6, 4.0]);
-  translate([24.37, 53, 2.5]) cube([1.6, 3, 4.0]);
-  translate([36, 57.790000000000006, 2.5]) cube([6, 1.6, 4.0]);
-  translate([54, 58.120000000000005, 2.5]) cube([6, 1.6, 4.0]);
-  translate([62, 39.95, 2.5]) cube([5, 1.6, 4.0]);
-  translate([76, 40.120000000000005, 2.5]) cube([8, 1.6, 4.0]);
-  translate([92, 40.120000000000005, 2.5]) cube([6, 1.6, 4.0]);
-  translate([106, 40.120000000000005, 2.5]) cube([6, 1.6, 4.0]);
-  translate([86.29, 4, 2.5]) cube([1.6, 5, 4.0]);
-}
+stair = "proposed";    // [proposed, as_drawn]
+changes = true;
+show_roof = true;
+roof_opacity = 1.0;    // [0.1:0.1:1]
+roof_color = [0.20, 0.38, 0.62];  // blue
+audit = false;         // echo the tables for the layout checker
 
-// ---- window panes
-color([0.53, 0.81, 0.92, 0.55]) {
-  translate([46, -0.06, 2.5]) cube([6, 0.12, 4.0]);
-  translate([53, -0.06, 2.5]) cube([6, 0.12, 4.0]);
-  translate([75, -0.06, 2.5]) cube([6, 0.12, 4.0]);
-  translate([82, -0.06, 2.5]) cube([5, 0.12, 4.0]);
-  translate([30, -0.06, 2.5]) cube([6, 0.12, 4.0]);
-  translate([108, -0.06, 2.5]) cube([6, 0.12, 4.0]);
-  translate([-0.06, 10, 2.5]) cube([0.12, 6, 4.0]);
-  translate([-0.06, 22, 2.5]) cube([0.12, 6, 4.0]);
-  translate([8, -0.06, 2.5]) cube([6, 0.12, 4.0]);
-  translate([25.110000000000003, 34, 2.5]) cube([0.12, 6, 4.0]);
-  translate([25.110000000000003, 53, 2.5]) cube([0.12, 3, 4.0]);
-  translate([36, 58.53, 2.5]) cube([6, 0.12, 4.0]);
-  translate([54, 58.86, 2.5]) cube([6, 0.12, 4.0]);
-  translate([62, 40.69, 2.5]) cube([5, 0.12, 4.0]);
-  translate([76, 40.86, 2.5]) cube([8, 0.12, 4.0]);
-  translate([92, 40.86, 2.5]) cube([6, 0.12, 4.0]);
-  translate([106, 40.86, 2.5]) cube([6, 0.12, 4.0]);
-  translate([87.03, 4, 2.5]) cube([0.12, 5, 4.0]);
-}
+main_level(stair, changes, show_roof, roof_color, roof_opacity, audit);
 
-// ---- door leaves (ajar 30 deg)
-color([0.55, 0.35, 0.2]) {
-  translate([64, 0, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([5, 0.18, 7.0]);
-  translate([46, 0, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([54, 0, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([76, 0, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([82, 0, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([25.17, 22, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([36.25, 22, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([27, 27.34, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([38, 13.92, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([28, 13.92, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([2.5, 0.18, 7.0]);
-  translate([38, 30.84, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([46, 30.84, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([55.42, 37.34, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([38, 44.17, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([47, 44.17, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([2.5, 0.18, 7.0]);
-  translate([32.17, 53, 0]) rotate([0,0,60]) translate([0, -0.09, 0]) cube([2.5, 0.18, 7.0]);
-  translate([64.42, 50, 0]) rotate([0,0,60]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([50, 14.5, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([63, 13.33, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([5, 0.18, 7.0]);
-  translate([63, 25.75, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([5, 0.18, 7.0]);
-  translate([76, 23.5, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([72.42, 30, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([5, 0.18, 7.0]);
-  translate([62, 40.75, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([78, 40.92, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([6, 0.18, 7.0]);
-  translate([94, 28.92, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([95, 40.92, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([104, 18.25, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([108, 40.92, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([5, 0.18, 7.0]);
-  translate([118.59, 24, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([5, 0.18, 7.0]);
-  translate([118.59, 33, 0]) rotate([0,0,120]) translate([0, -0.09, 0]) cube([4, 0.18, 7.0]);
-  translate([110, 16.5, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([90, 16.5, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-  translate([99, 16.5, 0]) rotate([0,0,30]) translate([0, -0.09, 0]) cube([3, 0.18, 7.0]);
-}
+/* [Hidden] */
+counter  = [0.97, 0.97, 0.95];
+wood     = [0.55, 0.38, 0.22];
+steel    = [0.70, 0.72, 0.74];
+dark     = [0.12, 0.12, 0.12];
+basin    = [0.62, 0.78, 0.86];
+hearth   = [0.35, 0.33, 0.32];
+brick    = [0.55, 0.27, 0.20];
+white    = [0.97, 0.97, 0.97];
 
-// ---- furniture
-color([0.5450980392156862, 0.27058823529411763, 0.07450980392156863]) translate([65, 30, 0]) cube([3, 8, 3.5]);
+// [label, x0, y0, x1, y1, ceiling, kind, z0, tag, label_at]
+function main_rooms() = [
+    // ---- garage, mud room, bedroom 4
+    ["GARAGE",          0,     7.9,  25.2,  39.7, 9.67, "garage", -1.5],
+    ["STORAGE",         19.5,  35.5, 25.2,  39.7, 8,    "closet", 0, "stair_new"],
+    ["STAIR DN",        19.5,  35.5, 25.2,  39.7, 8,    "stairwell", 0, "stair_old"],
+    ["MUD ROOM",        25.2,  23.5, 36.9,  31.1, 12,   "utility"],
+    ["HALL",            25.2,  31.1, 55.2,  35.5, 12,   "hall"],
+    ["",                25.2,  35.5, 29.9,  39.7, 12,   "hall"],
+    ["BATH 4",          36.9,  25.9, 45.5,  31.1, 12,   "bath"],
+    ["WIC",             45.5,  25.9, 50.7,  31.1, 12,   "closet"],
+    ["",                50.7,  25.9, 55.2,  31.1, 12,   "hall"],
+    ["BEDROOM 4",       36.9,  11.6, 55.2,  25.9, 12,   "bed"],
+    // ---- north bedroom wing
+    ["BEDROOM 3",       12.1,  39.7, 29.9,  53.1, 12,   "bed"],
+    ["",                12.1,  53.1, 16.1,  58.7, 12,   "hall"],
+    ["WIC",             16.1,  53.1, 21.4,  58.7, 12,   "closet"],
+    ["BATH 3",          12.1,  58.7, 21.4,  64.3, 12,   "bath"],
+    ["BEDROOM 2",       21.4,  53.1, 36.25, 68.1, 12,   "bed"],
+    ["WIC",             36.25, 51.3, 41.4,  56.1, 12,   "closet"],
+    ["BATH 2",          36.25, 56.1, 41.4,  66.1, 12,   "bath"],
+    ["HALL",            29.9,  47,   41.4,  51.3, 12,   "hall"],
+    ["",                29.9,  51.3, 36.25, 53.1, 12,   "hall"],
+    ["LAUNDRY",         29.9,  35.5, 43.1,  47,   12,   "utility"],
+    ["PWDR",            43.1,  35.5, 48.7,  41.8, 12,   "bath"],
+    ["LINEN",           43.1,  41.8, 48.7,  47,   12,   "closet"],
+    ["PANTRY",          48.7,  35.5, 55.2,  47,   12,   "utility"],
+    [["BREAKFAST", "NOOK"], 41.4, 47, 55.2, 66.2, 14, "dining"],
+    // ---- kitchen, family room, front rooms
+    ["KITCHEN",         55.2,  29.5, 71.3,  52.6, 14,   "kitchen", 0, "", [63.25, 32.5, 1.8]],
+    ["FAMILY ROOM",     71.3,  31.4, 97.2,  52.6, 14,   "living"],
+    ["DINING ROOM",     55.2,  0,    71.3,  19.6, 14,   "dining", 0, "", [64, 14.5, 1.5]],
+    [["BUTLER'S", "PANTRY"], 55.2, 19.6, 71.3, 29.5, 14, "utility"],
+    ["FOYER",           71.3,  2.9,  82.3,  17.7, 14,   "hall"],
+    [["FRONT", "HALL"], 71.3, 17.7, 82.3, 31.4, 14,   "hall"],
+    ["LOUNGE",          82.3,  0,    97.2,  21,   14,   "living"],
+    ["STAIR DN",        82.3,  21,   97.2,  31.4, 14,   "stairwell", 0, "stair_new", [90, 23.3, 1.5]],
+    ["BAR",             82.3,  21,   97.2,  31.4, 14,   "dining", 0, "stair_old"],
+    // ---- master wing
+    ["GALLERY",         97.2,  30.6, 109.7, 36.5, 14,   "hall"],
+    ["OFFICE",          97.2,  36.5, 109.7, 49.1, 14,   "office"],
+    [["MASTER", "SUITE"], 109.7, 30.6, 127.9, 53.5, 14, "bed"],
+    ["WIC",             97.2,  21.5, 108.7, 30.6, 12,   "closet"],
+    ["WIC",             108.7, 21.5, 117.1, 30.6, 12,   "closet"],
+    ["DRESSING",        97.2,  17.3, 117.1, 21.5, 12,   "hall"],
+    ["WC",              97.2,  11.6, 105.4, 17.3, 12,   "bath"],
+    ["SHOWER",          105.4, 11.6, 117.1, 17.3, 12,   "shower", 0, "new"],
+    ["VANITY",          105.4, 11.6, 110.2, 17.3, 12,   "bath", 0, "old"],
+    ["SHOWER",          110.2, 11.6, 117.1, 17.3, 12,   "shower", 0, "old"],
+    [["MASTER", "BATH"], 117.1, 11.6, 130.1, 30.6, 12, "bath"],
+    // ---- porches (no walls)
+    ["FRONT PORCH",     48.1, -12.3, 105.7, 0,    0,    "porch"],
+    ["",                48.1,  0,    55.2,  11.6, 0,    "porch"],
+    ["",                97.2,  0,    105.7, 11.6, 0,    "porch"],
+    ["",                71.3,  0,    82.3,  2.9,  0,    "porch"],
+    ["STOOP",           25.2,  17.8, 36.9,  23.5, 0,    "porch"],
+    [["BREAKFAST", "PORCH"], 55.2, 52.6, 69.3, 66.2, 0, "porch"],
+    ["OUTDOOR LIVING",  69.3,  52.6, 97.2,  67.6, 0,    "porch"],
+    [["OFFICE", "PORCH"], 97.2, 49.1, 109.7, 59.5, 0,  "porch"],
+    ["MASTER PORCH",    109.7, 53.5, 127.9, 63.5, 0,    "porch"],
+    [["SIDE", "PORCH"], 127.9, 30.6, 137.7, 59.8, 0,   "porch"],
+];
 
-// fireplace: Fireplace
-color([0.3,0.3,0.3]) translate([43.25, 10, 0]) cube([3, 4, 5.0]);
-color([0.05,0.05,0.05]) translate([43.95, 9.95, 0.6]) cube([1.6, 0.3, 1.8]);
+// [x, y, axis, width, type, swing, tag]
+function main_doors() = [
+    // ---- exterior
+    [73.8,  2.9,  "x", 6,    "double",  1],            // front door
+    [56.8,  0,    "x", 4.8,  "double",  1],            // dining French doors
+    [64.7,  0,    "x", 4.8,  "double",  1],
+    [84.2,  0,    "x", 4.4,  "double",  1],            // lounge French doors
+    [92.1,  0,    "x", 4.4,  "double",  1],
+    [51.1,  11.6, "x", 3,    "door",    1],            // bedroom 4 to the porch
+    [26.5,  23.5, "x", 3,    "door",   -1],            // mud room to the stoop
+    [0,     10.5, "y", 9,    "garage"],                // side-load garage doors
+    [0,     22.5, "y", 9,    "garage"],
+    [25.2,  32.4, "y", 2.8,  "door",   -1],            // garage to the hall
+    [55.2,  57.4, "y", 5.2,  "double", -1],            // nook to the breakfast porch
+    [72.5,  52.6, "x", 20.5, "slider"],                // family room pocket slider
+    [115.6, 53.5, "x", 6,    "double", -1],            // master suite to the master porch
+    [127.9, 32.4, "y", 5,    "double", -1],            // master suite to the side porch
+    [127.9, 46.8, "y", 5,    "double", -1],
+    // ---- front rooms, kitchen, family room
+    [71.3,  6,    "y", 8.5,  "open"],                  // foyer / dining
+    [82.3,  6,    "y", 8.5,  "open"],                  // foyer / lounge
+    [72.3,  17.7, "x", 9,    "open"],                  // foyer / front hall
+    [71.6,  31.4, "x", 10.4, "full"],                  // front hall / family room
+    [71.3,  31.7, "y", 20.6, "full"],                  // kitchen / family room
+    [82.6,  31.4, "x", 14.3, "full"],                  // stair (or bar) / family room
+    [58,    19.6, "x", 3,    "door",    1],            // dining / butler's pantry
+    [56.5,  29.5, "x", 3.5,  "open"],                  // butler's pantry / kitchen
+    [55.2,  31.4, "y", 3.8,  "full"],                  // hall into the kitchen
+    [55.2,  47.3, "y", 3.9,  "open"],                  // nook / kitchen
+    // ---- bedroom wing
+    [41.4,  47.3, "y", 3.7,  "open"],                  // nook / bedroom hall
+    [30.2,  51.3, "x", 5.75, "full"],                  // bedroom hall alcove
+    [32.7,  53.1, "x", 3,    "door",    1],            // bedroom 2
+    [29.9,  47.9, "y", 2.8,  "door",   -1],            // bedroom 3
+    [36.5,  47,   "x", 3,    "door",   -1, "new"],     // laundry, bedroom-hall side
+    [36.2,  35.5, "x", 3,    "door",    1],            // laundry, garage-hall side
+    [45.4,  35.5, "x", 2.6,  "door",    1],            // powder room
+    [45,    47,   "x", 2.4,  "door",    1],            // linen
+    [49.6,  47,   "x", 2.6,  "door",   -1],            // pantry, nook side
+    [49.6,  35.5, "x", 2.6,  "door",    1],            // pantry, hall side
+    [25.5,  31.1, "x", 8.2,  "full"],                  // mud room / hall
+    [25.5,  35.5, "x", 4.1,  "full"],                  // hall alcove by the garage door
+    [25.2,  36,   "y", 2.5,  "door",   -1, "stair_new"],  // storage in the old stair bay
+    [25.2,  35.8, "y", 3.6,  "full",    1, "stair_old"],  // top of the drawn stair
+    [51.0,  31.1, "x", 3.9,  "full"],                  // hall to bedroom 4
+    [51.4,  25.9, "x", 3,    "door",   -1],            // bedroom 4
+    [42.4,  25.9, "x", 2.6,  "door",    1],            // bath 4
+    [46.6,  25.9, "x", 2.6,  "door",    1, "new"],     // bedroom 4 -> WIC
+    [45.5,  27.5, "y", 2.4,  "open",    1, "old"],     // bath 4 -> WIC (as drawn)
+    [12.6,  53.1, "x", 3,    "open"],                  // bedroom 3 / closet vestibule
+    [12.4,  58.7, "x", 2.6,  "door",    1],            // bath 3
+    [16.1,  55.5, "y", 2.6,  "door",    1],            // bedroom 3 WIC
+    [36.25, 56.6, "y", 2.6,  "door",    1],            // bath 2
+    [36.25, 53.3, "y", 2.5,  "door",    1, "new"],     // bedroom 2 -> WIC
+    [36.6,  56.1, "x", 2.4,  "open",    1, "old"],     // bath 2 -> WIC (as drawn)
+    // ---- master wing
+    [97.2,  31.5, "y", 4.5,  "open"],                  // family room / gallery
+    [101.8, 36.5, "x", 3.6,  "open"],                  // gallery / office
+    [109.7, 31.2, "y", 5,    "double",  1],            // gallery / master suite
+    [111,   30.6, "x", 2.6,  "door",   -1, "new"],     // master suite -> WIC
+    [120.8, 30.6, "x", 5,    "double", -1],            // master suite / bath
+    [103.8, 21.5, "x", 2.5,  "open"],                  // WIC / dressing
+    [111.3, 21.5, "x", 2.5,  "open"],                  // WIC / dressing
+    [117.1, 17.6, "y", 3.6,  "open"],                  // dressing / master bath
+    [101.8, 17.3, "x", 2.5,  "door",   -1],            // WC
+    [105.8, 17.3, "x", 3,    "open",    1, "new"],     // bigger shower: entry
+    [109,   17.3, "x", 7.8,  "glass",   1, "new"],     //   and glass front
+    [105.8, 17.3, "x", 4,    "open",    1, "old"],     // vanity niche (as drawn)
+    [110.6, 17.3, "x", 2.6,  "open",    1, "old"],     // shower (as drawn)
+    [113.4, 17.3, "x", 3.4,  "glass",   1, "old"],
+];
 
-// fireplace: Fireplace
-color([0.3,0.3,0.3]) translate([86.42, 31, 0]) cube([2.5, 4, 5.0]);
-color([0.05,0.05,0.05]) translate([87.12, 30.95, 0.6]) cube([1.1, 0.3, 1.8]);
+// [x, y, axis, width, sill, height]
+function main_windows() = [
+    [6,     7.9,  "x", 3.5, 3,   4],      // garage
+    [15.5,  7.9,  "x", 3.5, 3,   4],
+    [40.3,  11.6, "x", 4.3, 2.5, 5],      // bedroom 4
+    [31.7,  23.5, "x", 3.2, 3,   4],      // mud room
+    [12.1,  41.5, "y", 3.5, 2.5, 5],      // bedroom 3
+    [12.1,  47.5, "y", 3.5, 2.5, 5],
+    [12.1,  54.5, "y", 2.5, 3,   4],      // closet vestibule
+    [14,    64.3, "x", 2.5, 4,   3],      // bath 3
+    [23.5,  68.1, "x", 3.5, 2.5, 5],      // bedroom 2
+    [30,    68.1, "x", 3.5, 2.5, 5],
+    [37.5,  66.1, "x", 2.5, 5,   2.5],    // bath 2
+    [43,    66.2, "x", 4,   2.5, 6],      // nook
+    [49.5,  66.2, "x", 4,   2.5, 6],
+    [62.5,  52.6, "x", 5,   3.5, 4],      // kitchen, over the counter
+    [55.2,  2,    "y", 4,   2.5, 6],      // dining
+    [97.2,  3,    "y", 3.3, 2.5, 6],      // lounge
+    [101,   49.1, "x", 5,   2.5, 6],      // office
+    [112.2, 53.5, "x", 3.2, 2.5, 6],      // master suite
+    [122.3, 53.5, "x", 3.2, 2.5, 6],
+    [127.9, 39.5, "y", 5,   2.5, 6],
+    [130.1, 21.9, "y", 6,   3.5, 4],      // master bath
+    [121,   11.6, "x", 5,   3.5, 4],
+    [99.5,  11.6, "x", 2,   5,   2.5],    // WC
+];
 
-// ---- porch columns + roof: FRONT PORCH
-color([0.96, 0.95, 0.92]) {
-  translate([39.62, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([39.62, -0.38, 0]) cube([0.75, 0.75, 12.67]);
-  translate([49.08, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([58.52, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([67.97, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([77.41, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([86.84, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([96.30, -12.71, 0]) cube([0.75, 0.75, 12.67]);
-  translate([96.30, -0.38, 0]) cube([0.75, 0.75, 12.67]);
-}
-color([0.30, 0.30, 0.32]) {
-  translate([39.00, -13.33, 12.67]) cube([58.67, 13.33, 0.75]);
-}
-color([0.80, 0.80, 0.78]) {
-  translate([63.25, -13.33, -0.50]) cube([8.0, 1.0, 0.5]);
-  translate([63.25, -14.33, -1.00]) cube([8.0, 1.0, 0.5]);
-  translate([63.25, -15.33, -1.50]) cube([8.0, 1.0, 0.5]);
-  translate([63.25, -16.33, -2.00]) cube([8.0, 1.0, 0.5]);
-}
+// [x0, y0, x1, y1, z0, z1, colour, tag]
+function main_fixtures() = [
+    // kitchen as proposed: one work aisle (range wall / island sink),
+    // closed at the south by a counter return, fridge at its north end;
+    // traffic passes north of it (nook <-> family room) and south of it
+    // (garage hall / butler's pantry <-> family room)
+    [55.2, 37.5, 57.2, 46.5, 0, 3,    counter, "new"],   // range wall
+    [55.4, 40.5, 57.1, 43.5, 3, 3.05, dark,    "new"],   // range
+    [55.2, 35.5, 61.2, 37.5, 0, 3,    counter, "new"],   // counter return
+    [61.2, 37.5, 65.2, 46.0, 0, 3,    wood,    "new"],   // island
+    [61.4, 40.5, 62.8, 43.5, 3, 3.05, basin,   "new"],   // island sink
+    [56.7, 50.6, 66.7, 52.6, 0, 3,    counter, "new"],   // north counter
+    [56.7, 50.3, 59.7, 52.6, 0, 7,    steel,   "new"],   // fridge
+    [59.7, 50.6, 62.2, 52.6, 0, 7,    steel,   "new"],   // wall ovens
+    // kitchen as drawn: cooktop wall, island across both entries
+    [55.2, 35.5, 57.6, 47.0, 0, 3,    counter, "old"],
+    [55.4, 39.5, 57.4, 43.0, 3, 3.05, dark,    "old"],
+    [60.7, 35.2, 65.2, 47.3, 0, 3,    wood,    "old"],
+    [60.9, 40.0, 62.3, 43.0, 3, 3.05, basin,   "old"],
+    [56.5, 50.6, 69.0, 52.6, 0, 3,    counter, "old"],
+    [59.4, 50.3, 66.3, 52.6, 0, 7,    steel,   "old"],
+    // laundry: washer + dryer
+    [30.4, 44.6, 32.9, 46.8, 0, 3.2,  steel],
+    [33.1, 44.6, 35.6, 46.8, 0, 3.2,  steel],
+    // fireplaces: dining (west wall), family room (east wall), lounge gas
+    [55.2, 8.0,  57.2, 11.5, 0, 4.5,  hearth],
+    [95.2, 39.5, 97.2, 43.5, 0, 4.5,  hearth],
+    [95.6, 8.2,  97.2, 11.8, 0, 3.5,  hearth],
+    [56.9, 8.6,  57.25, 10.9, 0.5, 2.6, dark],
+    [94.85, 40.1, 95.2, 42.9, 0.5, 2.6, dark],
+    [95.25, 8.8, 95.6, 11.2, 0.5, 2.2, dark],
+    // master bath tub, shower bench
+    [121.2, 12.4, 126.6, 15.6, 0, 2,  white],
+    [116.0, 11.9, 116.9, 17.0, 0, 1.5, white, "new"],
+    // garage: dog wash, steps up to the house
+    [0.6,  35.6, 5.0,  39.2, -1.5, 0.5,  white],
+    [19.5, 32.4, 20.5, 35.3, -1.5, -1.0, [0.80, 0.80, 0.78]],
+    [20.5, 32.4, 21.5, 35.3, -1.5, -0.5, [0.80, 0.80, 0.78]],
+    [21.5, 32.4, 25.0, 35.3, -1.5, 0,    [0.80, 0.80, 0.78]],
+];
 
-// stairs: DN
-color([0.75, 0.72, 0.68]) {
-  translate([25.17, 27.34, 0]) cube([0.83, 3.5, 1.00]);
-  translate([26.00, 27.34, 0]) cube([0.83, 3.5, 2.00]);
-  translate([26.84, 27.34, 0]) cube([0.83, 3.5, 3.00]);
-  translate([27.67, 27.34, 0]) cube([0.83, 3.5, 4.00]);
-  translate([28.50, 27.34, 0]) cube([0.83, 3.5, 5.00]);
-  translate([29.34, 27.34, 0]) cube([0.83, 3.5, 6.00]);
-  translate([30.17, 27.34, 0]) cube([0.83, 3.5, 7.00]);
-  translate([31.00, 27.34, 0]) cube([0.83, 3.5, 8.00]);
-  translate([31.84, 27.34, 0]) cube([0.83, 3.5, 9.00]);
-  translate([32.67, 27.34, 0]) cube([0.83, 3.5, 10.00]);
-  translate([33.50, 27.34, 0]) cube([0.83, 3.5, 11.00]);
-  translate([34.34, 27.34, 0]) cube([0.83, 3.5, 12.00]);
-}
+// porch posts [x, y, height]
+function main_posts() = [
+    [48.55, -11.85, 12.67], [55.1, -11.85, 12.67], [63.1, -11.85, 12.67],
+    [71.5,  -11.85, 12.67], [81.6, -11.85, 12.67], [90.7, -11.85, 12.67],
+    [98.8,  -11.85, 12.67], [105.25, -11.85, 12.67],
+    [48.55, 0, 12.67], [48.55, 11.15, 12.67], [105.25, 0, 12.67], [105.25, 11.15, 12.67],
+    [25.65, 18.25, 10], [36.45, 18.25, 10],
+    [55.65, 65.75, 14], [62.4, 65.75, 14],
+    [69.75, 67.15, 14], [79, 67.15, 14], [88.2, 67.15, 14], [96.75, 67.15, 14],
+    [97.65, 59.05, 14], [103.45, 59.05, 14], [109.25, 59.05, 14],
+    [110.15, 63.05, 14], [119, 63.05, 14], [127.45, 63.05, 14],
+    [131, 31.05, 12], [137.25, 31.05, 12], [137.25, 40.6, 12],
+    [137.25, 50.15, 12], [137.25, 59.35, 12],
+];
 
-// ---- back porch columns + roofs
-color([0.96, 0.95, 0.92]) {
-  translate([64.05, 46.30, 0]) cube([0.75, 0.75, 14.0]);
-  translate([64.05, 58.55, 0]) cube([0.75, 0.75, 14.0]);
-  translate([77.38, 40.55, 0]) cube([0.75, 0.75, 16.0]);
-  translate([77.38, 46.30, 0]) cube([0.75, 0.75, 14.0]);
-  translate([77.38, 48.22, 0]) cube([0.75, 0.75, 16.0]);
-  translate([77.38, 55.88, 0]) cube([0.75, 0.75, 16.0]);
-  translate([77.38, 58.55, 0]) cube([0.75, 0.75, 14.0]);
-  translate([85.38, 55.88, 0]) cube([0.75, 0.75, 16.0]);
-  translate([93.38, 55.88, 0]) cube([0.75, 0.75, 16.0]);
-  translate([101.38, 40.55, 0]) cube([0.75, 0.75, 14.0]);
-  translate([101.38, 40.55, 0]) cube([0.75, 0.75, 16.0]);
-  translate([101.38, 48.22, 0]) cube([0.75, 0.75, 16.0]);
-  translate([101.38, 51.22, 0]) cube([0.75, 0.75, 14.0]);
-  translate([101.38, 55.88, 0]) cube([0.75, 0.75, 16.0]);
-  translate([112.70, 40.55, 0]) cube([0.75, 0.75, 14.0]);
-  translate([112.70, 40.55, 0]) cube([0.75, 0.75, 16.0]);
-  translate([112.70, 50.55, 0]) cube([0.75, 0.75, 16.0]);
-  translate([112.70, 51.22, 0]) cube([0.75, 0.75, 14.0]);
-  translate([122.28, 50.55, 0]) cube([0.75, 0.75, 16.0]);
-  translate([131.88, 40.55, 0]) cube([0.75, 0.75, 16.0]);
-  translate([131.88, 50.55, 0]) cube([0.75, 0.75, 16.0]);
-}
-color([0.30, 0.30, 0.32]) {
-  translate([64.42, 45.67, 14.0]) cube([14.33, 14.25, 0.75]);
-  translate([76.75, 40.92, 16.0]) cube([26.00, 16.33, 0.75]);
-  translate([100.75, 40.92, 14.0]) cube([13.33, 11.67, 0.75]);
-  translate([112.08, 40.92, 16.0]) cube([21.17, 11.00, 0.75]);
-}
-// ---- back porch steps to the yard
-color([0.80, 0.80, 0.78]) {
-  translate([68.09, 58.92, -0.50]) cube([6.0, 1.0, 0.5]);
-  translate([68.09, 59.92, -1.00]) cube([6.0, 1.0, 0.5]);
-  translate([68.09, 60.92, -1.50]) cube([6.0, 1.0, 0.5]);
-  translate([68.09, 61.92, -2.00]) cube([6.0, 1.0, 0.5]);
-  translate([85.75, 56.25, -0.50]) cube([8.0, 1.0, 0.5]);
-  translate([85.75, 57.25, -1.00]) cube([8.0, 1.0, 0.5]);
-  translate([85.75, 58.25, -1.50]) cube([8.0, 1.0, 0.5]);
-  translate([85.75, 59.25, -2.00]) cube([8.0, 1.0, 0.5]);
+// [x0, y0, x1, y1, eave, pitch, overhang]
+function main_roof() = [
+    [0,     7.9,   25.2,  39.7, 8.17,  0.667, 1.5],  // garage
+    [25.2,  11.6,  55.2,  39.7, 12,    0.667, 1.5],  // mud room, bedroom 4
+    [12.1,  35.5,  41.4,  68.1, 12,    0.667, 1.5],  // bedrooms 2 + 3, laundry
+    [41.4,  35.5,  55.2,  66.2, 14,    0.667, 1.5],  // nook, pantry
+    [55.2,  0,     97.2,  31.4, 14,    0.667, 1.5],  // dining, foyer, lounge
+    [55.2,  29.5,  97.2,  52.6, 14,    0.667, 1.5],  // kitchen, family room
+    [97.2,  11.6,  130.1, 30.6, 12,    0.667, 1.5],  // master closets + bath
+    [97.2,  30.6,  127.9, 53.5, 14,    0.667, 1.5],  // office, master suite
+    [48.1, -12.3,  105.7, 0,    12.67, 0.333, 1],    // front porch
+    [48.1,  0,     55.2,  11.6, 12.67, 0.333, 1],
+    [97.2,  0,     105.7, 11.6, 12.67, 0.333, 1],
+    [25.2,  15.8,  36.9,  23.5, 10,    0.333, 1],    // stoop
+    [55.2,  52.6,  97.2,  67.6, 14,    0.333, 1],    // breakfast porch + outdoor living
+    [97.2,  49.1,  109.7, 59.5, 14,    0.333, 1],    // office porch
+    [109.7, 53.5,  127.9, 63.5, 14,    0.333, 1],    // master porch
+    [127.9, 30.6,  137.7, 59.8, 12,    0.333, 1],    // side porch
+];
+
+module main_level(stair = "proposed", changes = true, show_roof = true,
+                  roof_color = [0.20, 0.38, 0.62], roof_opacity = 1, audit = false) {
+    tags = [changes ? "new" : "old", stair == "proposed" ? "stair_new" : "stair_old"];
+    rooms = active(main_rooms(), 8, tags);
+    doors = active(main_doors(), 6, tags);
+    if (audit) echo(rooms = rooms, doors = doors, windows = main_windows());
+
+    draw_level(rooms, doors, main_windows());
+    fixtures(active(main_fixtures(), 7, tags));
+
+    // basement stair: the proposed U-stair in the old bar, or the short
+    // flight the plan draws in the garage corner (it stops at the wall)
+    if (stair == "proposed") bar_stair();
+    else flight(19.6, 35.7, 25.2, 39.5, "-x", 0, -8 * floor_to_floor() / 21, 8, -6);
+
+    for (p = main_posts()) post(p[0], p[1], p[2]);
+    porch_steps(72.6, -12.3, "-y", 8.4);    // front entry
+    porch_steps(26.5,  17.8, "-y", 9.5);    // stoop
+    porch_steps(73,    67.6, "+y", 20);     // outdoor living to the yard
+    porch_steps(112.5, 63.5, "+y", 12.5);   // master porch to the yard
+
+    if (show_roof) {
+        roofs(main_roof(), roof_color, roof_opacity);
+        color(brick) {                                  // chimneys
+            translate([54.7, 8.3, 0]) cube([2.5, 2.9, 20]);
+            translate([95.6, 40.0, 0]) cube([2.8, 3.0, 20]);
+        }
+    }
 }
