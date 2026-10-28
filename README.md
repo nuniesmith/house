@@ -9,7 +9,7 @@ review and Kayla's notes.
 | File | What |
 |---|---|
 | `main_floor.scad` | Main level, measured off the architect's plan: rooms, doors, windows, kitchen and bath fixtures, porches, hipped roof |
-| `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub, utilities, rec room, exit stair, foundation |
+| `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub, utilities, rec room / library, music room, exit stair, foundation |
 | `house_combined.scad` | Both levels stacked (`use`s the two files above) |
 | `house_lib.scad` | Shared modules and the basement alignment |
 | `tools/check_layout.py` | Optional layout checker (needs `openscad` on `PATH`) |
@@ -19,7 +19,8 @@ review and Kayla's notes.
 Set them in the OpenSCAD Customizer or with `-D name=value`:
 
 - `changes`: `true` shows the proposed changes from Kayla's review (new
-  doors drawn green, kitchen work zone, laundry pass-through, bigger shower);
+  doors drawn green, kitchen work zone, central bedroom hall, master
+  laundry, kitchen-to-dining hall, bigger shower);
   `false` shows the plan as drawn.
 - `stair`: `"proposed"` puts the basement stair in the former bar so both
   floors meet; `"as_drawn"` keeps each drawing's stair (they don't line up).

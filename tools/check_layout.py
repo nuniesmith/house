@@ -27,7 +27,7 @@ VARIANTS = {
     "basement.scad": [[], ["-D", 'stair="as_drawn"']],
 }
 # rooms deliberately drawn inside another room (own floor level or no plate)
-NESTED_OK = {("GARAGE", "STORAGE"), ("GARAGE", "STAIR DN"), ("REC ROOM", "STAIR UP"), ("", "STAIR UP")}
+NESTED_OK = {("GARAGE", "STORAGE"), ("GARAGE", "STAIR DN"), ("REC ROOM / LIBRARY", "STAIR UP"), ("", "STAIR UP")}
 
 
 def tables(scad, extra):
@@ -108,7 +108,8 @@ def check(scad, extra):
             problems.append(f"window {win} is between {name(a)} and {name(b)}")
     # reachability without going outside (porches excluded)
     inside = {name(r) for r in rooms if r[6] != "porch"}
-    start = next((name(r) for r in rooms if label(r) in ("FOYER", "REC ROOM")), name(rooms[0]))
+    start = next((name(r) for r in rooms if label(r) == "FOYER" or label(r).startswith("REC ROOM")),
+                 name(rooms[0]))
     seen, todo = {start}, deque([start])
     while todo:
         for nxt in graph[todo.popleft()]:

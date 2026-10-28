@@ -32,7 +32,7 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 |---|---|
 | *Add a door from bedroom to closet directly so you don't have to go through the bathroom* | New doors (green): **master suite → master closet**, **Bedroom 2 → its closet**, **Bedroom 4 → its closet**. The old through-the-bath openings into the Bedroom 2 and 4 closets are closed, so those closets keep their shelving walls. The master closets also still open to the dressing area by the master bath. Bedroom 3's closet already opens off its own little vestibule, so it's unchanged. |
 | *Kitchen layout needs tweaking, 2 paths of travel through work zone* | As drawn, the island sits between both kitchen entrances, so people coming from the bedrooms/nook and from the garage hall both walk through the cooking aisle. Now there is **one cooking aisle**: the range wall and the island sink, 4 ft apart. A counter return closes the aisle at the south end, and the fridge and wall ovens sit at its open north end. Through-traffic gets its own lanes: north of the work zone (nook ↔ family room) and south of it (garage hall / butler's pantry ↔ family room). |
-| *Access the laundry room from both sides* | **Second laundry door** from the bedroom hall (green). The laundry now connects the bedroom hall and the garage/mud-room hall, so nobody has to go round through the kitchen. |
+| *Access the laundry room from both sides* | Round 1 gave the laundry a second door so it worked as a pass-through. Round 2 replaces that with a **central hall** beside the laundry (see below). |
 | *I like all the porches* | All kept: front (wraps around the front rooms), breakfast, outdoor living, office, master and side, plus the mud-room stoop. They join up as one continuous back porch, with steps down to the yard. |
 | *I want a bigger shower* | Master shower grows from about **7 × 5½ ft to about 11½ × 5½ ft** (it takes the makeup-vanity niche next to it) and gets a bench. |
 | *The 3D model is cool and the roof looks nice*; *maybe a blue roof so it's not as hot as black* | The hipped roof is back in the model, with chimneys for the two wood fireplaces. It is **blue** by default (`roof_color`); `show_roof = false` or a lower `roof_opacity` lets you see inside. On "cooler than black", see [the roof note](#roof-colour-and-heat). |
@@ -40,6 +40,20 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 | As drawn (`changes = false`) | With the changes |
 |---|---|
 | ![Main floor as drawn](docs/main_floor_as_drawn.png) | ![Main floor with Kayla's changes](docs/main_floor_plan.png) |
+
+### Round 2: hall, laundries, kitchen, dining, basement
+
+| Note | In the model (`changes = true`) |
+|---|---|
+| *Get to Bedrooms 2 & 3 from a central hallway, not through the laundry* | The east end of the old laundry is now a **3½ ft hall** that runs straight from the main hall by the kitchen and mud room to the bedroom hall (Bedrooms 2 and 3, Bath 2). Both ends are full-height openings. |
+| *That laundry becomes the extra one for those three bedrooms* | The laundry keeps its washer and dryer, gets about 10 × 11½ ft, and has one door off the new hall. It is no longer a through-route. |
+| *Master suite gets its own laundry with the walk-in closet and the bathroom* | The west 5 ft of the master closet becomes a **master laundry** (labelled W / D) with a side-by-side washer and dryer. Its door opens off the dressing area, between the closets and the master bath. The walk-in closet keeps its door from the master suite. |
+| *Breakfast nook: outside to the deck (it does) and access to the kitchen* | The deck door stays. The nook-to-kitchen opening is widened to **5 ft** and lands at the north end of the work aisle. |
+| *Don't like going through the butler's pantry to get to the dining room* | The butler's pantry is 4 ft shorter. That frees a **4 ft hall from the kitchen straight to the dining room**, with full-height openings at both ends. The pantry is still next to the dining room, but you no longer walk through it. |
+| *Don't love the path of travel between the fridge and the rest of the kitchen* | The **fridge moves onto the range wall** at the north end of the aisle and faces the island. The wall ovens move to the south end of the same wall. Fridge, range, ovens and island sink now all face one 4 ft aisle, and no walkway crosses between them. The north wall is left clear for the walk-through to the nook. |
+| *Basement flex room becomes a music room* | Renamed **MUSIC ROOM**. Plan for sound isolation, because it sits beside the library. |
+| *Small bar / coffee station in the middle of the rec room with a small sink and dishwasher* | An island of about **8 × 3½ ft** stands in the open part of the rec room, east of the stair. It has a bar sink and a 24" dishwasher. The old bar counter along the wall is gone. |
+| *All rec-room walls full of bookshelves, a library, with some seating* | **7 ft bookshelves** line every solid rec-room wall, leaving door openings clear. There are two reading groups: a sofa with two chairs in the south bay, and a sofa with a chair near the coffee station. The room is labelled REC ROOM / LIBRARY. |
 
 ## 2. Decision needed: where the basement stair goes
 
@@ -130,7 +144,7 @@ Printed sizes were used as checks, with these findings:
 
 ## 4. Basement: model vs. the sketch
 
-![Basement: theater, pool, utilities, rec room with the stair and bar counter](docs/basement_plan.png)
+![Basement: theater, pool, utilities, rec room / library with the stair and coffee station, music room](docs/basement_plan.png)
 
 Fixed:
 
@@ -153,7 +167,7 @@ Fixed:
 Assumptions (please check):
 
 - The 5 ft strip beside the pool is a pool-equipment room.
-- The 40 × 20 room is labelled "flex room", with a door added because the
+- The 40 × 20 room is labelled "music room", with a door added because the
   sketch has none.
 - The 10 × 30 room is labelled "storage".
 - The door drawn by the exit stair is the exit door.
@@ -167,7 +181,7 @@ Assumptions (please check):
 - **The basement is bigger than the house in places.** The sketch's 100' × 60'
   rectangle doesn't follow the house's outline, so about 20% of it lies
   outside the walls: in front of Bedroom 4 (pool room), in front of the master
-  closets (flex room), and under the back porches (utilities, storage). In
+  closets (music room), and under the back porches (utilities, storage). In
   the 3D view, the pale outline on the lawn shows where. Either fit the
   basement to the house or plan structural slabs over those parts.
 - **Exit stair vs. side porch.** As sketched, the exit stair runs under the

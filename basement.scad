@@ -2,9 +2,11 @@
 // Units: feet. Visualisation only - NOT construction documents.
 //
 // Follows the hand-drawn 100' x 60' sketch: home theater (NW), pool +
-// hot tub (SW), utilities (N), open rec room with the bar / coffee /
-// sink counter, a 10' x 30' room (NE) and a 40' x 20' room (SE), both
-// unlabelled in the sketch, and the exit stair outside the east wall.
+// hot tub (SW), utilities (N), an open rec room that doubles as the
+// library (bookshelves on every wall, reading seats, a bar / coffee
+// station with sink and dishwasher in the middle), a 10' x 30' storage
+// room (NE), the 40' x 20' music room (SE) and the exit stair outside
+// the east wall.
 // Positions come from the photo with its perspective corrected; the
 // labelled dimensions win where the drawing disagrees with them.
 // x = east, y = north in basement coordinates; house_lib's
@@ -29,6 +31,10 @@ seat   = [0.29, 0.29, 0.29];
 riser  = [0.40, 0.33, 0.30];
 fabric = [0.45, 0.10, 0.12];
 screen = [0.96, 0.96, 0.96];
+shelf  = [0.42, 0.28, 0.17];
+sofa   = [0.35, 0.42, 0.55];
+steel  = [0.70, 0.72, 0.74];
+counter = [0.97, 0.97, 0.95];
 wood   = [0.55, 0.38, 0.22];
 
 // exit stair areaway outside the east foundation wall [x0, y0, x1, y1]
@@ -42,8 +48,8 @@ function base_rooms() = [
     ["",                  25, 31, 30,  35, 0,  "rec"],      // vestibule at the theater / pool doors
     ["UTILITIES",         30, 45, 70,  60, 12, "utility"],
     ["STORAGE",           70, 50, 100, 60, 12, "closet"],   // unlabelled in the sketch
-    ["FLEX ROOM",         60, 0,  100, 20, 12, "living"],   // unlabelled in the sketch
-    ["REC ROOM",          30, 20, 100, 45, 0,  "rec",    0, "", [42, 38, 2.2]],
+    ["MUSIC ROOM",        60, 0,  100, 20, 12, "living"],
+    [["REC ROOM /", "LIBRARY"], 30, 20, 100, 45, 0, "rec", 0, "", [42, 38, 1.8]],
     ["",                  30, 0,  60,  20, 0,  "rec"],
     ["",                  70, 45, 100, 50, 0,  "rec"],
     ["STAIR UP",          52.2, 21, 67.1, 31.4, 12, "stairwell", 0, "stair_new", [59.6, 33.3, 1.4]],
@@ -62,20 +68,41 @@ function base_doors() = [
     [91,   45,   "x", 8.7, "full", 1, "stair_old"],
     [64,   45,   "x", 3,   "door",  1],                 // utilities
     [95,   50,   "x", 3,   "door",  1],                 // storage
-    [88,   20,   "x", 3,   "door", -1],                 // flex room (no door in the sketch)
+    [88,   20,   "x", 3,   "door", -1],                 // music room (no door in the sketch)
     [100,  22,   "y", 3,   "door",  1],                 // exit door, opens outward
     [52.2, 21.2, "y", 4.4, "full",  1, "stair_new"],    // foot of the stair
     [90.7, 45.3, "y", 4.4, "full",  1, "stair_old"],
 ];
 
-// [x0, y0, x1, y1, z0, z1, colour]
+// [x0, y0, x1, y1, z0, z1, colour, tag]
 function base_fixtures() = [
     [5,    3,    17,   23,   -0.3, 0.02, water],        // pool
     [1.5,  36,   28.5, 40.5, 0,    1.33, riser],        // theater risers, rows 2 + 3
     [1.5,  41,   28.5, 45.5, 0,    0.67, riser],
     [0.4,  57.6, 29.6, 58.2, 0,    11,   fabric],       // false wall at the screen end
     [3,    57.4, 27,   57.6, 2,    10.5, screen],
-    [77.2, 29,   81.7, 39,   0,    3.5,  wood],         // bar / coffee / sink
+    // bar / coffee station in the middle of the rec room: small sink and dishwasher
+    [72,   31,   77.2, 34.4, 0,    2.95, wood],
+    [77.2, 31,   79.2, 34.4, 0,    2.95, steel],        // dishwasher
+    [79.2, 31,   80,   34.4, 0,    2.95, wood],
+    [71.9, 30.9, 80.1, 34.5, 2.95, 3.1,  counter],
+    [73.5, 32,   75,   33.4, 3.1,  3.15, water],        // sink
+    // library: bookshelves on every rec-room wall, 7 ft high
+    [31.4, 0.6,  58.8, 1.6,  0,    7,    shelf],        // south wall
+    [58.8, 1.6,  59.8, 19.6, 0,    7,    shelf],        // music room
+    [67.6, 20.2, 87.4, 21.2, 0,    7,    shelf],
+    [91.6, 20.2, 99.3, 21.2, 0,    7,    shelf],
+    [98.3, 25.6, 99.3, 49.6, 0,    7,    shelf],        // east wall
+    [70.6, 48.8, 94.6, 49.8, 0,    7,    shelf, "stair_new"],   // storage room wall
+    [31.4, 43.8, 63.6, 44.8, 0,    7,    shelf],        // utilities
+    [30.2, 35.4, 31.2, 43.8, 0,    7,    shelf],        // theater
+    [30.2, 1.6,  31.2, 30.6, 0,    7,    shelf],        // pool equipment
+    // reading seating
+    [38,   3,    46,   6,    0,    2.6,  sofa],
+    [37,   10,   40,   13,   0,    2.6,  sofa],
+    [44,   10,   47,   13,   0,    2.6,  sofa],
+    [86,   40.5, 94,   43.5, 0,    2.6,  sofa],
+    [88,   34,   91,   37,   0,    2.6,  sofa],
 ];
 
 module basement_level(stair = "proposed", audit = false) {
@@ -89,7 +116,7 @@ module basement_level(stair = "proposed", audit = false) {
     draw_level(rooms, doors, []) foundation_walls(0, 0, 100, 60, floor_to_floor());
     foundation_slab(0, 0, 100, 60);
 
-    fixtures(base_fixtures());
+    fixtures(active(base_fixtures(), 7, tags));
     color(spa) translate([11, 28.5, 0]) cylinder(r = 3.5, h = 1.5, $fn = 48);   // hot tub
     // theater seating: three rows of four facing the screen (north),
     // the back rows on the risers
