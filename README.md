@@ -12,8 +12,8 @@ review and Kayla's notes.
 | `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub + pool bath, utilities, rec room / library, music room, exit stair, foundation |
 | `house_combined.scad` | Both levels stacked (`use`s the two files above) |
 | `house_lib.scad` | Shared modules and the basement alignment |
-| `shop.scad` | The 100 × 100 ft 4-bay shop (v2: bays run north-south, front faces south, Bay 1 utilities easternmost) with pit, wash-bay drain and the Bay 1 utility rooms |
-| `site.scad` | The whole property: house + shop + the utility tunnel from Bay 1's east side to the basement's north-side UTILITIES room, drives, well and septic zones |
+| `shop.scad` | The 100 × 100 ft 4-bay shop (v3: behind the house, front faces west, Bay 1 utilities southernmost) with pit, wash-bay drain and the Bay 1 utility rooms |
+| `site.scad` | The whole property: house + shop + the utility tunnel from Bay 1's south side into the basement UTILITIES room's north wall, west shared driveway, front loop + garden, shop tree belt, well and septic zones |
 | `tools/check_layout.py` | Optional layout checker (needs `openscad` on `PATH`) |
 
 Research and planning documents live in `docs/`: the house review and
