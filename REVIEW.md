@@ -55,6 +55,18 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 | *Small bar / coffee station in the middle of the rec room with a small sink and dishwasher* | An island of about **8 × 3½ ft** stands in the open part of the rec room, east of the stair. It has a bar sink and a 24" dishwasher. The old bar counter along the wall is gone. |
 | *All rec-room walls full of bookshelves, a library, with some seating* | **7 ft bookshelves** line every solid rec-room wall, leaving door openings clear. There are two reading groups: a sofa with two chairs in the south bay, and a sofa with a chair near the coffee station. The room is labelled REC ROOM / LIBRARY. |
 
+### Round 3: from the build research (Oct 28)
+
+| Research item | In the model |
+|---|---|
+| *No basement bathroom* (decision A3, a before-the-pour rough-in) | A **pool bath** of about 5 × 12 ft, taken from the north end of the pool-equipment strip. Swimmers reach it straight from the pool room, and it has a second door from the vestibule on the rec-room side, so the theater and library can use it too. Inside: a shower at the south end, a change bench, a sink and a WC. The pool-equipment room is now 5 × 19 ft (about 95 sq ft) with its door off the pool room. |
+| *ICF: plan on an 8 in core* (decision C12) | The foundation wall is now drawn **13¼ in** thick (8 in core plus two 2⅝ in EPS faces) instead of 12 in, centred on the same 100 × 60 outline (`icf_wall_t()` in `house_lib.scad`). |
+
+The rest of the research's layout list is still open and needs your call:
+the stair (section 2 below), a second interior stair, fitting the basement
+outline to the house, the exit stair vs. the side porch, and the theater's
+sound isolation.
+
 ## 2. Decision needed: where the basement stair goes
 
 The two drawings put the stair in places that can't connect:
@@ -154,7 +166,7 @@ Fixed:
   - It now sits behind the screen on the north wall, with the seats on
     risers facing it. The seats used to float in mid-air.
 - **Exit door:**
-  - It wasn't cut through the 1 ft foundation wall, so it was blocked.
+  - It wasn't cut through the foundation wall, so it was blocked.
   - It also sat at the *top* of the exit flight, 10 ft up.
   - It is now cut through the wall at the foot of the stair.
 - **Utilities door:** it opened onto the stair 7–9 ft up, because an earlier
@@ -166,7 +178,8 @@ Fixed:
 
 Assumptions (please check):
 
-- The 5 ft strip beside the pool is a pool-equipment room.
+- The 5 ft strip beside the pool is a pool-equipment room (now shared with
+  the pool bath).
 - The 40 × 20 room is labelled "music room", with a door added because the
   sketch has none.
 - The 10 × 30 room is labelled "storage".

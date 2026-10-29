@@ -218,8 +218,11 @@ module porch_steps(x, y, dir, width, n = 4, rise = 0.5, run = 1.0) {
         }
 }
 
+// ICF foundation wall: 8 in concrete core + two 2 5/8 in EPS faces
+function icf_wall_t() = (8 + 2 * 2.625) / 12;
+
 // Foundation walls (ICF, t thick) centred on the outline [x0,y0]-[x1,y1].
-module foundation_walls(x0, y0, x1, y1, h, t = 1) {
+module foundation_walls(x0, y0, x1, y1, h, t = icf_wall_t()) {
     color(icf_color) {
         translate([x0 - t / 2, y0 - t / 2, 0]) cube([x1 - x0 + t, t, h]);
         translate([x0 - t / 2, y1 - t / 2, 0]) cube([x1 - x0 + t, t, h]);
@@ -229,7 +232,8 @@ module foundation_walls(x0, y0, x1, y1, h, t = 1) {
 }
 
 module foundation_slab(x0, y0, x1, y1, t = 1) {
-    color(icf_color) translate([x0 - 0.5, y0 - 0.5, -t - 0.15]) cube([x1 - x0 + 1, y1 - y0 + 1, t]);
+    w = icf_wall_t();
+    color(icf_color) translate([x0 - w / 2, y0 - w / 2, -t - 0.15]) cube([x1 - x0 + w, y1 - y0 + w, t]);
 }
 
 module landing(x0, y0, x1, y1, z0, z1) {
