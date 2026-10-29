@@ -9,7 +9,7 @@ review and Kayla's notes.
 | File | What |
 |---|---|
 | `main_floor.scad` | Main level, measured off the architect's plan: rooms, doors, windows, kitchen and bath fixtures, porches, hipped roof |
-| `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub, utilities, rec room / library, music room, exit stair, foundation |
+| `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub + pool bath, utilities, rec room / library, music room, exit stair, foundation |
 | `house_combined.scad` | Both levels stacked (`use`s the two files above) |
 | `house_lib.scad` | Shared modules and the basement alignment |
 | `tools/check_layout.py` | Optional layout checker (needs `openscad` on `PATH`) |

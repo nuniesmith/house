@@ -2,7 +2,8 @@
 // Units: feet. Visualisation only - NOT construction documents.
 //
 // Follows the hand-drawn 100' x 60' sketch: home theater (NW), pool +
-// hot tub (SW), utilities (N), an open rec room that doubles as the
+// hot tub (SW) with a pool bath (WC, shower, change bench) between the
+// pool and the rec room, utilities (N), an open rec room that doubles as the
 // library (bookshelves on every wall, reading seats, a bar / coffee
 // station with sink and dishwasher in the middle), a 10' x 30' storage
 // room (NE), the 40' x 20' music room (SE) and the exit stair outside
@@ -36,6 +37,7 @@ sofa   = [0.35, 0.42, 0.55];
 steel  = [0.70, 0.72, 0.74];
 counter = [0.97, 0.97, 0.95];
 wood   = [0.55, 0.38, 0.22];
+tile   = [0.55, 0.75, 0.85];
 
 // exit stair areaway outside the east foundation wall [x0, y0, x1, y1]
 function exit_areaway() = [100, 12, 105, 50];
@@ -44,7 +46,8 @@ function exit_areaway() = [100, 12, 105, 50];
 function base_rooms() = [
     [["HOME", "THEATER"], 0,  35, 30,  60, 12, "living", 0, "", [15, 53.6, 1.6]],
     [["POOL /", "HOT TUB"], 0, 0, 25,  35, 12, "pool",   0, "", [20.5, 29, 1.1]],
-    [["POOL", "EQUIP."],  25, 0,  30,  31, 12, "utility"],
+    [["POOL", "EQUIP."],  25, 0,  30,  19, 12, "utility"],
+    [["POOL", "BATH"],    25, 19, 30,  31, 12, "bath", 0, "", [27.1, 25.4, 0.7]],  // WC, shower, change bench
     ["",                  25, 31, 30,  35, 0,  "rec"],      // vestibule at the theater / pool doors
     ["UTILITIES",         30, 45, 70,  60, 12, "utility"],
     ["STORAGE",           70, 50, 100, 60, 12, "closet"],   // unlabelled in the sketch
@@ -61,7 +64,9 @@ function base_rooms() = [
 function base_doors() = [
     [26,   35,   "x", 3,   "door",  1],                 // theater
     [25,   31.5, "y", 3,   "door", -1],                 // pool room
-    [26,   31,   "x", 3,   "door", -1],                 // pool equipment
+    [27.2, 31,   "x", 2.6, "door", -1],                 // pool bath, from the rec room side
+    [25,   23.6, "y", 2.8, "door",  1],                 // pool bath, from the pool
+    [25,   8,    "y", 3,   "door",  1],                 // pool equipment, from the pool room
     [30,   31.3, "y", 3.4, "full"],                     // vestibule / rec room
     [30.3, 20,   "x", 29.4, "full"],                    // rec room is one open floor:
     [70.3, 45,   "x", 29.4, "full", 1, "stair_new"],    //   its three plates join here
@@ -77,6 +82,11 @@ function base_doors() = [
 // [x0, y0, x1, y1, z0, z1, colour, tag]
 function base_fixtures() = [
     [5,    3,    17,   23,   -0.3, 0.02, water],        // pool
+    // pool bath: shower, sink, WC, change bench
+    [25.2, 19.2, 29.8, 23.2, 0,    0.15, tile],
+    [25.2, 26.8, 26.6, 28.4, 0,    2.9,  counter],
+    [25.3, 29,   26.9, 30.8, 0,    1.4,  counter],
+    [28.4, 23.6, 29.8, 27.6, 0,    1.5,  wood],
     [1.5,  36,   28.5, 40.5, 0,    1.33, riser],        // theater risers, rows 2 + 3
     [1.5,  41,   28.5, 45.5, 0,    0.67, riser],
     [0.4,  57.6, 29.6, 58.2, 0,    11,   fabric],       // false wall at the screen end
