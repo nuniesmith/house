@@ -22,7 +22,9 @@ Set them in the OpenSCAD Customizer or with `-D name=value`:
   doors drawn green, kitchen work zone, central bedroom hall, master
   laundry, kitchen-to-dining hall, bigger shower, basement stair in the old
   bar, porches round the front corners, wider Bath 2);
-  `false` shows the plan as drawn.
+  `false` shows the main floor as drawn. The basement has no as-drawn
+  variant, so in `house_combined.scad` its stair rises into the as-drawn
+  bar.
 - `show_roof`, `roof_opacity`, `roof_color`: the roof (blue by default).
 - `mode` (combined only): `assembled`, `exploded`, `basement_only` or
   `main_only`; `show_ground` draws the lawn at grade in the assembled view.

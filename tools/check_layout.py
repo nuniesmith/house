@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Layout checker for the house models (needs `openscad` on PATH).
 
-Runs each level file with -D audit=true, reads the room / door / window
-tables it echoes, and checks that:
-  * every door or opening lies on a room's wall line and has a room on
-    both sides (no doors into voids or outside, except garage doors);
+Runs each level file with -D audit=true, reads the room / door / window /
+fixture tables it echoes, and checks that:
+  * every door or opening lies on a room's wall line and has the same
+    room on each side along its whole width (no doors into voids or
+    outside, except garage doors, and no cuts into a neighbouring room);
+  * every door leaf swings clear of walls, fixtures and other leaves;
   * every room is reachable from the foyer (main floor) or the rec room
     (basement) without going outside;
   * no door overlaps a window, and every window has walls on one side only;
@@ -15,10 +17,12 @@ The main floor is checked with the changes on and off.
     python3 tools/check_layout.py basement.scad
 """
 import ast
+import math
 import re
 import subprocess
 import sys
 from collections import defaultdict, deque
+from itertools import combinations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -34,11 +38,12 @@ def tables(scad, extra):
     out = subprocess.run(
         ["openscad", "-o", "/dev/stdout", "--export-format", "echo", "-D", "audit=true", *extra, str(scad)],
         capture_output=True, text=True)
-    m = re.search(r"ECHO: rooms = (.*?), doors = (.*?), windows = (.*)$", out.stdout + out.stderr, re.M)
+    m = re.search(r"ECHO: rooms = (.*?), doors = (.*?), windows = (.*?), fixtures = (.*)$",
+                  out.stdout + out.stderr, re.M)
     if not m:
         sys.exit(f"{scad}: no audit output\n{out.stderr}")
     lit = lambda s: ast.literal_eval(s.replace("true", "True").replace("false", "False").replace("undef", "None"))
-    return lit(m.group(1)), lit(m.group(2)), lit(m.group(3))
+    return [lit(g) for g in m.groups()]
 
 
 def label(r):
@@ -66,6 +71,53 @@ def sides(rooms, x, y, axis, w):
     return (a[0] if a else None), (b[0] if b else None)
 
 
+def side_pairs(rooms, x, y, axis, w):
+    """The (innermost) rooms either side of an opening, sampled along its width."""
+    pairs = set()
+    for i in range(int(w / 0.1) + 1):
+        s = 0.05 + (w - 0.1) * i / max(1, int(w / 0.1))
+        if axis == "x":
+            a, b = rooms_at(rooms, x + s, y - 0.3), rooms_at(rooms, x + s, y + 0.3)
+        else:
+            a, b = rooms_at(rooms, x - 0.3, y + s), rooms_at(rooms, x + 0.3, y + s)
+        pairs.add((name(a[0]) if a else None, name(b[0]) if b else None))
+    return pairs
+
+
+def leaf_sweep(d, step=0.15):
+    """Points swept by a door's leaf (both leaves of a double door) as it opens."""
+    x, y, axis, w, kind = d[:5]
+    s = d[5] if len(d) > 5 else 1
+    u, n = ((1, 0), (0, s)) if axis == "x" else ((0, 1), (s, 0))
+    leaves = {"door": [((x, y), u, w)],
+              "double": [((x, y), u, w / 2), ((x + w * u[0], y + w * u[1]), (-u[0], -u[1]), w / 2)]}
+    pts = []
+    for (hx, hy), (ux, uy), lw in leaves.get(kind, []):
+        for i in range(1, int(lw / step) + 1):
+            for j in range(11):
+                c, sn = math.cos(math.pi / 20 * j), math.sin(math.pi / 20 * j)
+                px, py = hx + i * step * (c * ux + sn * n[0]), hy + i * step * (c * uy + sn * n[1])
+                if (abs(py - y) if axis == "x" else abs(px - x)) > 0.25:   # clear of its own wall
+                    pts.append((px, py))
+    return pts
+
+
+def wall_at(rooms, doors, px, py):
+    """The room whose wall (0.4 ft thick, centred on its edge) is at (px, py), unless cut open there."""
+    for r in rooms:
+        if r[5] <= 0:
+            continue
+        for axis, line, a, b in (("x", r[2], r[1], r[3]), ("x", r[4], r[1], r[3]),
+                                 ("y", r[1], r[2], r[4]), ("y", r[3], r[2], r[4])):
+            along, across = (px, py) if axis == "x" else (py, px)
+            if abs(across - line) < 0.2 and a - 0.2 <= along <= b + 0.2 and not any(
+                    d[2] == axis and abs(d[1 if axis == "x" else 0] - line) < 0.05
+                    and d[0 if axis == "x" else 1] <= along <= d[0 if axis == "x" else 1] + d[3]
+                    for d in doors):
+                return name(r)
+    return None
+
+
 def on_wall_line(rooms, x, y, axis, w):
     for r in rooms:
         if axis == "x" and min(abs(y - r[2]), abs(y - r[4])) < 0.05 and r[1] - 0.05 <= x and x + w <= r[3] + 0.05:
@@ -76,9 +128,10 @@ def on_wall_line(rooms, x, y, axis, w):
 
 
 def check(scad, extra):
-    rooms, doors, windows = tables(scad, extra)
+    rooms, doors, windows, fixtures = tables(scad, extra)
     problems = []
     graph = defaultdict(set)
+    sweeps = {}
     for d in doors:
         x, y, axis, w, kind = d[:5]
         a, b = sides(rooms, x, y, axis, w)
@@ -88,9 +141,23 @@ def check(scad, extra):
             problems.append(f"door {d} opens to nothing ({a and name(a)} | {b and name(b)})")
         elif a is b and a is not None:
             problems.append(f"door {d} has the same room on both sides")
+        pairs = side_pairs(rooms, x, y, axis, w)
+        if len(pairs) > 1:
+            problems.append(f"door {d} runs past the rooms it joins: {sorted(pairs, key=str)}")
         if a and b:
             graph[name(a)].add(name(b))
             graph[name(b)].add(name(a))
+        # the leaf's swing: walls, fixtures (anything standing above the floor), other leaves
+        pts = leaf_sweep(d)
+        walls = {wall_at(rooms, doors, px, py) for px, py in pts} - {None}
+        hits = {tuple(f[:6]) for f in fixtures for px, py in pts
+                if f[5] > 0.1 and f[4] < 7 and f[0] < px < f[2] and f[1] < py < f[3]}
+        problems += [f"door {d} swings into the wall of {r}" for r in sorted(walls)]
+        problems += [f"door {d} swings into fixture {list(f)}" for f in sorted(hits)]
+        sweeps[str(d)] = {(round(px * 4), round(py * 4)) for px, py in pts}
+    for (da, sa), (db, sb) in combinations(sweeps.items(), 2):
+        if len(sa & sb) > 5:
+            problems.append(f"doors {da} and {db} swing into each other")
     for d in doors:
         for win in windows:
             line_d = d[1] if d[2] == "x" else d[0]

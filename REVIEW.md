@@ -30,9 +30,9 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 | Note | In the model (`changes = true`) |
 |---|---|
 | *Add a door from bedroom to closet directly so you don't have to go through the bathroom* | New doors (green): **master suite → master closet**, **Bedroom 2 → its closet**, **Bedroom 4 → its closet**. The old through-the-bath openings into the Bedroom 2 and 4 closets are closed, so those closets keep their shelving walls. The master closets also still open to the dressing area by the master bath. Bedroom 3's closet already opens off its own little vestibule, so it's unchanged. |
-| *Kitchen layout needs tweaking, 2 paths of travel through work zone* | As drawn, the island sits between both kitchen entrances, so people coming from the bedrooms/nook and from the garage hall both walk through the cooking aisle. Now there is **one cooking aisle**: the range wall and the island sink, 4 ft apart. A counter return closes the aisle at the south end, and the fridge and wall ovens sit at its open north end. Through-traffic gets its own lanes: north of the work zone (nook ↔ family room) and south of it (garage hall / butler's pantry ↔ family room). |
+| *Kitchen layout needs tweaking, 2 paths of travel through work zone* | As drawn, the island sits between both kitchen entrances, so people coming from the bedrooms/nook and from the garage hall both walk through the cooking aisle. Now there is **one cooking aisle**: the range wall and the island sink, 4 ft apart. A counter return closes the aisle at the south end. (Round 1 put the fridge and wall ovens at the aisle's open north end; round 2 moved them onto the range wall, see below.) Through-traffic gets its own lanes: north of the work zone (nook ↔ family room) and south of it (garage hall / butler's pantry ↔ family room). |
 | *Access the laundry room from both sides* | Round 1 gave the laundry a second door so it worked as a pass-through. Round 2 replaces that with a **central hall** beside the laundry (see below). |
-| *I like all the porches* | All kept: front (wraps around the front rooms), breakfast, outdoor living, office, master and side, plus the mud-room stoop. They join up as one continuous back porch, with steps down to the yard. |
+| *I like all the porches* | All kept: front (wraps around the front rooms), breakfast, outdoor living, office, master and side, plus the mud-room stoop. They join up as one continuous back porch, with steps down to the yard. Round 4 also wraps the front porch round both front corners. |
 | *I want a bigger shower* | Master shower grows from about **7 × 5½ ft to about 11½ × 5½ ft** (it takes the makeup-vanity niche next to it) and gets a bench. |
 | *The 3D model is cool and the roof looks nice*; *maybe a blue roof so it's not as hot as black* | The hipped roof is back in the model, with chimneys for the two wood fireplaces. It is **blue** by default (`roof_color`); `show_roof = false` or a lower `roof_opacity` lets you see inside. On "cooler than black", see [the roof note](#roof-colour-and-heat). |
 
@@ -68,11 +68,42 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 | Basement stair (#1) | **Option A, final**: the U-stair in the former bar. The `stair` switch is gone; `changes = false` still shows the bar and the architect's garage-corner stair. |
 | Second interior stair (#2) | **No.** The pool bath removes the reason for one, and the exit stair is the second way out. |
 | Basement outline (#4) | **Keep the 100 × 60 rectangle** and wrap the front porch round both front corners: in front of Bedroom 4 / the stoop (over the pool room) and in front of the master bath (over the music room). The basement now sits entirely under the house (~4,600 sq ft) or a porch (~1,400 sq ft), so the out-of-house parts are one detail: a structural slab under the porch floor. Confirm that detail with the builder. |
-| Exit stair vs. side porch (#6) | **Moved.** The exit stair now climbs south along the master bath's east wall from a door further north (landing at the door, 18 risers, landing at grade), entirely south of the side porch. |
+| Exit stair vs. side porch (#6) | **Moved.** The exit stair now climbs south along the master bath's east wall from a door further north (landing at the door, 18 risers, landing at grade), entirely south of the side porch. The exit door swings inward (see the review pass below). |
 | Bath 2 (tightest bath) | **1 ft wider** (about 6 × 10 ft), taken from Bedroom 2, which is now about 14 × 15 ft. Its WIC widens too. |
 
 Still open: the theater's sound isolation (a framing detail, not a layout
 change).
+
+### Review pass (Oct 29)
+
+A full re-check of both floors, with a new check in `tools/check_layout.py`
+for door swings and for openings that run past the rooms they join. Fixed:
+
+- **Theater door:** it swung into the back-row riser (since round 1). The
+  risers now stop short of the side walls, leaving an aisle on each side.
+- **Exit door:** after round 4 flipped the exit stair, the door opened
+  outward across the foot of the stair. It now swings inward, which also
+  stops snow in the stairwell from blocking it, and the bookshelves run on
+  both sides of it.
+- **Bedroom-hall alcove:** when Bath 2 was widened, the alcove got 1 ft
+  shorter but its open edge didn't, leaving a 0.7 ft hole into the Bedroom 2
+  closet.
+- **Porch posts:** the post at the front porch's east inside corner was lost
+  when that corner porch was added (the west one was kept); restored. The
+  stoop's two posts now only appear where the stoop is a porch of its own.
+- **Exit stair:** it now fills the stairwell's width; there was a 4" slot
+  beside it.
+- **As-drawn kitchen** (`changes = false` only): a 7 ft block stood in front
+  of the north window. The architect's plan has the sink and dishwasher
+  there, under the window, and the fridge beside the butler's pantry.
+- **Theater false wall:** its end poked into the foundation wall, more so
+  once round 3 thickened it.
+- **Linen closet:** its door now opens off the new central hall instead of
+  into the breakfast nook (a small change, easy to undo if you prefer the
+  original).
+- **Labels and colours:** room names moved clear of fireplaces, appliances
+  and door swings, and the coffee-station counter darkened so it shows on
+  the plan.
 
 ## 2. The basement stair (decided: A)
 
@@ -101,8 +132,8 @@ old, undersized model.)
   plan also shows only 7 treads there; a 13 ft drop needs about 20, so it
   needs more room than drawn. It may even be an attic stair, which is worth
   asking the architect.
-- **C: keep the sketch's stair beside the utilities.** It comes up through the office and master suite, so the office
-  would have to move.
+- **C: keep the sketch's stair beside the utilities.** It comes up through
+  the office and master suite, so the office would have to move.
 
 **Recommendation: A.** It's the only option that doesn't cost a main room on
 either floor.
@@ -192,8 +223,8 @@ Assumptions (please check):
 - The door drawn by the exit stair is the exit door.
 - The ceiling is 12 ft, plus 1 ft of floor, so the main stair is 21 risers
   of about 7½".
-- The exit stair climbs north to grade (2 ft below the main floor) outside
-  the east wall.
+- The exit stair climbs south to grade (2 ft below the main floor) outside
+  the east wall, beside the master bath.
 
 ## 5. Worth raising with the architect / builder
 
@@ -204,7 +235,8 @@ Assumptions (please check):
   with the builder.
 - **Exit stair.** It now climbs south beside the master bath, clear of the
   side porch (round 4). Its areaway needs a drain and a guard at grade.
-- **Pool in the basement.** It sits under Bedroom 4, Bath 4 and the mud room.
+- **Pool in the basement.** It sits under Bedroom 4, Bath 4, the mud room and
+  the corner porch.
   A pool room needs its own dehumidification and vapour control, and the
   structure has to be designed for it.
 - **Theater under the laundry, pantry and nook.** Plan for sound and
@@ -245,18 +277,20 @@ Roof Rating Council listing, and compare a few options. Sources:
   - One room row draws that room's floor, label and walls.
   - One door row draws both the wall opening and the door leaf, so they can't
     drift apart the way the old cut and leaf lines did.
-  - Rows tagged `new` / `old` or `stair_new` / `stair_old` hold the
-    alternatives.
+  - Rows tagged `new` / `old` hold the alternatives.
 - **`house_combined.scad`**: pulls in both floors with `use <>`, so there is
   no copy left to keep in sync.
 - **`tools/check_layout.py`** (optional, needs `openscad` on `PATH`): checks
-  every variant for unreachable rooms, doors into nothing, doors on windows,
-  overlapping rooms and gaps. Run it after editing the tables.
+  every variant for unreachable rooms, doors into nothing or past the rooms
+  they join, door leaves that hit walls, fixtures or each other, doors on
+  windows, overlapping rooms and gaps. Run it after editing the tables.
 
 Tested with OpenSCAD 2021.01:
 
-- Every `mode` / `stair` / `changes` combination previews cleanly.
-- All three files complete a full render (F6, about 1½ min).
+- Every `mode` / `changes` combination previews cleanly.
+- All three files complete a full render (F6): about 15 s for the
+  basement, about 2 min for the main floor and about 2½ min for the
+  combined model.
 - The checker passes on every variant.
 
 A full render prints "may not be a valid 2-manifold". The old model did too;

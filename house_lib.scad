@@ -15,7 +15,8 @@
 //   is the floor elevation, e.g. a garage slab below the house floor.
 //   tag (optional) - see keep() below. label "" = no label; a list of
 //   strings is a multi-line label. label_at (optional) = [x, y, size]
-//   moves the label off the room centre, e.g. clear of an island.
+//   or [x, y, size, angle] moves the label off the room centre, e.g.
+//   clear of an island or a door swing.
 // door   = [x, y, axis, width, type, swing, tag]
 //   axis "x": the opening sits in a horizontal wall at y and spans
 //   x .. x+width; axis "y": vertical wall at x, spans y .. y+width.
@@ -103,7 +104,7 @@ module room_label(r) {
         color(label_color)
             translate([is_undef(at) ? (r[1] + r[3]) / 2 : at[0],
                        is_undef(at) ? (r[2] + r[4]) / 2 : at[1], room_z0(r) + 0.01])
-                rotate([0, 0, turn ? 90 : 0])
+                rotate([0, 0, is_undef(at) ? (turn ? 90 : 0) : (len(at) > 3 ? at[3] : 0)])
                     for (i = [0 : k - 1])
                         translate([0, ((k - 1) / 2 - i) * 1.4 * size, 0])
                             linear_extrude(0.05)
