@@ -14,21 +14,22 @@
 // hall from the kitchen to the dining room beside the butler's pantry,
 // a kitchen work zone with no through traffic (fridge included), a
 // wider nook-to-kitchen opening and a larger master shower.
-// changes = false shows the plan as drawn.
-// stair = "proposed" puts the basement stair in the former bar so it
-// lands in the basement rec room; "as_drawn" keeps both drawings'
-// stairs where they are drawn (they do not meet - see REVIEW.md).
+// It also puts the basement stair in the former bar (a U-stair that lands
+// in the basement rec room), wraps the front porch round both front
+// corners so the whole basement sits under the house or a porch, and
+// widens bath 2.
+// changes = false shows the plan as drawn, with the bar and the short
+// stair in the garage corner (it doesn't meet the basement - REVIEW.md).
 
 use <house_lib.scad>
 
-stair = "proposed";    // [proposed, as_drawn]
 changes = true;
 show_roof = true;
 roof_opacity = 1.0;    // [0.1:0.1:1]
 roof_color = [0.20, 0.38, 0.62];  // blue
 audit = false;         // echo the tables for the layout checker
 
-main_level(stair, changes, show_roof, roof_color, roof_opacity, audit);
+main_level(changes, show_roof, roof_color, roof_opacity, audit);
 
 /* [Hidden] */
 counter  = [0.97, 0.97, 0.95];
@@ -44,8 +45,8 @@ white    = [0.97, 0.97, 0.97];
 function main_rooms() = [
     // ---- garage, mud room, bedroom 4
     ["GARAGE",          0,     7.9,  25.2,  39.7, 9.67, "garage", -1.5],
-    ["STORAGE",         19.5,  35.5, 25.2,  39.7, 8,    "closet", 0, "stair_new"],
-    ["STAIR DN",        19.5,  35.5, 25.2,  39.7, 8,    "stairwell", 0, "stair_old"],
+    ["STORAGE",         19.5,  35.5, 25.2,  39.7, 8,    "closet", 0, "new"],
+    ["STAIR DN",        19.5,  35.5, 25.2,  39.7, 8,    "stairwell", 0, "old"],
     ["MUD ROOM",        25.2,  23.5, 36.9,  31.1, 12,   "utility"],
     ["HALL",            25.2,  31.1, 55.2,  35.5, 12,   "hall"],
     ["",                25.2,  35.5, 29.9,  39.7, 12,   "hall"],
@@ -58,11 +59,15 @@ function main_rooms() = [
     ["",                12.1,  53.1, 16.1,  58.7, 12,   "hall"],
     ["WIC",             16.1,  53.1, 21.4,  58.7, 12,   "closet"],
     ["BATH 3",          12.1,  58.7, 21.4,  64.3, 12,   "bath"],
-    ["BEDROOM 2",       21.4,  53.1, 36.25, 68.1, 12,   "bed"],
-    ["WIC",             36.25, 51.3, 41.4,  56.1, 12,   "closet"],
-    ["BATH 2",          36.25, 56.1, 41.4,  66.1, 12,   "bath"],
+    ["BEDROOM 2",       21.4,  53.1, 35.25, 68.1, 12,   "bed", 0, "new"],
+    ["WIC",             35.25, 51.3, 41.4,  56.1, 12,   "closet", 0, "new"],
+    ["BATH 2",          35.25, 56.1, 41.4,  66.1, 12,   "bath", 0, "new"],    // 1 ft wider
+    ["BEDROOM 2",       21.4,  53.1, 36.25, 68.1, 12,   "bed", 0, "old"],
+    ["WIC",             36.25, 51.3, 41.4,  56.1, 12,   "closet", 0, "old"],
+    ["BATH 2",          36.25, 56.1, 41.4,  66.1, 12,   "bath", 0, "old"],
     ["HALL",            29.9,  47,   41.4,  51.3, 12,   "hall"],
-    ["",                29.9,  51.3, 36.25, 53.1, 12,   "hall"],
+    ["",                29.9,  51.3, 35.25, 53.1, 12,   "hall", 0, "new"],
+    ["",                29.9,  51.3, 36.25, 53.1, 12,   "hall", 0, "old"],
     ["LAUNDRY",         29.9,  35.5, 37.4,  47,   12,   "utility", 0, "new"],
     ["HALL",            37.4,  35.5, 41.4,  47,   12,   "hall", 0, "new"],   // to bedrooms 2 + 3, in line with the bedroom hall
     ["LAUNDRY",         29.9,  35.5, 43.1,  47,   12,   "utility", 0, "old"],
@@ -82,8 +87,8 @@ function main_rooms() = [
     ["FOYER",           71.3,  2.9,  82.3,  17.7, 14,   "hall"],
     [["FRONT", "HALL"], 71.3, 17.7, 82.3, 31.4, 14,   "hall"],
     ["LOUNGE",          82.3,  0,    97.2,  21,   14,   "living"],
-    ["STAIR DN",        82.3,  21,   97.2,  31.4, 14,   "stairwell", 0, "stair_new", [90, 23.3, 1.5]],
-    ["BAR",             82.3,  21,   97.2,  31.4, 14,   "dining", 0, "stair_old"],
+    ["STAIR DN",        82.3,  21,   97.2,  31.4, 14,   "stairwell", 0, "new", [90, 23.3, 1.5]],
+    ["BAR",             82.3,  21,   97.2,  31.4, 14,   "dining", 0, "old"],
     // ---- master wing
     ["GALLERY",         97.2,  30.6, 109.7, 36.5, 14,   "hall"],
     ["OFFICE",          97.2,  36.5, 109.7, 49.1, 14,   "office"],
@@ -101,7 +106,10 @@ function main_rooms() = [
     // ---- porches (no walls)
     ["FRONT PORCH",     48.1, -12.3, 105.7, 0,    0,    "porch"],
     ["",                48.1,  0,    55.2,  11.6, 0,    "porch"],
-    ["",                97.2,  0,    105.7, 11.6, 0,    "porch"],
+    ["",                97.2,  0,    105.7, 11.6, 0,    "porch", 0, "old"],
+    ["",                97.2,  0,    130.1, 11.6, 0,    "porch", 0, "new"],   // over the music room
+    ["",                25.2,  0,    48.1,  11.6, 0,    "porch", 0, "new"],   // over the pool room
+    ["",                25.2,  11.6, 36.9,  17.8, 0,    "porch", 0, "new"],
     ["",                71.3,  0,    82.3,  2.9,  0,    "porch"],
     ["STOOP",           25.2,  17.8, 36.9,  23.5, 0,    "porch"],
     [["BREAKFAST", "PORCH"], 55.2, 52.6, 69.3, 66.2, 0, "porch"],
@@ -146,7 +154,8 @@ function main_doors() = [
     // ---- bedroom wing
     [41.4,  47.3, "y", 3.7,  "open"],                  // nook / bedroom hall
     [30.2,  51.3, "x", 5.75, "full"],                  // bedroom hall alcove
-    [32.7,  53.1, "x", 3,    "door",    1],            // bedroom 2
+    [31.9,  53.1, "x", 3,    "door",    1, "new"],     // bedroom 2
+    [32.7,  53.1, "x", 3,    "door",    1, "old"],
     [29.9,  47.9, "y", 2.8,  "door",   -1],            // bedroom 3
     [36.2,  35.5, "x", 3,    "door",    1, "old"],     // laundry (as drawn)
     [37.4,  40,   "y", 2.8,  "door",   -1, "new"],     // laundry off the bedroom hall
@@ -158,8 +167,8 @@ function main_doors() = [
     [49.6,  35.5, "x", 2.6,  "door",    1],            // pantry, hall side
     [25.5,  31.1, "x", 8.2,  "full"],                  // mud room / hall
     [25.5,  35.5, "x", 4.1,  "full"],                  // hall alcove by the garage door
-    [25.2,  36,   "y", 2.5,  "door",   -1, "stair_new"],  // storage in the old stair bay
-    [25.2,  35.8, "y", 3.6,  "full",    1, "stair_old"],  // top of the drawn stair
+    [25.2,  36,   "y", 2.5,  "door",   -1, "new"],        // storage in the old stair bay
+    [25.2,  35.8, "y", 3.6,  "full",    1, "old"],        // top of the drawn stair
     [51.0,  31.1, "x", 3.9,  "full"],                  // hall to bedroom 4
     [51.4,  25.9, "x", 3,    "door",   -1],            // bedroom 4
     [42.4,  25.9, "x", 2.6,  "door",    1],            // bath 4
@@ -168,8 +177,9 @@ function main_doors() = [
     [12.6,  53.1, "x", 3,    "open"],                  // bedroom 3 / closet vestibule
     [12.4,  58.7, "x", 2.6,  "door",    1],            // bath 3
     [16.1,  55.5, "y", 2.6,  "door",    1],            // bedroom 3 WIC
-    [36.25, 56.6, "y", 2.6,  "door",    1],            // bath 2
-    [36.25, 53.3, "y", 2.5,  "door",    1, "new"],     // bedroom 2 -> WIC
+    [35.25, 56.6, "y", 2.6,  "door",    1, "new"],     // bath 2
+    [36.25, 56.6, "y", 2.6,  "door",    1, "old"],
+    [35.25, 53.3, "y", 2.5,  "door",    1, "new"],     // bedroom 2 -> WIC
     [36.6,  56.1, "x", 2.4,  "open",    1, "old"],     // bath 2 -> WIC (as drawn)
     // ---- master wing
     [97.2,  31.5, "y", 4.5,  "open"],                  // family room / gallery
@@ -264,7 +274,9 @@ function main_posts() = [
     [48.55, -11.85, 12.67], [55.1, -11.85, 12.67], [63.1, -11.85, 12.67],
     [71.5,  -11.85, 12.67], [81.6, -11.85, 12.67], [90.7, -11.85, 12.67],
     [98.8,  -11.85, 12.67], [105.25, -11.85, 12.67],
-    [48.55, 0, 12.67], [48.55, 11.15, 12.67], [105.25, 0, 12.67], [105.25, 11.15, 12.67],
+    [48.55, 0, 12.67], [48.55, 11.15, 12.67, "old"], [105.25, 0, 12.67, "old"], [105.25, 11.15, 12.67, "old"],
+    [25.65, 0.45, 12.67, "new"], [36.45, 0.45, 12.67, "new"], [117.6, 0.45, 12.67, "new"],
+    [129.65, 0.45, 12.67, "new"], [129.65, 11.15, 12.67, "new"],
     [25.65, 18.25, 10], [36.45, 18.25, 10],
     [55.65, 65.75, 14], [62.4, 65.75, 14],
     [69.75, 67.15, 14], [79, 67.15, 14], [88.2, 67.15, 14], [96.75, 67.15, 14],
@@ -286,17 +298,20 @@ function main_roof() = [
     [97.2,  30.6,  127.9, 53.5, 14,    0.667, 1.5],  // office, master suite
     [48.1, -12.3,  105.7, 0,    12.67, 0.333, 1],    // front porch
     [48.1,  0,     55.2,  11.6, 12.67, 0.333, 1],
-    [97.2,  0,     105.7, 11.6, 12.67, 0.333, 1],
-    [25.2,  15.8,  36.9,  23.5, 10,    0.333, 1],    // stoop
+    [25.2,  0,     48.1,  11.6, 12.67, 0.333, 1, "new"],   // porch over the pool room
+    [97.2,  0,     105.7, 11.6, 12.67, 0.333, 1, "old"],
+    [97.2,  0,     130.1, 11.6, 12.67, 0.333, 1, "new"],   // porch over the music room
+    [25.2,  15.8,  36.9,  23.5, 10,    0.333, 1, "old"],    // stoop
+    [25.2,  11.6,  36.9,  23.5, 10,    0.333, 1, "new"],
     [55.2,  52.6,  97.2,  67.6, 14,    0.333, 1],    // breakfast porch + outdoor living
     [97.2,  49.1,  109.7, 59.5, 14,    0.333, 1],    // office porch
     [109.7, 53.5,  127.9, 63.5, 14,    0.333, 1],    // master porch
     [127.9, 30.6,  137.7, 59.8, 12,    0.333, 1],    // side porch
 ];
 
-module main_level(stair = "proposed", changes = true, show_roof = true,
+module main_level(changes = true, show_roof = true,
                   roof_color = [0.20, 0.38, 0.62], roof_opacity = 1, audit = false) {
-    tags = [changes ? "new" : "old", stair == "proposed" ? "stair_new" : "stair_old"];
+    tags = [changes ? "new" : "old"];
     rooms = active(main_rooms(), 8, tags);
     doors = active(main_doors(), 6, tags);
     if (audit) echo(rooms = rooms, doors = doors, windows = main_windows());
@@ -304,19 +319,20 @@ module main_level(stair = "proposed", changes = true, show_roof = true,
     draw_level(rooms, doors, main_windows());
     fixtures(active(main_fixtures(), 7, tags));
 
-    // basement stair: the proposed U-stair in the old bar, or the short
-    // flight the plan draws in the garage corner (it stops at the wall)
-    if (stair == "proposed") bar_stair();
+    // basement stair: the U-stair in the old bar, or the short flight
+    // the plan draws in the garage corner (it stops at the wall)
+    if (changes) bar_stair();
     else flight(19.6, 35.7, 25.2, 39.5, "-x", 0, -8 * floor_to_floor() / 21, 8, -6);
 
-    for (p = main_posts()) post(p[0], p[1], p[2]);
+    for (p = active(main_posts(), 3, tags)) post(p[0], p[1], p[2]);
     porch_steps(72.6, -12.3, "-y", 8.4);    // front entry
-    porch_steps(26.5,  17.8, "-y", 9.5);    // stoop
+    if (changes) porch_steps(27.5, 0, "-y", 8);   // corner porch by the garage
+    else porch_steps(26.5, 17.8, "-y", 9.5);     // stoop
     porch_steps(73,    67.6, "+y", 20);     // outdoor living to the yard
     porch_steps(112.5, 63.5, "+y", 12.5);   // master porch to the yard
 
     if (show_roof) {
-        roofs(main_roof(), roof_color, roof_opacity);
+        roofs(active(main_roof(), 7, tags), roof_color, roof_opacity);
         color(brick) {                                  // chimneys
             translate([54.7, 8.3, 0]) cube([2.5, 2.9, 20]);
             translate([95.6, 40.0, 0]) cube([2.8, 3.0, 20]);

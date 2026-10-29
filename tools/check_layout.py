@@ -9,7 +9,7 @@ tables it echoes, and checks that:
     (basement) without going outside;
   * no door overlaps a window, and every window has walls on one side only;
   * rooms don't overlap and leave no thin voids between them.
-Each level is checked in every stair / changes variant.
+The main floor is checked with the changes on and off.
 
     python3 tools/check_layout.py             # both levels
     python3 tools/check_layout.py basement.scad
@@ -23,8 +23,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 VARIANTS = {
-    "main_floor.scad": [[], ["-D", "changes=false"], ["-D", 'stair="as_drawn"']],
-    "basement.scad": [[], ["-D", 'stair="as_drawn"']],
+    "main_floor.scad": [[], ["-D", "changes=false"]],
+    "basement.scad": [[]],
 }
 # rooms deliberately drawn inside another room (own floor level or no plate)
 NESTED_OK = {("GARAGE", "STORAGE"), ("GARAGE", "STAIR DN"), ("REC ROOM / LIBRARY", "STAIR UP"), ("", "STAIR UP")}

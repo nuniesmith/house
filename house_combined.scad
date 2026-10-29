@@ -13,7 +13,6 @@ use <main_floor.scad>
 use <basement.scad>
 
 mode = "assembled";    // [assembled, exploded, basement_only, main_only]
-stair = "proposed";    // [proposed, as_drawn]
 changes = true;        // the proposed changes (Kayla's review)
 show_roof = true;
 roof_opacity = 1.0;    // [0.1:0.1:1]
@@ -26,9 +25,9 @@ basement_z = (mode == "exploded") ? -floor_to_floor() - explode_gap : -floor_to_
 main_z = (mode == "exploded") ? explode_gap / 2 : 0;
 
 if (mode != "main_only")
-    translate([off[0], off[1], basement_z]) basement_level(stair);
+    translate([off[0], off[1], basement_z]) basement_level();
 if (mode != "basement_only")
-    translate([0, 0, main_z]) main_level(stair, changes, show_roof, roof_color, roof_opacity);
+    translate([0, 0, main_z]) main_level(changes, show_roof, roof_color, roof_opacity);
 
 // The sketch's 100' x 60' basement runs past the house walls in places
 // (see REVIEW.md); the ground hides those parts the way the yard would,

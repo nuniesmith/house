@@ -19,9 +19,8 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 - **All of Kayla's notes are in the model.** They are switchable, so you can
   compare before and after (`changes = true / false`). New doors are drawn
   green.
-- **The stairs in the two drawings can't meet.** The model proposes putting
-  the basement stair where the bar is. **That's a decision for you**; see
-  below.
+- **The stairs in the two drawings can't meet.** Decided: the basement
+  stair goes where the bar is (option A, section 2).
 - **The code is now table-driven.** One row per room, door and window; the
   combined model reuses the level files instead of copying them; and a
   checker catches layout bugs like the ones above.
@@ -62,12 +61,20 @@ basement sketch, the OpenSCAD models as of `c28a5f8`, and Kayla's notes.
 | *No basement bathroom* (decision A3, a before-the-pour rough-in) | A **pool bath** of about 5 × 12 ft, taken from the north end of the pool-equipment strip. Swimmers reach it straight from the pool room, and it has a second door from the vestibule on the rec-room side, so the theater and library can use it too. Inside: a shower at the south end, a change bench, a sink and a WC. The pool-equipment room is now 5 × 19 ft (about 95 sq ft) with its door off the pool room. |
 | *ICF: plan on an 8 in core* (decision C12) | The foundation wall is now drawn **13¼ in** thick (8 in core plus two 2⅝ in EPS faces) instead of 12 in, centred on the same 100 × 60 outline (`icf_wall_t()` in `house_lib.scad`). |
 
-The rest of the research's layout list is still open and needs your call:
-the stair (section 2 below), a second interior stair, fitting the basement
-outline to the house, the exit stair vs. the side porch, and the theater's
-sound isolation.
+### Round 4: the research's open layout decisions (Oct 29)
 
-## 2. Decision needed: where the basement stair goes
+| Decision | Made, and in the model |
+|---|---|
+| Basement stair (#1) | **Option A, final**: the U-stair in the former bar. The `stair` switch is gone; `changes = false` still shows the bar and the architect's garage-corner stair. |
+| Second interior stair (#2) | **No.** The pool bath removes the reason for one, and the exit stair is the second way out. |
+| Basement outline (#4) | **Keep the 100 × 60 rectangle** and wrap the front porch round both front corners: in front of Bedroom 4 / the stoop (over the pool room) and in front of the master bath (over the music room). The basement now sits entirely under the house (~4,600 sq ft) or a porch (~1,400 sq ft), so the out-of-house parts are one detail: a structural slab under the porch floor. Confirm that detail with the builder. |
+| Exit stair vs. side porch (#6) | **Moved.** The exit stair now climbs south along the master bath's east wall from a door further north (landing at the door, 18 risers, landing at grade), entirely south of the side porch. |
+| Bath 2 (tightest bath) | **1 ft wider** (about 6 × 10 ft), taken from Bedroom 2, which is now about 14 × 15 ft. Its WIC widens too. |
+
+Still open: the theater's sound isolation (a framing detail, not a layout
+change).
+
+## 2. The basement stair (decided: A)
 
 The two drawings put the stair in places that can't connect:
 
@@ -83,7 +90,7 @@ sketch has the theater and pool. (The earlier "Kayla's changes" drawing put
 the stair across the back of the family room. That spot only lined up on the
 old, undersized model.)
 
-- **A: stair where the bar is (the model's default, `stair = "proposed"`).**
+- **A: stair where the bar is (chosen; in the model).**
   A U-shaped stair in the bar's space, just off the front hall and family
   room. It lands in the middle of the basement rec room. The bar / coffee /
   sink counter you sketched for the basement takes over from the main-floor
@@ -94,8 +101,7 @@ old, undersized model.)
   plan also shows only 7 treads there; a 13 ft drop needs about 20, so it
   needs more room than drawn. It may even be an attic stair, which is worth
   asking the architect.
-- **C: keep the sketch's stair beside the utilities** (`stair = "as_drawn"`
-  shows it). It comes up through the office and master suite, so the office
+- **C: keep the sketch's stair beside the utilities.** It comes up through the office and master suite, so the office
   would have to move.
 
 **Recommendation: A.** It's the only option that doesn't cost a main room on
@@ -192,13 +198,12 @@ Assumptions (please check):
 ## 5. Worth raising with the architect / builder
 
 - **The basement is bigger than the house in places.** The sketch's 100' × 60'
-  rectangle doesn't follow the house's outline, so about 20% of it lies
-  outside the walls: in front of Bedroom 4 (pool room), in front of the master
-  closets (music room), and under the back porches (utilities, storage). In
-  the 3D view, the pale outline on the lawn shows where. Either fit the
-  basement to the house or plan structural slabs over those parts.
-- **Exit stair vs. side porch.** As sketched, the exit stair runs under the
-  side porch, so the porch floor needs an opening there or the stair moves.
+  rectangle doesn't follow the house's outline. With the porches wrapped round
+  the front corners (round 4), every part outside the walls is under a porch,
+  so those porch floors are structural slabs over the basement. Confirm that
+  with the builder.
+- **Exit stair.** It now climbs south beside the master bath, clear of the
+  side porch (round 4). Its areaway needs a drain and a guard at grade.
 - **Pool in the basement.** It sits under Bedroom 4, Bath 4 and the mud room.
   A pool room needs its own dehumidification and vapour control, and the
   structure has to be designed for it.

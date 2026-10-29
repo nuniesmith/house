@@ -13,17 +13,16 @@
 // x = east, y = north in basement coordinates; house_lib's
 // basement_offset() maps them onto the main floor.
 //
-// stair = "proposed": the stair comes down from the main floor's
-// former bar into the rec room (it lines up with main_floor.scad).
-// "as_drawn": the sketch's straight stair beside the utilities, which
-// lands under the office / master suite upstairs (see REVIEW.md).
+// The main stair comes down from the main floor's former bar into the
+// rec room (it lines up with main_floor.scad). The exit stair climbs
+// south to grade along the master bath's east wall, clear of the side
+// porch.
 
 use <house_lib.scad>
 
-stair = "proposed";    // [proposed, as_drawn]
 audit = false;         // echo the tables for the layout checker
 
-basement_level(stair, audit);
+basement_level(audit);
 
 /* [Hidden] */
 water  = [0.39, 0.70, 0.93];
@@ -40,7 +39,7 @@ wood   = [0.55, 0.38, 0.22];
 tile   = [0.55, 0.75, 0.85];
 
 // exit stair areaway outside the east foundation wall [x0, y0, x1, y1]
-function exit_areaway() = [100, 12, 105, 50];
+function exit_areaway() = [100, 7, 105, 30.5];
 
 // [label, x0, y0, x1, y1, ceiling, kind, z0, tag, label_at]
 function base_rooms() = [
@@ -55,8 +54,7 @@ function base_rooms() = [
     [["REC ROOM /", "LIBRARY"], 30, 20, 100, 45, 0, "rec", 0, "", [42, 38, 1.8]],
     ["",                  30, 0,  60,  20, 0,  "rec"],
     ["",                  70, 45, 100, 50, 0,  "rec"],
-    ["STAIR UP",          52.2, 21, 67.1, 31.4, 12, "stairwell", 0, "stair_new", [59.6, 33.3, 1.4]],
-    ["STAIR UP",          70, 45, 90.7, 50, 12, "stairwell", 0, "stair_old", [80.3, 42.6, 1.4]],
+    ["STAIR UP",          52.2, 21, 67.1, 31.4, 12, "stairwell", 0, "", [59.6, 33.3, 1.4]],
     concat([["EXIT", "STAIR"]], exit_areaway(), [11, "stair"]),   // areaway outside the foundation
 ];
 
@@ -69,14 +67,12 @@ function base_doors() = [
     [25,   8,    "y", 3,   "door",  1],                 // pool equipment, from the pool room
     [30,   31.3, "y", 3.4, "full"],                     // vestibule / rec room
     [30.3, 20,   "x", 29.4, "full"],                    // rec room is one open floor:
-    [70.3, 45,   "x", 29.4, "full", 1, "stair_new"],    //   its three plates join here
-    [91,   45,   "x", 8.7, "full", 1, "stair_old"],
+    [70.3, 45,   "x", 29.4, "full"],                    //   its three plates join here
     [64,   45,   "x", 3,   "door",  1],                 // utilities
     [95,   50,   "x", 3,   "door",  1],                 // storage
     [88,   20,   "x", 3,   "door", -1],                 // music room (no door in the sketch)
-    [100,  22,   "y", 3,   "door",  1],                 // exit door, opens outward
-    [52.2, 21.2, "y", 4.4, "full",  1, "stair_new"],    // foot of the stair
-    [90.7, 45.3, "y", 4.4, "full",  1, "stair_old"],
+    [100,  26.8, "y", 3,   "door",  1],                 // exit door, opens outward
+    [52.2, 21.2, "y", 4.4, "full"],                     // foot of the stair
 ];
 
 // [x0, y0, x1, y1, z0, z1, colour, tag]
@@ -102,8 +98,8 @@ function base_fixtures() = [
     [58.8, 1.6,  59.8, 19.6, 0,    7,    shelf],        // music room
     [67.6, 20.2, 87.4, 21.2, 0,    7,    shelf],
     [91.6, 20.2, 99.3, 21.2, 0,    7,    shelf],
-    [98.3, 25.6, 99.3, 49.6, 0,    7,    shelf],        // east wall
-    [70.6, 48.8, 94.6, 49.8, 0,    7,    shelf, "stair_new"],   // storage room wall
+    [98.3, 30.4, 99.3, 49.6, 0,    7,    shelf],        // east wall
+    [70.6, 48.8, 94.6, 49.8, 0,    7,    shelf],        // storage room wall
     [31.4, 43.8, 63.6, 44.8, 0,    7,    shelf],        // utilities
     [30.2, 35.4, 31.2, 43.8, 0,    7,    shelf],        // theater
     [30.2, 1.6,  31.2, 30.6, 0,    7,    shelf],        // pool equipment
@@ -115,10 +111,9 @@ function base_fixtures() = [
     [88,   34,   91,   37,   0,    2.6,  sofa],
 ];
 
-module basement_level(stair = "proposed", audit = false) {
-    tags = [stair == "proposed" ? "stair_new" : "stair_old"];
-    rooms = active(base_rooms(), 8, tags);
-    doors = active(base_doors(), 6, tags);
+module basement_level(audit = false) {
+    rooms = base_rooms();
+    doors = base_doors();
     if (audit) echo(rooms = rooms, doors = doors, windows = []);
 
     // ICF foundation walls up to the main floor; passed into draw_level
@@ -126,7 +121,7 @@ module basement_level(stair = "proposed", audit = false) {
     draw_level(rooms, doors, []) foundation_walls(0, 0, 100, 60, floor_to_floor());
     foundation_slab(0, 0, 100, 60);
 
-    fixtures(active(base_fixtures(), 7, tags));
+    fixtures(base_fixtures());
     color(spa) translate([11, 28.5, 0]) cylinder(r = 3.5, h = 1.5, $fn = 48);   // hot tub
     // theater seating: three rows of four facing the screen (north),
     // the back rows on the risers
@@ -135,12 +130,10 @@ module basement_level(stair = "proposed", audit = false) {
             translate([x, row[0], row[1]]) cube([3, 2.5, 2.6]);
 
     // stairs: up to the main floor, and the exit stair up to grade
-    // (2 ft below the main floor) along the outside of the east wall
+    // (2 ft below the main floor) along the outside of the east wall:
+    // landing at the door, 18 risers climbing south, landing at grade
     off = basement_offset();
-    if (stair == "proposed")
-        translate([-off[0], -off[1], 0]) bar_stair(floor_to_floor(), upper = false);
-    else
-        flight(70.5, 45.5, 90.7, 49.5, "+x", floor_to_floor(), 0, 21, 0);
-    flight(100.5, 27, 104.5, 44, "-y", floor_to_floor() - 2, 0, 18, 0);
-    landing(100.5, 44, 104.5, 50, 0, floor_to_floor() - 2);
+    translate([-off[0], -off[1], 0]) bar_stair(floor_to_floor(), upper = false);
+    flight(100.5, 11, 104.5, 26.3, "+y", floor_to_floor() - 2, 0, 18, 0);
+    landing(100.5, 7, 104.5, 11, 0, floor_to_floor() - 2);
 }
