@@ -20,10 +20,9 @@ Set them in the OpenSCAD Customizer or with `-D name=value`:
 
 - `changes`: `true` shows the proposed changes from Kayla's review (new
   doors drawn green, kitchen work zone, central bedroom hall, master
-  laundry, kitchen-to-dining hall, bigger shower);
+  laundry, kitchen-to-dining hall, bigger shower, basement stair in the old
+  bar, porches round the front corners, wider Bath 2);
   `false` shows the plan as drawn.
-- `stair`: `"proposed"` puts the basement stair in the former bar so both
-  floors meet; `"as_drawn"` keeps each drawing's stair (they don't line up).
 - `show_roof`, `roof_opacity`, `roof_color`: the roof (blue by default).
 - `mode` (combined only): `assembled`, `exploded`, `basement_only` or
   `main_only`; `show_ground` draws the lawn at grade in the assembled view.

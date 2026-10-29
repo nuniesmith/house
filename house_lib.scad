@@ -27,8 +27,7 @@
 // window = [x, y, axis, width, sill, height]
 //
 // Tags let one table carry alternatives: a row tagged "new" is drawn
-// only with the proposed changes on, "old" only with them off; the
-// stair options use "stair_new" / "stair_old" the same way.
+// only with the proposed changes on, "old" only with them off.
 
 wall_t = 0.4;   // wall thickness
 door_h = 7.0;   // single-door height
