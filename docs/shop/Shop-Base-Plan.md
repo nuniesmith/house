@@ -7,14 +7,20 @@ Diagrams: `site-plan.png`, `shop-floor-plan.png`,
 `tunnel-section.png`. SCAD: `shop.scad` and `site.scad` in
 the house repo model this plan.
 
-**Revision v2 (2026-10-29, Jordan's redirect):** the shop is **rotated
-90°** from v1. The bays now run **north–south**, the front (overhead
-doors) faces **south**, and Bay 1 (utilities) is the **easternmost**
-bay, closest to the house. The tunnel leaves the **side** (east wall)
-of Bay 1 at its portal room and runs due east on the centreline of the
-basement's **UTILITIES room — which sits on the north side of the
-basement** — instead of v1's southern alignment to a new room under
-the mud room/garage. §5 and §6 carry the consequences.
+**Revision v3 (2026-10-29, Jordan's redirect — supersedes v2):** the
+shop moves **behind the house, to the north side**, rotated 90° right
+from v2: the front (overhead doors) faces **west** again, the bays run
+**east–west**, and Bay 1 (utilities) is the **southernmost** bay,
+closest to the house. A **shared driveway runs up the west side** of
+house and shop (past the garage's west doors) to the shop's west
+apron; a **loop driveway with a garden island** sits in front (south)
+of the house; and **trees belt the shop on its north, east and south
+edges** (the west edge is the working front). The tunnel now runs due
+**south** from Bay 1's south side into the basement UTILITIES room
+**through its north foundation wall** — UTILITIES is on the north
+side of the basement, so v3 gives the tunnel the direct landing v2
+couldn't: **no basement room is touched at all**, and v2's theater
+receiving-room proposal is dead. §5 and §6 carry the details.
 
 **The concept, in Jordan's words:** the shop is the property's utility hub.
 Power, water, gas, internet and heat originate in the shop's utility bay,
@@ -29,15 +35,16 @@ shop the same way.
 
 ## 0. Assumptions I had to make (change any of these and the plan moves)
 
-| # | Assumption in v1 | Why |
+| # | Assumption | Why |
 |---|---|---|
-| A1 | Shop sits **west of the house, 100 ft clear** between the garage's west wall and the shop's east wall | Round stakeout number, good fire/noise separation, room for the court. This is the single biggest cost lever on the tunnel (§6) |
-| A2 | Shop's footprint sits west of the house with its middle on the basement UTILITIES centreline (house-frame y ≈ 52.5) | Aligns Bay 1's side portal, the tunnel and the basement UTILITIES room on one straight east–west line |
-| A3 | Bays run **north–south** (100 ft deep), doors on the **south** wall, each bay 25 ft wide, stacking west → east: wash, work + pit, work, utilities (v2, Jordan) | The 90° rotation puts Bay 1's long east side facing the house, so the tunnel leaves its side, not its end |
-| A4 | The tunnel lands in a **new receiving room at the basement's west wall, north end**, tied into the existing UTILITIES room (§5) | The UTILITIES room has no outside wall on the west — the theater sits between it and the foundation — see §5 |
-| A5 | The drilled well itself is **outside** the shop; what lives in Bay 1 is the well *equipment* | §4.3 — wellheads inside buildings are a contamination/access problem |
+| A1 | Shop sits **behind (north of) the house**: south wall at house-frame y = 130, west wall aligned with the garage's west wall (x = 0), so the shop occupies x 0–100, y 130–230 | Jordan v3. Leaves ~62 ft of back yard between the house's north porches and the shop |
+| A2 | The tunnel runs on house-frame **x = 80**, the centreline of both the basement UTILITIES room (x 60.1–100.1) and Bay 1's portal room (shop-local x 72–88) | One straight north–south line: Bay 1 → tunnel → UTILITIES north wall. Tunnel length ~70 ft |
+| A3 | Bays run **east–west** (100 ft deep), doors on the **west** wall, each bay 25 ft wide, stacking south → north: utilities, work, work + pit, wash (v3, Jordan) | Bay 1 southernmost = shortest tunnel and shortest runs to the house |
+| A4 | The tunnel lands **directly in the UTILITIES room** through its north foundation wall (§5) | UTILITIES' north wall IS foundation — v3 needs no new basement room and touches no other room |
+| A5 | The drilled well itself is **outside** the shop (east side); what lives in Bay 1 is the well *equipment*. Septic tank/field go west/north-west, as far from the well as the layout allows | §4.3, §7 — wellheads inside buildings are a contamination/access problem; ≥ 30 m well-to-septic separation |
 | A6 | **Gas does not run inside the tunnel** by default; it goes direct-buried alongside it | §6.3 — gas in an enclosed occupied tunnel is the one part of the concept an inspector is likely to refuse as drawn |
 | A7 | Shop boiler (from your 2026-10-28 note) lives in Bay 1 and is the heat hub for shop slab, tunnel, house hydronics and snow melt | Ties this plan to the earlier research instead of duplicating plant in the house |
+| A8 | **Trees on the shop's north, east and south edges** (rows ~14 ft off the walls; a gap in the south row at the tunnel) | Jordan v3 — shelter/screening. Keep the south row's shade and roots in mind: gap at the tunnel, and don't plant over the septic/well lines |
 
 ---
 
@@ -46,30 +53,40 @@ shop the same way.
 Coordinates below reuse the house model's frame (feet; x = east, y = north;
 garage west wall x = 0, house front wall y = 0, front porch to the south).
 
-- **Shop:** east wall at x = −100, west wall at x = −200, south wall at
-  y ≈ 2.5, north wall at y ≈ 102.5. Front (all overhead doors) faces
-  **south** onto a **60 ft deep truck apron** — and south-facing doors
-  get winter sun on the ice in front of them, which in Alberta is worth
-  real money. Trucks reach the apron via the south spine (below).
-- **Shared driveway:** a court between house and shop (over the tunnel),
-  plus a south spine running from the garage's west doors, west along
-  the shop's south front to the apron. Cars use the court; trucks use
-  the spine + apron on the shop's south side.
-- **Well zone:** south-west of the shop (short run into Bay 1's water
-  room at its south end; keeps the well on the opposite side of the
-  shop from the septic).
-- **Septic zone:** tank north-west of the shop, treatment field further
-  north — as far from the well as the layout allows (plan on the
-  ≥ 30 m / ~100 ft well-to-septic separation from the well research;
-  final distances are the septic designer's, after a soil test).
-- **Reserved corridors:** a services corridor north from Bay 1 and one
-  east (over the tunnel) for future houses (§9). Keep buildings, the
-  septic field and the well out of both.
+- **Shop:** x 0–100, y 130–230 (behind the house). Front (all overhead
+  doors) faces **west** onto a **70 ft deep truck apron** (x −72–0).
+- **Shared driveway (west side):** one drive runs the whole west side —
+  from the front loop (below) north past the garage's west doors and
+  the house's west side, widening into the shop apron. Cars and trucks
+  share it; the apron is the truck working area.
+- **Front loop + garden (south of the house):** a loop driveway in
+  front of the front porch (ring roughly x 25–130, y −72…−14) with a
+  **garden island in its middle**, connected to the west drive at its
+  south-west corner. This is the house's public face — keep truck
+  traffic on the west drive/apron, not on the loop.
+- **Tree belt:** rows along the shop's **north, east and south edges**
+  (~14 ft off the walls), with a gap in the south row where the tunnel
+  passes. The south row sits between shop and back yard — it screens
+  the shop from the house's north porches; pick species/height with
+  that and winter shade in mind.
+- **Well zone:** east side, around (140, 110) — east of the shop's
+  south-east corner. Line runs west, underground, into Bay 1's water
+  room (toward its east end). Keeps the well on the opposite side of
+  the property from the septic.
+- **Septic zone:** tank north-west of the apron (around (−89, 212)),
+  treatment field further west (x −165…−105, y 150–205) — as far from
+  the well as the layout allows (plan on the ≥ 30 m / ~100 ft
+  well-to-septic separation from the well research; final distances
+  are the septic designer's, after a soil test).
+- **Reserved corridors:** services corridors north and east from Bay 1
+  for future houses (§9). Keep buildings, the septic field, the well
+  and the tree rows out of both.
 - **Grading:** shop slab at grade for truck entry. The house basement
   floor is ~11 ft below grade, so the tunnel is a deep structure its
   whole length and arrives *under* the shop — see §6.2 for the shop-end
   stair. Surface drainage must fall away from both buildings and must
-  not pond over the tunnel.
+  not pond over the tunnel — and the south tree row must not dam the
+  back yard's drainage.
 
 ## 2. The shop building — base spec
 
@@ -91,41 +108,42 @@ garage west wall x = 0, house front wall y = 0, front porch to the south).
   conduit sleeve in/out of Bay 1 (service entrance, well line, septic/
   bathroom drains, solar/future sleeves), lift anchor zones kept clear
   of hydronic loops. The tunnel portal is *below* the slab on Bay 1's
-  east side (§6.2) — its opening is in the shop's foundation, not a pour
-  embed in the slab itself.
+  **south side** (§6.2) — its opening is in the shop's foundation, not
+  a pour embed in the slab itself.
 - **Doors:** Bays 2–4: **14 ft wide × 14 ft high** insulated overhead,
-  on the **south** wall. Bay 1: 10 ft wide × 12 ft overhead + a man door
-  (equipment in/out, no trucks), also south. Man door on the east
-  (house) side for daily use on foot.
+  on the **west** wall. Bay 1: 10 ft wide × 12 ft overhead + a man door
+  (equipment in/out, no trucks), also west. Man door on the south side
+  (back-yard side) for daily use on foot between house and shop.
 - **Fire/life safety flags for the designer:** fuel, welding, a pit,
   batteries and a generator in one building drive separations, ventilation
   and possibly sprinkling. The generator and battery rooms below are
   planned as separated rooms from day one because retrofitting that is
   miserable.
 
-## 3. Bay by bay (west → east)
+## 3. Bay by bay (south → north)
 
-### Bay 1 — Utilities (25 × 100 ft, easternmost) — §4 has the detail
-The hub. Subdivided south → north: **1A generator room (south end) →
-1B electrical + batteries → 1E tunnel portal, stair and manifold room
-(mid-bay, on the east wall, on the tunnel centreline) → 1C water +
-heat → 1D network/server + bathroom (north end)**. Everything the
-house (and later, other houses) needs is generated, stored or
-terminated here, and every service leaves through 1E — the portal
-room sits between the electrical and water/heat rooms on purpose, so
-both feed it with short runs.
+### Bay 1 — Utilities (25 × 100 ft, southernmost) — §4 has the detail
+The hub. Subdivided west → east: **1A generator room (west end, at
+the apron) → 1B electrical + batteries → 1D network/server +
+bathroom → 1C water + heat → 1E tunnel portal, stair and manifold
+room (near the east end, tunnel leaving its south side on the x = 80
+line) → future/expansion room at the east end**. Everything the house
+(and later, other houses) needs is generated, stored or terminated
+here; services gather at 1E and drop to the tunnel. The portal sits
+beside the water/heat room and one room from electrical — short runs
+either way.
 
 ### Bay 2 — Truck work (25 × 100 ft)
-General work bay. 14 × 14 door on the south wall, open floor for a
-2-post or mobile-column lift, benches/tool storage on the **north
-(back) wall**, welder and air compressor at the north wall with drops
+General work bay. 14 × 14 door on the west wall, open floor for a
+2-post or mobile-column lift, benches/tool storage on the **east
+(back) wall**, welder and air compressor at the east wall with drops
 down the bay. Keep the middle of the floor empty — a 100 ft deep bay
 is for a truck + trailer *inside*, which only works if nothing creeps
 into the lane.
 
 ### Bay 3 — Truck work + pit (25 × 100 ft)
 Second work bay with the **pit**: proposed **40 ft long × ~4 ft wide ×
-~5.5 ft deep**, running north–south (the bay's direction), centred in
+~5.5 ft deep**, running east–west (the bay's direction), centred in
 the bay, roughly mid-length. Non-negotiables to design in, not add later:
 - **Drive-over rated covers** (flush, axle-rated) so the bay still works
   with the pit closed.
@@ -137,10 +155,10 @@ A pit is the most regulated single item in the building — raise it with
 the designer/insurer early. (The honest alternative is a second lift bay;
 your call, the plan keeps the pit as asked.)
 
-### Bay 4 — Wash bay (25 × 100 ft, westernmost)
-14 × 14 door on the south wall, slab sloped to a **centre trench drain**
-(running north–south), hose reels and pressure-washer plant (hot-water
-unit) in a small equipment zone at the north end. Drainage: trench →
+### Bay 4 — Wash bay (25 × 100 ft, northernmost)
+14 × 14 door on the west wall, slab sloped to a **centre trench drain**
+(running east–west), hose reels and pressure-washer plant (hot-water
+unit) in a small equipment zone at the east end. Drainage: trench →
 **oil/grit separator → holding tank**,
 pumped out as waste. **Wash water never goes to the septic system or the
 field** — detergents, oil and volume would kill it, and it's the standard
@@ -174,9 +192,9 @@ later add; rough in the space, not the plant.
   later (roof-mount on a 100 ft shop is also possible; ground-mount is
   easier to service and expand, and doesn't load the roof with Alberta
   snow math).
-- **Generator (1A, south end of Bay 1):** its own fire-separated room
+- **Generator (1A, west end of Bay 1):** its own fire-separated room
   with combustion-air louvres and exhaust direct to outside through
-  the south wall — the south end is deliberate: shortest air/exhaust
+  the west wall — the west end is deliberate: shortest air/exhaust
   path onto the apron, fuel delivery from the apron, and the room sits
   at the opposite end of the bay from the bathroom/network rooms. Diesel vs natural gas follows the same
   parcel question as the house heat (gas line or not); diesel with an
@@ -197,9 +215,9 @@ alarms, lift-station alarm, generator status). Two fibre conduits shop →
 house (one lit, one spare/dark). House gets a small termination panel in
 its utility room — no servers in the house.
 
-### 4.3 Water (1C, ~24 ft)
-- Well drilled **outside, south-west of the shop** (A5); line enters
-  Bay 1 underground and runs to 1C. In 1C: pressure tanks, treatment train (decided by the
+### 4.3 Water (1C, ~14 ft of the bay)
+- Well drilled **outside, east of the shop** (A5); line enters Bay 1
+  underground from the east and runs to 1C. In 1C: pressure tanks, treatment train (decided by the
   water test on the finished well — iron/sediment/softener/UV as needed,
   per the well research), manifold with a valved outlet per consumer:
   house (through tunnel), shop/bathroom, wash bay (separate, with
@@ -224,62 +242,49 @@ idling). Fuel = the parcel gas question again; the plant room is laid
 out so a second boiler or a future ground-source unit fits beside
 the first.
 
-### 4.5 Bathroom (1D, north end with the network room)
+### 4.5 Bathroom (1D, mid-bay with the network room)
 Simple and complete: WC, sink, **shower** (a shop you can wash in
 before going to the house is the point), floor drain, water heater
-fed from 1C next door. Drains **by gravity north/west to the shop
-septic tank** (shop slab is at grade, tank is below grade — gravity
-works here, unlike the house run, §7). Hot water and the room itself
-are on the shop slab heat zone.
+fed from 1C next door. Drains **by gravity west along Bay 1, then
+north to the shop septic tank** (shop slab is at grade, tank is
+below grade — gravity works here, unlike the house run, §7). Hot
+water and the room itself are on the shop slab heat zone.
 
-## 5. The house end — landing in the north-side UTILITIES room
+## 5. The house end — straight into UTILITIES (v3's big win)
 
 **The geometry (checked against the current house model,
 `nuniesmith/house` @ a88cf06):** the basement's UTILITIES room sits on
 the **north side** of the basement (basement coords (30,45)–(70,60),
-under the nook/kitchen area). It has exactly one outside wall — its
-north wall is foundation. On its west, between UTILITIES and the
-basement's west foundation wall, sits the **theater** (basement
-(0,35)–(30,60)). So a tunnel running due east on the UTILITIES
-centreline (house-frame y = 52.5) reaches the basement's west wall
-in line with UTILITIES, but enters through the theater's territory.
+under the nook/kitchen area), and **its north wall is foundation
+wall**. With the shop now behind the house, the tunnel runs due
+south on x = 80 and **enters UTILITIES directly through that north
+foundation wall** — no new basement room, no bulkhead, nothing carved
+out of anything. (This kills both earlier workarounds: v1's extension
+under the mud room/garage and v2's receiving room in the theater.
+The theater keeps its full 30 ft.)
 
-**The fix in this plan (v2):** a **utility receiving room carved from
-the theater's west end** — basement coords roughly (0,44)–(12,60),
-12 ft wide × 16 ft deep at the basement's north-west corner:
-- the tunnel's fire-rated door on its west (foundation) wall;
-- the **duplex grinder lift station** for all house sewage (§7) —
-  or it lives in UTILITIES itself if space prefers; decide at
-  mechanical design;
-- services then continue **east along the theater's north wall in a
-  ceiling bulkhead/soffit** straight into the UTILITIES room's west
-  wall — pipes and cables don't need a walkable corridor, and a
-  bulkhead over the theater's screen wall is a small, honest price;
-- people reach UTILITIES from the receiving room via the theater and
-  the existing basement circulation (theater door → rec room →
-  utilities door), which is fine for a route used occasionally;
-- the house's 200 A panel, water manifold, hydronic exchangers and
-  fibre termination live in **UTILITIES itself**, as originally
-  intended — it is 40 × 15 ft, big enough for the house's minimal
-  kit once the shop carries the plant.
-The cost is real and stated plainly: **the theater narrows from
-30 ft to ~18 ft wide.** It stays a big theater (the screen wall moves
-to the receiving room's east wall), but if that trade is unacceptable
-the alternative is a deeper tunnel passing *under* the basement slab
-and stairing up inside UTILITIES — more structure, more money, no
-theater loss. That's decision D7. Either way this is
-**house-foundation design work** — it has to be drawn with the
-basement ICF, not dug later. (v1's extension under the mud room/
-garage is superseded by this section.)
+In UTILITIES, exactly as the room was always meant to work:
+- the tunnel's fire-rated door on its north wall;
+- the house's 200 A panel (fed from the shop; the house's *only*
+  panel besides sub-panels) and transfer/protection gear;
+- the **duplex grinder lift station** for all house sewage (§7);
+- water entry + house manifold, hydronic entry + exchangers;
+- fibre termination + small network panel;
+- sump and floor drain.
+UTILITIES is 40 × 15 ft — big enough for the house's minimal kit
+because the shop carries all the plant. The one design note: the
+tunnel penetration and its fire-rated door go in **with the basement
+ICF pour** — formed, sleeved and waterproofed as foundation work,
+not cored later.
 
 ## 6. The tunnel (utilidor)
 
 ### 6.1 Route and size
-Straight, Bay 1's portal room (mid-way along its **east side**) →
-the basement's west wall, on the UTILITIES centreline (house-frame
-y = 52.5). At A1's 100 ft building gap the run is **~130 ft** — the
-extra ~30 ft is the basement itself, which sits 30 ft east of the
-garage's west wall — plus the two end structures. **Proposed section:
+Straight, Bay 1's portal room (on its **south side**) → due south →
+the UTILITIES room's **north foundation wall**, on house-frame
+x = 80, the centreline of both rooms. From Bay 1's south wall
+(y = 130) to the basement wall (y = 60) the run is **~70 ft** — the
+shortest of the three layouts (v1 ~100 ft, v2 ~130 ft). **Proposed section:
 ~8 ft wide × 7.5 ft clear inside** — a real walkway (4 ft clear) plus
 a service trench zone under **removable floor grates**, per your
 spec. Grate sections sized to lift by hand (< ~40 lb each). Precast
@@ -290,13 +295,13 @@ fallback.
 ### 6.2 The level problem (read this one)
 The tunnel floor sits at **house basement level — about 11 ft below
 the shop slab**. At the house end that's perfect (it walks straight
-into the new receiving room at the basement's west wall, §5). At the
+into the UTILITIES room through its north wall, §5). At the
 shop end it arrives *under* Bay 1: **1E is a stair room** — services
 rise up the manifold wall to grade-level distribution, and you reach
 the tunnel down a full flight of stairs (~19 risers) inside 1E. No
 way around it; a ramp would eat half the bay. The tunnel roof is
-~3–4 ft below grade — deep enough for frost and for the driveway
-court to drive over it.
+~3–4 ft below grade — deep enough for frost and for the back yard
+(and the south tree row's gap) to pass over it.
 
 ### 6.3 What runs in it — and the one thing that doesn't
 | Service | In tunnel? | How |
@@ -325,8 +330,8 @@ court to drive over it.
   so raise fire separation, egress and insurance with the designer/AHJ
   **before** the design is final, not at permit time.
 - **Cost honesty:** a heated walkable utilidor is the expensive version
-  of this idea — at Alberta prices, budget *in the order of* $200K–
-  $400K for ~130 ft installed, deep, serviced and finished
+  of this idea — at Alberta prices, budget *in the order of* $110K–
+  $220K for ~70 ft installed, deep, serviced and finished
   *(rough planning range, unverified — get precast quotes early)*.
   A direct-buried bundle + access vaults does the same job for a
   fraction of that, minus walk-in access. Your concept is the walkable
@@ -336,10 +341,10 @@ court to drive over it.
 
 ### 6.5 Build timing — do the tunnel with the house
 Excavation and concrete crews are already mobilised for the house
-basement + receiving room (§5). **Build the full tunnel (or at minimum
-the house-end half, capped at a bulkhead) during the house build**,
+basement (§5). **Build the full tunnel (or at minimum the house-end
+half, capped at a bulkhead) during the house build**,
 while the trench is cheap to open. Digging it later, under a finished
-driveway, is the expensive way to own the same tunnel.
+back yard, is the expensive way to own the same tunnel.
 
 ## 7. Septic — house pumps to the shop, shop drains by gravity
 
@@ -347,14 +352,14 @@ driveway, is the expensive way to own the same tunnel.
   by the septic designer after soil testing (house is ~5 bedrooms plus
   a shop bathroom — don't guess the size here).
 - **House → tank:** all house sewage collects to the **duplex grinder
-  lift station** in the basement receiving room / UTILITIES (§5)
+  lift station** in UTILITIES (§5)
   (duplex = a pump can fail without an emergency; high-level alarm to
   the phone; on the generator-backed panel because it must never be
-  without power). Forcemain runs through the tunnel (§6.3), rises at
-  the shop, and drops into the tank. Lift is ~8–10 ft plus ~130 ft of
-  friction — routine for grinder pumps.
-- **Shop bathroom → tank:** gravity, short run north/west from Bay 1D
-  (the bathroom sits at Bay 1's north end, nearest the tank).
+  without power). Forcemain runs north through the tunnel (§6.3),
+  rises into Bay 1, runs west inside the shop and out to the tank.
+  Lift is ~8–10 ft plus ~70 ft of friction — routine for grinder pumps.
+- **Shop bathroom → tank:** gravity — west along Bay 1, then north
+  past the apron to the tank (§4.5).
 - **Wash bay → NOT the tank:** separator + holding (§3, Bay 4). Pool
   backwash/drain water also stays out of the septic (volume + chlorine)
   — it needs its own discharge arrangement in the house mechanical
@@ -364,14 +369,16 @@ driveway, is the expensive way to own the same tunnel.
 
 1. **Land + tests:** geotech, well test hole/AWWID records, septic
    soil test — these pick the well and field zones for real.
-2. **House build**, including: the basement receiving room (§5), the
-   UTILITIES room's 200 A panel and the lift station, the tunnel
-   (§6.5), and a **temporary service shed** at the house's north-west
-   side, on the tunnel alignment — insulated ~10 × 12 ft, holding the
-   meter + temporary main feeding the house panel through the
-   *already-built tunnel trench/conduits* (services laid in their
-   final path from day one, even though their source is temporary).
-   Interim water: the well (drilled early, at its final shop-side
+2. **House build**, including: the UTILITIES room's fit-out (§5 —
+   200 A panel, lift station, manifolds), the tunnel penetration in
+   the north foundation wall, the tunnel itself
+   (§6.5), and a **temporary service shed** in the back yard, on the
+   tunnel alignment (x ≈ 80, just north of the house) — insulated
+   ~10 × 12 ft, holding the meter + temporary main feeding the house
+   panel through the *already-built tunnel trench/conduits* (services
+   laid in their final path from day one, even though their source
+   is temporary).
+   Interim water: the well (drilled early, at its final east-side
    location) feeding the house through the tunnel line. Interim
    sewage: lift station pumping through the forcemain to… the septic
    tank, which therefore gets installed in this phase too, at its
@@ -405,23 +412,22 @@ either has the capacity or a documented expansion area.
 
 My recommended default is in **bold** — say the word and it stands.
 
-- **D1 — House–shop gap: 100 ft** (tunnel ~130 ft, §6.1). Shortening
-  to 60 ft is the biggest single saving in this whole plan; lengthening
-  costs tunnel money for separation you may not need.
-- **D2 — Bay order west → east as drawn** (wash, work + pit, work,
-  utilities). Utilities easternmost is what makes the side-portal
-  tunnel work; the rest of the order is preference.
+- **D1 — Back-yard depth: ~62 ft** (house north porches → shop south
+  wall; tunnel ~70 ft, §6.1). Shrinking it is still the biggest single
+  saving in this plan; growing it costs tunnel money and back yard.
+- **D2 — Bay order south → north as drawn** (utilities, work,
+  work + pit, wash). Utilities southernmost is what makes the short
+  southbound tunnel work; the rest of the order is preference.
 - **D3 — Gas stays out of the tunnel** (direct-buried). Override only
   with the AHJ-approved vented compartment.
-- **D4 — Well outside, south-west of the shop**; equipment in 1C.
+- **D4 — Well outside, east of the shop**; equipment in 1C.
 - **D5 — Utility service conversation early**: single-phase cap vs
   three-phase decides the electrical design's shape.
 - **D6 — Tunnel built with the house** (full length preferred, capped
   half-tunnel as the fallback).
-- **D7 — Basement link: receiving room carved from the theater's
-  west end** (theater 30 ft → ~18 ft wide) **+ north-wall bulkhead**
-  into UTILITIES — vs the under-slab tunnel that spares the theater
-  for more money. Receiving room is my default.
+- **D7 — Basement link: RESOLVED by v3** — the tunnel enters
+  UTILITIES directly through its north foundation wall; no receiving
+  room, no theater impact, nothing to decide.
 - **D8 — Pit in Bay 3 only**, 40 × 4 ft, drive-over covers.
 - **D9 — Wash bay to separator + holding tank** (no alternative on
   the table — this one is rules, not preference).
@@ -439,7 +445,7 @@ flagged tunnel range. The AHJ conversations that gate real design:
 gas-in/near-tunnel routing, tunnel fire separation/egress, pit
 requirements, septic design, well siting, and the utility service
 size. The SCAD models (`shop.scad`, `site.scad` in the house repo)
-already carry this v2 plan, including the proposed receiving room
-drawn as a translucent change over the theater's west end in
-`site.scad` — the basement tables themselves are unchanged until
-D7 is settled.
+already carry this v3 plan — shop behind the house, west shared
+drive, front loop + garden, tree belt, and the tunnel entering
+UTILITIES' north wall. The basement tables are unchanged: v3 needs
+no basement change at all.
