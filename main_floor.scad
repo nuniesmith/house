@@ -1,26 +1,30 @@
 // Main floor - OpenSCAD model of the main level.
 // Units: feet. Visualisation only - NOT construction documents.
 //
-// Geometry is measured off the architect's plan image (about 11.55 px
-// per ft, +/- 0.3 ft): rooms are wall-centre-line rectangles, so they
-// run larger than the printed clear sizes, which also leave out the
-// walkways (e.g. the family room's printed 16'-6" x 15'-2" is its
-// seating area). x = east, y = north; y = 0 is the front wall of the
-// dining room / lounge and x = 0 the garage's west wall.
+// CONVERTED 2026-10-29 (Jordan) from Architectural Designs plan
+// 818030JSS, "New American Ranch Plan with Private Primary Suite -
+// 3564 Sq Ft" (4 bd, 4.5 ba, 1 storey, 3-car garage; overall
+// 89'-10" wide x 87'-6" deep, 10 ft ceilings, ridge 26'-10").
+// See docs/ranch-plan-818030.md. This file REPLACES the previous
+// main-floor design on its branch; the previous design remains on
+// main / in git history.
 //
-// changes = true applies the proposed changes (Kayla's review): direct
-// bedroom -> closet doors (green leaves), a hall to bedrooms 2 + 3 that
-// doesn't pass through the laundry, a master laundry by the closet, a
-// hall from the kitchen to the dining room beside the butler's pantry,
-// a kitchen work zone with no through traffic (fridge included), a
-// wider nook-to-kitchen opening, a linen-closet door off the new hall
-// and a larger master shower.
-// It also puts the basement stair in the former bar (a U-stair that lands
-// in the basement rec room), wraps the front porch round both front
-// corners so the whole basement sits under the house or a porch, and
-// widens bath 2.
-// changes = false shows the plan as drawn, with the bar and the short
-// stair in the garage corner (it doesn't meet the basement - REVIEW.md).
+// Geometry is fitted from the plan's marketing floor-plan image plus
+// its printed room dimensions: rooms are wall-centre-line rectangles,
+// so they run larger than the printed clear sizes. The marketing
+// image is not perfectly to scale, so a few printed dimensions could
+// not all be satisfied at once - overall envelope and the labelled
+// bedroom/living sizes were given priority. x = east, y = north;
+// y = 0 is the garage's south wall, x = 0 the west wall of the
+// bedroom wing. Front (entry) faces SOUTH, as drawn.
+//
+// The plan is drawn slab-on-grade; basement.scad is NOT part of this
+// conversion - it still belongs to the previous design and does not
+// align with this footprint (docs/ranch-plan-818030.md).
+//
+// main_level() keeps the old signature so house_combined.scad and
+// site.scad still call it; `changes` is accepted and ignored (this
+// plan has no as-drawn/proposed variants).
 
 use <house_lib.scad>
 
@@ -43,305 +47,193 @@ brick    = [0.55, 0.27, 0.20];
 white    = [0.97, 0.97, 0.97];
 
 // [label, x0, y0, x1, y1, ceiling, kind, z0, tag, label_at]
+// Printed sizes in comments are the plan's labelled clear dimensions.
 function main_rooms() = [
-    // ---- garage, mud room, bedroom 4
-    ["GARAGE",          0,     7.9,  25.2,  39.7, 9.67, "garage", -1.5],
-    ["STORAGE",         19.5,  35.5, 25.2,  39.7, 8,    "closet", 0, "new", [22.1, 38.7, 0.65]],
-    ["STAIR DN",        19.5,  35.5, 25.2,  39.7, 8,    "stairwell", 0, "old"],
-    ["MUD ROOM",        25.2,  23.5, 36.9,  31.1, 12,   "utility"],
-    ["HALL",            25.2,  31.1, 55.2,  35.5, 12,   "hall"],
-    ["",                25.2,  35.5, 29.9,  39.7, 12,   "hall"],
-    ["BATH 4",          36.9,  25.9, 45.5,  31.1, 12,   "bath", 0, "", [40.5, 29.4, 1.2]],
-    ["WIC",             45.5,  25.9, 50.7,  31.1, 12,   "closet", 0, "", [48.1, 29.6, 1.1]],
-    ["",                50.7,  25.9, 55.2,  31.1, 12,   "hall"],
-    ["BEDROOM 4",       36.9,  11.6, 55.2,  25.9, 12,   "bed"],
-    // ---- north bedroom wing
-    ["BEDROOM 3",       12.1,  39.7, 29.9,  53.1, 12,   "bed"],
-    ["",                12.1,  53.1, 16.1,  58.7, 12,   "hall"],
-    ["WIC",             16.1,  53.1, 21.4,  58.7, 12,   "closet", 0, "", [19.6, 54.2, 1]],
-    ["BATH 3",          12.1,  58.7, 21.4,  64.3, 12,   "bath", 0, "", [17.3, 62.2, 1.3]],
-    ["BEDROOM 2",       21.4,  53.1, 35.25, 68.1, 12,   "bed", 0, "new"],
-    ["WIC",             35.25, 51.3, 41.4,  56.1, 12,   "closet", 0, "new", [39.2, 52.4, 1.1]],
-    ["BATH 2",          35.25, 56.1, 41.4,  66.1, 12,   "bath", 0, "new", [38.3, 62, 1.4, 90]],    // 1 ft wider
-    ["BEDROOM 2",       21.4,  53.1, 36.25, 68.1, 12,   "bed", 0, "old"],
-    ["WIC",             36.25, 51.3, 41.4,  56.1, 12,   "closet", 0, "old"],
-    ["BATH 2",          36.25, 56.1, 41.4,  66.1, 12,   "bath", 0, "old"],
-    ["HALL",            29.9,  47,   41.4,  51.3, 12,   "hall"],
-    ["",                29.9,  51.3, 35.25, 53.1, 12,   "hall", 0, "new"],
-    ["",                29.9,  51.3, 36.25, 53.1, 12,   "hall", 0, "old"],
-    ["LAUNDRY",         29.9,  35.5, 37.4,  47,   12,   "utility", 0, "new", [33.4, 38.3, 1.1]],
-    ["HALL",            37.4,  35.5, 41.4,  47,   12,   "hall", 0, "new"],   // to bedrooms 2 + 3, in line with the bedroom hall
-    ["LAUNDRY",         29.9,  35.5, 43.1,  47,   12,   "utility", 0, "old"],
-    ["PWDR",            41.4,  35.5, 48.7,  41.8, 12,   "bath", 0, "new", [44.6, 39.6, 1.3]],
-    ["LINEN",           41.4,  41.8, 48.7,  47,   12,   "closet", 0, "new", [46.2, 44.4, 1]],
-    ["PWDR",            43.1,  35.5, 48.7,  41.8, 12,   "bath", 0, "old"],
-    ["LINEN",           43.1,  41.8, 48.7,  47,   12,   "closet", 0, "old"],
-    ["PANTRY",          48.7,  35.5, 55.2,  47,   12,   "utility", 0, "", [52, 41.25, 1.4, 90]],
-    [["BREAKFAST", "NOOK"], 41.4, 47, 55.2, 66.2, 14, "dining", 0, "", [47.5, 57.5, 1.4]],
-    // ---- kitchen, family room, front rooms
-    ["KITCHEN",         55.2,  29.5, 71.3,  52.6, 14,   "kitchen", 0, "", [63.25, 33.3, 1.8]],
-    ["FAMILY ROOM",     71.3,  31.4, 97.2,  52.6, 14,   "living", 0, "", [83.5, 47.6, 2]],
-    ["DINING ROOM",     55.2,  0,    71.3,  19.6, 14,   "dining", 0, "", [64, 14.5, 1.5]],
-    [["BUTLER'S", "PANTRY"], 55.2, 19.6, 67.3, 29.5, 14, "utility", 0, "new"],
-    ["HALL",            67.3,  19.6, 71.3,  29.5, 14,   "hall", 0, "new"],   // kitchen to dining
-    [["BUTLER'S", "PANTRY"], 55.2, 19.6, 71.3, 29.5, 14, "utility", 0, "old"],
-    ["FOYER",           71.3,  2.9,  82.3,  17.7, 14,   "hall"],
-    [["FRONT", "HALL"], 71.3, 17.7, 82.3, 31.4, 14,   "hall"],
-    ["LOUNGE",          82.3,  0,    97.2,  21,   14,   "living", 0, "", [88.8, 14.2, 2]],
-    ["STAIR DN",        82.3,  21,   97.2,  31.4, 14,   "stairwell", 0, "new", [90, 23.3, 1.5]],
-    ["BAR",             82.3,  21,   97.2,  31.4, 14,   "dining", 0, "old"],
-    // ---- master wing
-    ["GALLERY",         97.2,  30.6, 109.7, 36.5, 14,   "hall"],
-    ["OFFICE",          97.2,  36.5, 109.7, 49.1, 14,   "office"],
-    [["MASTER", "SUITE"], 109.7, 30.6, 127.9, 53.5, 14, "bed"],
-    ["W / D",           97.2,  21.5, 102.2, 30.6, 12,   "utility", 0, "new", [99.7, 25.3, 0.9]],  // master laundry
-    ["WIC",             102.2, 21.5, 108.7, 30.6, 12,   "closet", 0, "new"],
-    ["WIC",             97.2,  21.5, 108.7, 30.6, 12,   "closet", 0, "old"],
-    ["WIC",             108.7, 21.5, 117.1, 30.6, 12,   "closet"],
-    ["DRESSING",        97.2,  17.3, 117.1, 21.5, 12,   "hall"],
-    ["WC",              97.2,  11.6, 105.4, 17.3, 12,   "bath", 0, "", [100.2, 13.6, 1.6]],
-    ["SHOWER",          105.4, 11.6, 117.1, 17.3, 12,   "shower", 0, "new", [110.5, 14.45, 1.5]],
-    ["VANITY",          105.4, 11.6, 110.2, 17.3, 12,   "bath", 0, "old"],
-    ["SHOWER",          110.2, 11.6, 117.1, 17.3, 12,   "shower", 0, "old"],
-    [["MASTER", "BATH"], 117.1, 11.6, 130.1, 30.6, 12, "bath"],
+    // ---- west wing (bedrooms + game room), north -> south
+    ["GAME ROOM",       0,     69.5, 17.3,  87.5, 10, "living", 0, "", [8.6, 78.5, 1.6]],   // 16'-3" x 18'-0", vault
+    ["BEDROOM 3",       0,     57.5, 12.5,  69.5, 10, "bed"],                 // 12'-0" x 12'-0"
+    ["BATH 3",          0,     50.5, 12.5,  57.5, 10, "bath", 0, "", [6.2, 54, 1.2]],
+    ["LINEN",           0,     49,   12.5,  50.5, 10, "closet", 0, "", [6.2, 49.7, 0.8]],
+    ["",                12.5,  43,   17.3,  69.5, 10, "hall"],                // west corridor
+    ["BEDROOM 2",       0,     37,   12.5,  49,   10, "bed"],                 // 12'-0" x 11'-10"
+    ["CLOSET",          17.3,  43,   23.5,  49,   10, "closet", 0, "", [20.4, 46, 1]],
+    ["BATH 2",          12.5,  37,   19,    43,   10, "bath", 0, "", [15.7, 40, 1.1]],
+    ["WC",              19,    37,   23.5,  43,   10, "bath", 0, "", [21.2, 40, 0.9]],     // 6'-0" x 5'-0"
+    ["BATH 4",          0,     29,   13,    37,   10, "bath", 0, "", [8, 35.8, 1.2]],      // tub bath + 7'-0" x 5'-7" pwdr end
+    ["",                13,    29,   19,    37,   10, "hall"],                // west passage
+    ["",                19,    29,   23.6,  37,   10, "living"],              // family west strip (fireplace)
+    ["",                17.3,  49,   23.6,  57.5, 10, "hall"],                // landing
+    ["",                17.3,  57.5, 23.6,  62,   0,  "porch"],               // back porch west strip
+    ["",                10.6,  26.6, 23.6,  29,   10, "hall"],
+    ["BEDROOM 4",       10.6,  14.1, 23.6,  26.6, 10, "bed"],                 // 12'-6" x 12'-0"
+    // ---- centre: family, entry, kitchen, dining
+    ["FAMILY",          23.6,  26,   45,    62,   13, "living"],              // 20'-0" x 22'-0", vault off 18'
+    ["ENTRY HALL",      23.6,  18.9, 43.5,  26,   12, "hall", 0, "", [34.5, 22.4, 1.3]],   // 18'-7" x 7'-6"
+    ["",                43.5,  14.1, 47.5,  26,   10, "hall"],                // entry alcove
+    ["DINING",          45,    47,   58.7,  62,   10, "dining"],              // 12'-1" x 15'-0"
+    ["KITCHEN",         45,    29,   56.5,  47,   10, "kitchen", 0, "", [52, 31.8, 1.5]],   // 12'-9" x 18'-0"
+    ["",                56.5,  43,   58.7,  47,   10, "kitchen"],
+    ["HALL",            45,    26.1, 60,    29,   10, "hall"],
+    ["PANTRY",          56.5,  33,   63.5,  43,   10, "utility", 0, "", [60, 38, 1.2]],    // 7'-0" x 10'-0"
+    ["",                56.5,  29,   63.5,  33,   10, "hall"],                // pantry passage
+    ["OFFICE",          47.5,  14.1, 60,    26.1, 10, "office", 0, "", [55.5, 20, 1.5]],   // 12'-6" x 12'-0"
+    // ---- east wing: mud, primary suite
+    ["",                60,    26.1, 63.5,  29,   10, "hall"],                // garage vestibule
+    ["MUD ROOM",        63.5,  29,   70.7,  43,   10, "utility", 0, "", [67.1, 36, 1.1]],  // 7'-2" x 14'-3"
+    ["HALL",            58.7,  43,   70.7,  49,   10, "hall", 0, "", [64, 46, 1]],         // primary entry hall
+    ["",                70.7,  34.5, 73.6,  49,   10, "hall"],                // primary hall
+    ["PRIMARY SUITE",   58.7,  49,   73.6,  67,   10, "bed"],                 // 14'-6" x 18'-0", vault
+    [["PRIMARY", "BATH"], 73.6, 52,  89.83, 72,   10, "bath", 0, "", [81, 55.8, 1.5]],
+    ["CLOSET",          73.6,  41.5, 89.83, 52,   10, "closet"],              // 15'-4" x 10'-6", pass-through
+    ["UTILITY",         73.6,  34.5, 89.83, 41.5, 10, "utility", 0, "", [79, 38, 1.3]],   // 15'-4" x 7'-0" laundry
+    // ---- garage (three plates so the mud room / vestibule sit over its NW)
+    ["3 CAR GARAGE",    60,    0,    83,    26.1, 10, "garage", 0, "", [71.5, 12, 1.8]],   // 23'-0" x 33'-3"
+    ["",                70.7,  26.1, 83,    34.5, 10, "garage"],
+    ["",                63.5,  26.1, 70.7,  29,   10, "garage"],
     // ---- porches (no walls)
-    ["FRONT PORCH",     48.1, -12.3, 105.7, 0,    0,    "porch"],
-    ["",                48.1,  0,    55.2,  11.6, 0,    "porch"],
-    ["",                97.2,  0,    105.7, 11.6, 0,    "porch", 0, "old"],
-    ["",                97.2,  0,    130.1, 11.6, 0,    "porch", 0, "new"],   // over the music room
-    ["",                25.2,  0,    48.1,  11.6, 0,    "porch", 0, "new"],   // over the pool room
-    ["",                25.2,  11.6, 36.9,  17.8, 0,    "porch", 0, "new"],
-    ["",                71.3,  0,    82.3,  2.9,  0,    "porch"],
-    ["STOOP",           25.2,  17.8, 36.9,  23.5, 0,    "porch", 0, "", [33, 19.7, 1.5]],
-    [["BREAKFAST", "PORCH"], 55.2, 52.6, 69.3, 66.2, 0, "porch"],
-    ["OUTDOOR LIVING",  69.3,  52.6, 97.2,  67.6, 0,    "porch"],
-    [["OFFICE", "PORCH"], 97.2, 49.1, 109.7, 59.5, 0,  "porch"],
-    ["MASTER PORCH",    109.7, 53.5, 127.9, 63.5, 0,    "porch"],
-    [["SIDE", "PORCH"], 127.9, 30.6, 137.7, 59.8, 0,   "porch"],
+    ["FRONT PORCH",     23.6,  10.4, 43.5,  18.9, 0,  "porch", 0, "", [33.5, 14.6, 1.3]],  // 18'-9" x 8'-6"
+    ["BACK PORCH",      17.3,  62,   58.7,  79.2, 0,  "porch"],               // 40'-4" x 17'-1"
+    [["OUTDOOR", "KITCHEN"], 17.3, 79.2, 26.5, 86.8, 0, "porch", 0, "", [21.9, 83, 1]],
 ];
 
-// [x, y, axis, width, type, swing, tag]
+// [x, y, axis, width, type, swing, tag] - x,y is the LOW end of the opening
 function main_doors() = [
     // ---- exterior
-    [73.8,  2.9,  "x", 6,    "double",  1],            // front door
-    [56.8,  0,    "x", 4.8,  "double",  1],            // dining French doors
-    [64.7,  0,    "x", 4.8,  "double",  1],
-    [84.2,  0,    "x", 4.4,  "double",  1],            // lounge French doors
-    [92.1,  0,    "x", 4.4,  "double",  1],
-    [51.1,  11.6, "x", 3,    "door",    1],            // bedroom 4 to the porch
-    [26.5,  23.5, "x", 3,    "door",   -1],            // mud room to the stoop
-    [0,     10.5, "y", 9,    "garage"],                // side-load garage doors
-    [0,     22.5, "y", 9,    "garage"],
-    [25.2,  32.4, "y", 2.8,  "door",   -1],            // garage to the hall
-    [55.2,  57.4, "y", 5.2,  "double", -1],            // nook to the breakfast porch
-    [72.5,  52.6, "x", 20.5, "slider"],                // family room pocket slider
-    [115.6, 53.5, "x", 6,    "double", -1],            // master suite to the master porch
-    [127.9, 32.4, "y", 5,    "double", -1],            // master suite to the side porch
-    [127.9, 46.8, "y", 5,    "double", -1],
-    // ---- front rooms, kitchen, family room
-    [71.3,  6,    "y", 8.5,  "open"],                  // foyer / dining
-    [82.3,  6,    "y", 8.5,  "open"],                  // foyer / lounge
-    [72.3,  17.7, "x", 9,    "open"],                  // foyer / front hall
-    [71.6,  31.4, "x", 10.4, "full"],                  // front hall / family room
-    [71.3,  31.7, "y", 20.6, "full"],                  // kitchen / family room
-    [82.6,  31.4, "x", 14.3, "full"],                  // stair (or bar) / family room
-    [58,    19.6, "x", 3,    "door",    1],            // dining / butler's pantry
-    [56.5,  29.5, "x", 3.5,  "open"],                  // butler's pantry / kitchen
-    [55.2,  31.4, "y", 3.8,  "full"],                  // hall into the kitchen
-    [55.2,  47.3, "y", 5,    "open",    1, "new"],     // nook / kitchen, widened
-    [55.2,  47.3, "y", 3.9,  "open",    1, "old"],     // nook / kitchen (as drawn)
-    [67.6,  29.5, "x", 3.4,  "full",    1, "new"],     // kitchen / dining hall
-    [67.6,  19.6, "x", 3.4,  "full",    1, "new"],     // dining hall / dining room
-    // ---- bedroom wing
-    [41.4,  47.3, "y", 3.7,  "open"],                  // nook / bedroom hall
-    [30.2,  51.3, "x", 4.75, "full",    1, "new"],     // bedroom hall alcove
-    [30.2,  51.3, "x", 5.75, "full",    1, "old"],
-    [31.9,  53.1, "x", 3,    "door",    1, "new"],     // bedroom 2
-    [32.7,  53.1, "x", 3,    "door",    1, "old"],
-    [29.9,  47.9, "y", 2.8,  "door",   -1],            // bedroom 3
-    [36.2,  35.5, "x", 3,    "door",    1, "old"],     // laundry (as drawn)
-    [37.4,  40,   "y", 2.8,  "door",   -1, "new"],     // laundry off the bedroom hall
-    [37.7,  35.5, "x", 3.4,  "full",    1, "new"],     // bedroom hall from the garage hall
-    [37.7,  47,   "x", 3.4,  "full",    1, "new"],     // bedroom hall to bedrooms 2 + 3
-    [45.4,  35.5, "x", 2.6,  "door",    1],            // powder room
-    [41.4,  43,   "y", 2.4,  "door",    1, "new"],     // linen, off the new hall
-    [45,    47,   "x", 2.4,  "door",    1, "old"],     // linen, into the nook (as drawn)
-    [49.6,  47,   "x", 2.6,  "door",   -1],            // pantry, nook side
-    [49.6,  35.5, "x", 2.6,  "door",    1],            // pantry, hall side
-    [25.5,  31.1, "x", 8.2,  "full"],                  // mud room / hall
-    [25.5,  35.5, "x", 4.1,  "full"],                  // hall alcove by the garage door
-    [25.2,  36,   "y", 2.5,  "door",   -1, "new"],        // storage in the old stair bay
-    [25.2,  35.8, "y", 3.6,  "full",    1, "old"],        // top of the drawn stair
-    [51.0,  31.1, "x", 3.9,  "full"],                  // hall to bedroom 4
-    [51.4,  25.9, "x", 3,    "door",   -1],            // bedroom 4
-    [42.4,  25.9, "x", 2.6,  "door",    1],            // bath 4
-    [46.6,  25.9, "x", 2.6,  "door",    1, "new"],     // bedroom 4 -> WIC
-    [45.5,  27.5, "y", 2.4,  "open",    1, "old"],     // bath 4 -> WIC (as drawn)
-    [12.6,  53.1, "x", 3,    "open"],                  // bedroom 3 / closet vestibule
-    [12.4,  58.7, "x", 2.6,  "door",    1],            // bath 3
-    [16.1,  55.5, "y", 2.6,  "door",    1],            // bedroom 3 WIC
-    [35.25, 56.6, "y", 2.6,  "door",    1, "new"],     // bath 2
-    [36.25, 56.6, "y", 2.6,  "door",    1, "old"],
-    [35.25, 53.3, "y", 2.5,  "door",    1, "new"],     // bedroom 2 -> WIC
-    [36.6,  56.1, "x", 2.4,  "open",    1, "old"],     // bath 2 -> WIC (as drawn)
-    // ---- master wing
-    [97.2,  31.5, "y", 4.5,  "open"],                  // family room / gallery
-    [101.8, 36.5, "x", 3.6,  "open"],                  // gallery / office
-    [109.7, 31.2, "y", 5,    "double",  1],            // gallery / master suite
-    [111,   30.6, "x", 2.6,  "door",   -1, "new"],     // master suite -> WIC
-    [120.8, 30.6, "x", 5,    "double", -1],            // master suite / bath
-    [103.8, 21.5, "x", 2.5,  "open"],                  // WIC / dressing
-    [98.3,  21.5, "x", 2.6,  "door",    1, "new"],     // master laundry
-    [111.3, 21.5, "x", 2.5,  "open"],                  // WIC / dressing
-    [117.1, 17.6, "y", 3.6,  "open"],                  // dressing / master bath
-    [101.8, 17.3, "x", 2.5,  "door",   -1],            // WC
-    [105.8, 17.3, "x", 3,    "open",    1, "new"],     // bigger shower: entry
-    [109,   17.3, "x", 7.8,  "glass",   1, "new"],     //   and glass front
-    [105.8, 17.3, "x", 4,    "open",    1, "old"],     // vanity niche (as drawn)
-    [110.6, 17.3, "x", 2.6,  "open",    1, "old"],     // shower (as drawn)
-    [113.4, 17.3, "x", 3.4,  "glass",   1, "old"],
+    [32,    18.9, "x", 5,    "double",  1],            // front door
+    [28,    62,   "x", 16,   "slider"],                // family -> back porch
+    [48,    62,   "x", 6,    "slider"],                // dining -> back porch
+    [61,    0,    "x", 7,    "garage"],                // 3-car garage, side entry (south)
+    [68,    0,    "x", 7,    "garage"],
+    [75.25, 0,    "x", 6.5,  "garage"],
+    // ---- centre
+    [28.5,  26,   "x", 12,   "full"],                  // entry hall / family
+    [43.5,  20,   "y", 4,    "open"],                  // entry hall / alcove
+    [47.5,  18.5, "y", 3,    "door",    1],            // alcove -> office
+    [48.5,  26.1, "x", 3,    "door",   -1],            // hall -> office
+    [45,    50,   "y", 8,    "full"],                  // family / dining
+    [45,    32,   "y", 12,   "full"],                  // family / kitchen
+    [46,    47,   "x", 8,    "full"],                  // kitchen / dining
+    [45,    26.1, "y", 2.8,  "open"],                  // family -> east hall
+    [56.5,  36.7, "y", 2.6,  "door",   -1],            // kitchen -> pantry
+    [58.7,  33,   "x", 2.6,  "door",    1],            // pantry passage -> pantry
+    [57.5,  29,   "x", 2.4,  "full"],                  // east hall / pantry passage
+    [60.1,  29,   "x", 2.4,  "full"],                  // vestibule / pantry passage
+    [63.5,  29.7, "y", 2.6,  "door",   -1],            // pantry passage -> mud room
+    [60,    26.2, "y", 2.6,  "open"],                  // east hall / vestibule
+    [60.2,  26.1, "x", 3,    "door",    1],            // vestibule -> garage
+    [64.5,  26.1, "x", 5,    "full"],                  // garage plates join
+    [72,    26.1, "x", 8,    "full"],
+    [65.5,  29,   "x", 3,    "door",    1],            // mud room -> garage
+    // ---- primary wing
+    [64.25, 43,   "x", 3.5,  "open"],                  // mud room -> primary entry hall
+    [58.7,  43.7, "y", 2.6,  "open"],                  // kitchen strip -> primary entry hall
+    [70.7,  44.5, "y", 3,    "open"],                  // entry hall / primary hall
+    [70.7,  49,   "x", 2.8,  "door",    1],            // primary hall -> primary suite
+    [73.6,  56,   "y", 4,    "double", -1],            // primary suite -> primary bath
+    [73.6,  44.5, "y", 3,    "open"],                  // primary hall -> closet (pass-through)
+    [79.5,  52,   "x", 3,    "door",    1],            // closet -> primary bath
+    [73.6,  36.6, "y", 2.8,  "door",    1],            // primary hall -> utility / laundry
+    // ---- west wing
+    [13.4,  69.5, "x", 3,    "door",    1],            // game room -> west corridor
+    [17.3,  58,   "y", 3,    "door",    1],            // corridor -> back porch west strip
+    [18,    62,   "x", 4,    "full"],                  // porch strip / back porch
+    [12.5,  61.6, "y", 2.8,  "door",    1],            // corridor -> bedroom 3
+    [12.5,  51.7, "y", 2.6,  "door",   -1],            // corridor -> bath 3
+    [5,     50.5, "x", 2,    "door",    1],            // bath 3 -> linen
+    [12.5,  44.6, "y", 2.8,  "door",   -1],            // corridor -> bedroom 2
+    [17.3,  44.7, "y", 2.6,  "door",    1],            // corridor -> bedroom 2 closet
+    [13.7,  43,   "x", 2.6,  "door",   -1],            // corridor -> bath 2
+    [12.5,  38.7, "y", 2.6,  "door",    1],            // bedroom 2 -> bath 2
+    [19,    38.4, "y", 2.2,  "door",    1],            // bath 2 -> WC
+    [14.2,  37,   "x", 2.6,  "door",   -1],            // west passage -> bath 2
+    [13,    31.7, "y", 2.6,  "door",    1],            // west passage -> bath 4
+    [16,    29,   "x", 3,    "open"],                  // west hall / west passage
+    [19,    31.5, "y", 3,    "open"],                  // west passage / family strip
+    [23.6,  31,   "y", 4,    "full"],                  // family strip / family
+    [17.3,  50.5, "y", 3,    "open"],                  // corridor / landing
+    [23.6,  50.25,"y", 3.5,  "open"],                  // landing / family
+    [18.6,  26.6, "x", 2.8,  "door",   -1],            // west hall -> bedroom 4
 ];
 
-// [x, y, axis, width, sill, height]
+// [x, y, axis, width, sill, height] - x,y is the LOW end of the opening
 function main_windows() = [
-    [6,     7.9,  "x", 3.5, 3,   4],      // garage
-    [15.5,  7.9,  "x", 3.5, 3,   4],
-    [40.3,  11.6, "x", 4.3, 2.5, 5],      // bedroom 4
-    [31.7,  23.5, "x", 3.2, 3,   4],      // mud room
-    [12.1,  41.5, "y", 3.5, 2.5, 5],      // bedroom 3
-    [12.1,  47.5, "y", 3.5, 2.5, 5],
-    [12.1,  54.5, "y", 2.5, 3,   4],      // closet vestibule
-    [14,    64.3, "x", 2.5, 4,   3],      // bath 3
-    [23.5,  68.1, "x", 3.5, 2.5, 5],      // bedroom 2
-    [30,    68.1, "x", 3.5, 2.5, 5],
-    [37.5,  66.1, "x", 2.5, 5,   2.5],    // bath 2
-    [43,    66.2, "x", 4,   2.5, 6],      // nook
-    [49.5,  66.2, "x", 4,   2.5, 6],
-    [62.5,  52.6, "x", 5,   3.5, 4],      // kitchen, over the counter
-    [55.2,  2,    "y", 4,   2.5, 6],      // dining
-    [97.2,  3,    "y", 3.3, 2.5, 6],      // lounge
-    [101,   49.1, "x", 5,   2.5, 6],      // office
-    [112.2, 53.5, "x", 3.2, 2.5, 6],      // master suite
-    [122.3, 53.5, "x", 3.2, 2.5, 6],
-    [127.9, 39.5, "y", 5,   2.5, 6],
-    [130.1, 21.9, "y", 6,   3.5, 4],      // master bath
-    [121,   11.6, "x", 5,   3.5, 4],
-    [99.5,  11.6, "x", 2,   5,   2.5],    // WC
+    [3,     87.5, "x", 4,   2.5, 5],      // game room, north
+    [10,    87.5, "x", 4,   2.5, 5],
+    [0,     75.5, "y", 5,   2.5, 5],      // game room, west
+    [0,     61,   "y", 4,   2.5, 5],      // bedroom 3
+    [0,     53,   "y", 2,   4.5, 2.5],    // bath 3
+    [0,     40.75,"y", 4.5, 2.5, 5],      // bedroom 2
+    [0,     31.75,"y", 2.5, 4.5, 2.5],    // bath 4
+    [14.5,  14.1, "x", 5,   2.5, 5],      // bedroom 4, south
+    [10.6,  18.25,"y", 3.5, 2.5, 5],      // bedroom 4, west (notch side)
+    [26.25, 18.9, "x", 3.5, 2.5, 5],      // entry / family glass, south
+    [39.25, 18.9, "x", 3.5, 2.5, 5],
+    [51.5,  14.1, "x", 5,   2.5, 5],      // office, south
+    [58.7,  60,   "y", 4,   2.5, 5],      // primary suite, west to back porch
+    [60,    67,   "x", 4,   2.5, 5],      // primary suite, north
+    [68,    67,   "x", 4,   2.5, 5],
+    [78.5,  72,   "x", 3,   4.5, 2.5],    // primary bath, north
+    [89.83, 59.5, "y", 5,   3.5, 4],      // primary bath, east
+    [89.83, 46,   "y", 2,   5,   2],      // closet, east
+    [89.83, 36.5, "y", 3,   3.5, 3.5],    // utility, east
+    [83,    15.5, "y", 3,   3.5, 3],      // garage, east
 ];
 
-// [x0, y0, x1, y1, z0, z1, colour, tag]
-function main_fixtures() = [
-    // kitchen as proposed: one work aisle - wall ovens, range and fridge
-    // on the west wall facing the island sink - closed at the south by a
-    // counter return. Nothing sits on the north wall, so the nook <->
-    // family room path and the garage hall <-> family room path both pass
-    // outside the work zone and never between the fridge and the cook.
-    [55.2, 37.5, 57.2, 43.4, 0, 3,    counter, "new"],   // range wall
-    [55.2, 37.5, 57.2, 39.8, 0, 7,    steel,   "new"],   // wall ovens
-    [55.4, 40.4, 57.1, 43.2, 3, 3.05, dark,    "new"],   // range
-    [55.2, 43.5, 57.5, 46.5, 0, 7,    steel,   "new"],   // fridge, facing the aisle
-    [55.2, 35.5, 61.2, 37.5, 0, 3,    counter, "new"],   // counter return
-    [61.2, 37.5, 65.2, 46.0, 0, 3,    wood,    "new"],   // island
-    [61.4, 40.5, 62.8, 43.5, 3, 3.05, basin,   "new"],   // island sink
-    // kitchen as drawn: cooktop wall, island across both entries, sink
-    // under the north window, fridge by the butler's pantry
-    [55.2, 35.5, 57.6, 47.0, 0, 3,    counter, "old"],
-    [55.4, 39.5, 57.4, 43.0, 3, 3.05, dark,    "old"],
-    [60.7, 35.2, 65.2, 47.3, 0, 3,    wood,    "old"],
-    [60.9, 40.0, 62.3, 43.0, 3, 3.05, basin,   "old"],
-    [56.5, 50.6, 69.0, 52.6, 0, 3,    counter, "old"],
-    [63.3, 50.9, 66.7, 52.3, 3, 3.05, basin,   "old"],
-    [60.4, 29.7, 63.6, 32.1, 0, 7,    steel,   "old"],
-    // laundry: washer + dryer; master laundry beside the closet
-    [97.5, 28.1, 99.8, 30.3, 0, 3.2,  steel, "new"],
-    [99.8, 28.1, 102.0, 30.3, 0, 3.2, steel, "new"],
-    [30.4, 44.6, 32.9, 46.8, 0, 3.2,  steel],
-    [33.1, 44.6, 35.6, 46.8, 0, 3.2,  steel],
-    // fireplaces: dining (west wall), family room (east wall), lounge gas
-    [55.2, 8.0,  57.2, 11.5, 0, 4.5,  hearth],
-    [95.2, 39.5, 97.2, 43.5, 0, 4.5,  hearth],
-    [95.6, 8.2,  97.2, 11.8, 0, 3.5,  hearth],
-    [56.9, 8.6,  57.25, 10.9, 0.5, 2.6, dark],
-    [94.85, 40.1, 95.2, 42.9, 0.5, 2.6, dark],
-    [95.25, 8.8, 95.6, 11.2, 0.5, 2.2, dark],
-    // master bath tub, shower bench
-    [121.2, 12.4, 126.6, 15.6, 0, 2,  white],
-    [116.0, 11.9, 116.9, 17.0, 0, 1.5, white, "new"],
-    // garage: dog wash, steps up to the house
-    [0.6,  35.6, 5.0,  39.2, -1.5, 0.5,  white],
-    [19.5, 32.4, 20.5, 35.3, -1.5, -1.0, [0.80, 0.80, 0.78]],
-    [20.5, 32.4, 21.5, 35.3, -1.5, -0.5, [0.80, 0.80, 0.78]],
-    [21.5, 32.4, 25.0, 35.3, -1.5, 0,    [0.80, 0.80, 0.78]],
-];
-
-// porch posts [x, y, height]
+// porch posts: [x, y, height, tag]
 function main_posts() = [
-    [48.55, -11.85, 12.67], [55.1, -11.85, 12.67], [63.1, -11.85, 12.67],
-    [71.5,  -11.85, 12.67], [81.6, -11.85, 12.67], [90.7, -11.85, 12.67],
-    [98.8,  -11.85, 12.67], [105.25, -11.85, 12.67],
-    [48.55, 0, 12.67], [105.25, 0, 12.67], [48.55, 11.15, 12.67, "old"], [105.25, 11.15, 12.67, "old"],
-    [25.65, 0.45, 12.67, "new"], [36.45, 0.45, 12.67, "new"], [117.6, 0.45, 12.67, "new"],
-    [129.65, 0.45, 12.67, "new"], [129.65, 11.15, 12.67, "new"],
-    [25.65, 18.25, 10, "old"], [36.45, 18.25, 10, "old"],
-    [55.65, 65.75, 14], [62.4, 65.75, 14],
-    [69.75, 67.15, 14], [79, 67.15, 14], [88.2, 67.15, 14], [96.75, 67.15, 14],
-    [97.65, 59.05, 14], [103.45, 59.05, 14], [109.25, 59.05, 14],
-    [110.15, 63.05, 14], [119, 63.05, 14], [127.45, 63.05, 14],
-    [131, 31.05, 12], [137.25, 31.05, 12], [137.25, 40.6, 12],
-    [137.25, 50.15, 12], [137.25, 59.35, 12],
+    [23.6, 10.4, 10], [33, 10.4, 10], [43.5, 10.4, 10],          // front porch
+    [20, 79.2, 10], [32, 79.2, 10], [44, 79.2, 10], [56, 79.2, 10],  // back porch
+    [18.3, 86.3, 10],                                            // outdoor kitchen corner
 ];
 
-// [x0, y0, x1, y1, eave, pitch, overhang]
+// roof blocks: [x0, y0, x1, y1, eave, pitch, overhang]
 function main_roof() = [
-    [0,     7.9,   25.2,  39.7, 8.17,  0.667, 1.5],  // garage
-    [25.2,  11.6,  55.2,  39.7, 12,    0.667, 1.5],  // mud room, bedroom 4
-    [12.1,  35.5,  41.4,  68.1, 12,    0.667, 1.5],  // bedrooms 2 + 3, laundry
-    [41.4,  35.5,  55.2,  66.2, 14,    0.667, 1.5],  // nook, pantry
-    [55.2,  0,     97.2,  31.4, 14,    0.667, 1.5],  // dining, foyer, lounge
-    [55.2,  29.5,  97.2,  52.6, 14,    0.667, 1.5],  // kitchen, family room
-    [97.2,  11.6,  130.1, 30.6, 12,    0.667, 1.5],  // master closets + bath
-    [97.2,  30.6,  127.9, 53.5, 14,    0.667, 1.5],  // office, master suite
-    [48.1, -12.3,  105.7, 0,    12.67, 0.333, 1],    // front porch
-    [48.1,  0,     55.2,  11.6, 12.67, 0.333, 1],
-    [25.2,  0,     48.1,  11.6, 12.67, 0.333, 1, "new"],   // porch over the pool room
-    [97.2,  0,     105.7, 11.6, 12.67, 0.333, 1, "old"],
-    [97.2,  0,     130.1, 11.6, 12.67, 0.333, 1, "new"],   // porch over the music room
-    [25.2,  15.8,  36.9,  23.5, 10,    0.333, 1, "old"],    // stoop
-    [25.2,  11.6,  36.9,  23.5, 10,    0.333, 1, "new"],
-    [55.2,  52.6,  97.2,  67.6, 14,    0.333, 1],    // breakfast porch + outdoor living
-    [97.2,  49.1,  109.7, 59.5, 14,    0.333, 1],    // office porch
-    [109.7, 53.5,  127.9, 63.5, 14,    0.333, 1],    // master porch
-    [127.9, 30.6,  137.7, 59.8, 12,    0.333, 1],    // side porch
+    [0,    14.1, 24,   87.5, 13, 0.45, 1.5],   // west wing
+    [23.6, 18.9, 47.5, 62,   15, 0.55, 1.5],   // family (vaulted, tallest)
+    [45,   14.1, 63.5, 62,   13, 0.45, 1.5],   // kitchen / dining / office
+    [58.7, 29,   89.83, 72,  13, 0.45, 1.5],   // primary wing
+    [60,   0,    83,   34.5, 11, 0.40, 1.5],   // garage
+    [23.6, 10.4, 43.5, 18.9, 10, 0.25, 1],     // front porch
+    [17.3, 62,   58.7, 86.8, 10.5, 0.25, 1],   // back porch + outdoor kitchen
 ];
 
 module main_level(changes = true, show_roof = true,
                   roof_color = [0.20, 0.38, 0.62], roof_opacity = 1, audit = false) {
-    tags = [changes ? "new" : "old"];
-    rooms = active(main_rooms(), 8, tags);
-    doors = active(main_doors(), 6, tags);
+    rooms = main_rooms();
+    doors = main_doors();
     if (audit) echo(rooms = rooms, doors = doors, windows = main_windows(),
-                    fixtures = active(main_fixtures(), 7, tags));
+                    fixtures = []);
 
     draw_level(rooms, doors, main_windows());
-    fixtures(active(main_fixtures(), 7, tags));
 
-    // basement stair: the U-stair in the old bar, or the short flight
-    // the plan draws in the garage corner (it stops at the wall)
-    if (changes) bar_stair();
-    else flight(19.6, 35.7, 25.2, 39.5, "-x", 0, -8 * floor_to_floor() / 21, 8, -6);
+    // ---- fixtures (simple blocks, as in the previous model)
+    color(counter) {
+        translate([49.5, 35, 0]) cube([4, 6, 3]);              // kitchen island
+        translate([45.2, 30, 0]) cube([2.3, 15, 3]);           // kitchen west counters
+        translate([47.5, 45, 0]) cube([8, 2, 3]);              // kitchen north counter
+        translate([74, 52.2, 0]) cube([7, 2, 3]);              // primary bath vanity
+        translate([0.2, 30, 0]) cube([5, 2, 3]);               // bath 4 vanity
+        translate([13, 37.2, 0]) cube([5.5, 2, 3]);            // bath 2 vanity
+    }
+    color(basin) {
+        translate([86.3, 57.5, 0]) cube([3.2, 6.5, 2]);        // primary soaking tub
+        translate([7.5, 30.5, 0]) cube([5, 2.5, 1.8]);         // bath 4 tub
+        translate([74, 64, 0]) cube([7.5, 7.5, 0.4]);          // primary shower tray
+    }
+    color(steel) {
+        translate([84.5, 35, 0]) cube([2.2, 2.5, 3.5]);        // washer
+        translate([87, 35, 0]) cube([2.2, 2.5, 3.5]);          // dryer
+    }
+    // fireplaces: family room west wall + back porch west end
+    color(hearth) translate([23.6, 40, 0]) cube([1.5, 6, 5]);
+    color(hearth) translate([17.3, 57, 0]) cube([2, 5.5, 5]);
 
-    for (p = active(main_posts(), 3, tags)) post(p[0], p[1], p[2]);
-    porch_steps(72.6, -12.3, "-y", 8.4);    // front entry
-    if (changes) porch_steps(27.5, 0, "-y", 8);   // corner porch by the garage
-    else porch_steps(26.5, 17.8, "-y", 9.5);     // stoop
-    porch_steps(73,    67.6, "+y", 20);     // outdoor living to the yard
-    porch_steps(112.5, 63.5, "+y", 12.5);   // master porch to the yard
+    for (p = main_posts()) post(p[0], p[1], p[2]);
+    porch_steps(34.5, 10.4, "-y", 8.4);    // front entry
+    porch_steps(40,   79.2, "+y", 16);     // back porch to the yard
 
     if (show_roof) {
-        roofs(active(main_roof(), 7, tags), roof_color, roof_opacity);
-        color(brick) {                                  // chimneys
-            translate([54.7, 8.3, 0]) cube([2.5, 2.9, 20]);
-            translate([95.6, 40.0, 0]) cube([2.8, 3.0, 20]);
-        }
+        roofs(main_roof(), roof_color, roof_opacity);
+        color(brick) translate([23.9, 42.5, 0]) cube([2.2, 2.6, 22]);  // family chimney
     }
 }

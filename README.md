@@ -8,7 +8,7 @@ review and Kayla's notes.
 
 | File | What |
 |---|---|
-| `main_floor.scad` | Main level, measured off the architect's plan: rooms, doors, windows, kitchen and bath fixtures, porches, hipped roof |
+| `main_floor.scad` | Main level — converted 2026-10-29 to plan 818030JSS (New American Ranch, 3,564 sq ft): rooms, doors, windows, fixtures, porches, hipped roof. See `docs/ranch-plan-818030.md` |
 | `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub + pool bath, utilities, rec room / library, music room, exit stair, foundation |
 | `house_combined.scad` | Both levels stacked (`use`s the two files above) |
 | `house_lib.scad` | Shared modules and the basement alignment |
