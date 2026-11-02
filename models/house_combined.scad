@@ -24,7 +24,7 @@ use <basement.scad>
 use <foundation.scad>
 
 mode = "assembled";    // [assembled, exploded, basement_only, main_only, foundation, section]
-section = "A";         // [A, B, C, D, custom]
+section = "A";         // [A, B, C, D, E, custom]
 cut_axis = "y";        // [x, y] - custom section: keep x >= cut_at or y >= cut_at
 cut_at = 40;
 show_roof = true;
@@ -38,11 +38,13 @@ show_ground = true;    // the lawn at grade (assembled view)
 // B: north-south along the stair
 // C: north-south through the theatre
 // D: north-south through the pool, the spa and its spillway
+// E: east-west along the basement exit stair, looking north
 function section_cut(s) =
     s == "A" ? ["y", 40] :
     s == "B" ? ["x", 45] :
     s == "C" ? ["x", 62] :
-    s == "D" ? ["x", 86] : [cut_axis, cut_at];
+    s == "D" ? ["x", 86] :
+    s == "E" ? ["y", (exit_areaway()[1] + exit_areaway()[3]) / 2] : [cut_axis, cut_at];
 
 $cut = mode == "section" ? section_cut(section) : undef;
 
@@ -66,6 +68,7 @@ if (mode == "foundation") {
                        show_stair = !stair_below);
     if (mode == "assembled" || mode == "section")
         foundation("frost", show_earth = mode == "section", crawl_rooms = crawl);
-    if (mode == "assembled" && show_ground)
-        paint([0.56, 0.68, 0.45]) translate([-25, -45, grade() - 0.1]) cube([190, 140, 0.1]);
+    if (mode == "assembled" && show_ground)   // the lawn, open over the exit stair
+        paint([0.56, 0.68, 0.45]) translate([0, 0, grade() - 0.1]) linear_extrude(0.1)
+            difference() { translate([-25, -45]) square([190, 140]); let(e = exit_footprint()) translate([e[0], e[1]]) square([e[2] - e[0], e[3] - e[1]]); }
 }

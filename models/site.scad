@@ -4,8 +4,9 @@
 //
 // Coordinates are the house model's (x = east, y = north; main floor
 // at z = 0, grade 2 ft below it at z = -2, basement floor
-// floor_to_floor() = 11.75 ft below the main floor). Land is not yet
-// chosen: positions are RELATIVE to the house, not a survey.
+// floor_to_floor() below the main floor: 13.75 ft, for 12 ft ceilings).
+// Land is not yet chosen: positions are RELATIVE to the house, not a
+// survey.
 //
 // Shop v3 (Jordan, 2026-10-29): the shop moves BEHIND the house, to
 // the north side, rotated 90 degrees right from v2 - front faces
@@ -21,11 +22,11 @@
 // is touched. See docs/shop/Shop-Base-Plan.md.
 //
 // NOTE - house redesign of November 2026: the new basement has no
-// UTILITIES room on its north side. Its UTILITY room (14'6" x 7') is on
-// the west side, behind the storage room, and on x = 80 the basement's
-// north wall is now the POOL ROOM's. The tunnel below is drawn to that
-// wall so the conflict shows; its landing needs re-planning (see
-// docs/house/Redesign-and-Spec-2026-11-02.md).
+// UTILITIES room on its north side; its UTILITY room (14'6" x 7') is on
+// the west side, behind the storage room. Decision (Nov 2): the tunnel
+// will connect to that UTILITY room; its route is to be planned later.
+// Until then it is drawn as before, on x = 80, which meets the basement's
+// north wall at the POOL ROOM.
 
 use <house_lib.scad>
 use <main_floor.scad>
@@ -109,8 +110,11 @@ module tunnel() {
 }
 
 module ground() {
+    e = exit_footprint();
     color([0.56, 0.68, 0.45]) difference() {
         translate([-175, -100, grade_z - 0.1]) cube([370, 370, 0.1]);
+        // the basement exit stair's areaway stays open
+        translate([e[0], e[1], grade_z - 1]) cube([e[2] - e[0], e[3] - e[1], 2]);
         // a slot over the tunnel so the tunnel reads from above
         if (show_tunnel) translate([tunnel_x() - 5.5, tunnel_end_y() - 2, grade_z - 1]) cube([11, 134 - tunnel_end_y(), 2]);
     }

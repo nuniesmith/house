@@ -10,7 +10,16 @@ This document covers:
 3. the foundation;
 4. the concrete for the indoor pool and the hot tub that spills into it;
 5. the stadium-tiered home theater floor;
-6. the open questions.
+6. the basement exit stair;
+7. the open questions.
+
+**Update, Nov 2:**
+
+- The basement is now 12 ft clear.
+- The great room has a door onto the deck.
+- The basement has an exit stair up to the back yard (section 6).
+- The shop tunnel will connect to the basement utility room; its route
+  comes later.
 
 The site is rural Alberta (see
 [`../House-Review-and-Research-2026-10-28.md`](../House-Review-and-Research-2026-10-28.md)).
@@ -35,6 +44,8 @@ Code references are to the National Building Code, Alberta Edition (NBC-AE), and
 | Section B: along the stair | [`section_b.png`](section_b.png) |
 | Section C: through the theater | [`section_c.png`](section_c.png) |
 | Section D: through the pool and spa | [`section_d.png`](section_d.png) |
+| Section E: along the basement exit stair | [`section_e.png`](section_e.png) |
+| The exit stair, from the back yard and cut open | [`exit_stair.png`](exit_stair.png), [`exit_stair_cut.png`](exit_stair_cut.png) |
 | Foundation alone | [`foundation.png`](foundation.png) |
 | Both levels, apart | [`house_exploded.png`](house_exploded.png) |
 | Outside | [`house_front.png`](house_front.png), [`house_back.png`](house_back.png) |
@@ -59,30 +70,37 @@ within 1–2 in of its labelled size.
 | Main floor (finished) | 0'-0" |
 | Top of foundation walls (sill) | −1'-7½" (18" floor trusses + subfloor) |
 | Grade | −2'-0" |
-| Basement ceiling | 10'-0" clear (theater front tier: 11'-3") |
-| Basement floor (slab top) | −11'-9" |
-| Footing top / bottom | −12'-7" / −13'-5" (11'-5" below grade) |
-| Theater front tier | −13'-0" |
-| Pool water surface / pool floor | −12'-3" / −16'-9" |
-| Spa rim / water / floor | −10'-3" / −10'-5" / −13'-11" |
-| Bottom of the pool excavation | −18'-3" (16'-3" below grade) |
+| Basement ceiling | 12'-0" clear (theater front tier: 13'-3") |
+| Basement floor (slab top) | −13'-9" (11'-9" below grade) |
+| Footing top / bottom | −14'-7" / −15'-5" (13'-5" below grade) |
+| Theater front tier | −15'-0" |
+| Pool water surface / pool floor | −14'-3" / −18'-9" |
+| Spa rim / water / floor | −12'-3" / −12'-5" / −15'-11" |
+| Bottom of the pool excavation | −20'-3" (18'-3" below grade) |
 | Frost-wall footings | −6'-0" (4'-0" below grade) |
 
 The floor-to-floor height is one parameter, `floor_to_floor()` in
-`models/house_lib.scad`. It is 11.75 ft, which gives 10 ft basement
-ceilings. The earlier research assumed 12 ft ceilings; for those, set it to
-13.75. The basement rooms and the stair follow automatically: 22 risers of
-7½", with the foot 2.6 ft further south, still in the hallway.
+`models/house_lib.scad`. It is **13.75 ft, which gives 12 ft basement
+ceilings**. These follow it automatically:
+
+- the basement rooms;
+- the main stair: 22 risers;
+- the exit stair: 19 risers up to grade;
+- the foundation;
+- the pool and theater levels.
+
+For 10 ft ceilings, set it to 11.75.
 
 ### 1.2 Changes from the drawings
 
 1. **The stair** (section 2). It is drawn entered from the south on both
    floors, which no straight stair can do, and its box is about 9 ft long,
    too short for any basement stair. It now starts at the north end in the
-   upper hall and runs 15'-9" south, under the main hall, to the basement
+   upper hall and runs 18'-4½" south, under the main hall, to the basement
    hallway.
-2. **Basement hallway**: 1.7 ft deeper, and the living room 1.7 ft shorter,
-   so the foot of the stair has a proper landing.
+2. **Basement hallway**: 1.7 ft deeper, and the living room 1.7 ft shorter.
+   The foot of the stair lands in the hallway, at the 8 ft archway into the
+   living room.
 3. **Basement doors**: the sketch has none, so 19 were added. Two to note:
    - the theater door swings out into the hallway, clear of the back row;
    - the pool room and the pool bath each open off the long hall.
@@ -94,6 +112,11 @@ ceilings. The earlier research assumed 12 ft ceilings; for those, set it to
    walls are thicker than the drawn walls.
 7. **Furniture and fixtures** are illustrative: the plan's own, plus
    equipment in the utility and pool equipment rooms.
+8. **Great room to the deck**: 6'-0" French doors, swinging in, take the
+   place of the drawn 6'-9" two-pane window at the west end of the great
+   room's north wall, nearest the kitchen and the nook. The plan had no
+   door onto the deck.
+9. **Basement exit stair**: added outside the gym (section 6).
 
 `tools/check_layout.py` checks both levels after every edit. It confirms:
 
@@ -106,18 +129,18 @@ ceilings. The earlier research assumed 12 ft ceilings; for those, set it to
 
 | | Model | NBC-AE limit (stairs in a dwelling unit) |
 |---|---|---|
-| Rise | 19 risers × 7.42" (188 mm) = 11'-9" | ≤ 200 mm (7⅞") *verify* [S1] |
-| Run | 18 treads × 10½" (267 mm) = 15'-9" | ≥ 255 mm (10") *verify* [S1] |
-| 2R + T | 25.3" | comfortable range ~24–25½" (rule of thumb) |
+| Rise | 22 risers × 7½" (190.5 mm) = 13'-9" | ≤ 200 mm (7⅞") *verify* [S1] |
+| Run | 21 treads × 10½" (267 mm) = 18'-4½" | ≥ 255 mm (10") *verify* [S1] |
+| 2R + T | 25½" | comfortable range ~24–25½" (rule of thumb) |
 | Clear width | 4'-2½" (1 286 mm) between walls | ≥ 860 mm |
-| Headroom | ≥ 1 967 mm at the tightest point | ≥ 1 950 mm [S1][S2] |
+| Headroom | ≥ 1 993 mm at the tightest point | ≥ 1 950 mm [S1][S2] |
 | Handrails | both sides in the model | at least one side for > 2 risers; 865–965 mm high *verify* [S3] |
-| Landings | top: the upper hall; bottom: the hallway, with 3'-9" before the living room opening | ≥ stair width, ≥ 900 mm long |
+| Landings | top: the upper hall; bottom: at the 8 ft archway into the living room, 5 ft clear to the sofa | ≥ stair width, ≥ 900 mm long |
 
 **Headroom.** Headroom is the tight dimension. The main hall's floor
 (1'-7½" deep) crosses over the lower half of the flight. The floor opening
 runs 11'-5" from the top nosing back to the main hall's north wall. That
-keeps 1 967 mm of clear height under the floor edge, measured vertically
+keeps 1 993 mm of clear height under the floor edge, measured vertically
 from the line of the nosings. The opening cannot get shorter without
 cutting into the main hall.
 
@@ -136,13 +159,12 @@ document, §1.3–1.5.
 ### 3.1 Basement walls and footings
 
 - **ICF walls:** an 8" concrete core with 2⅝" EPS on each face, 13¼"
-  overall, running from the footing to the sill (about 11'-2" of wall).
-  - Reinforcement follows the ICF maker's Canadian prescriptive tables or
-    the engineer. For about 9½' of backfill this is typically 15M verticals
-    and 15M horizontals in every course at 400 mm (16"); *engineer to
-    confirm*.
-  - Build in bucks for any basement windows (section 6).
-- **Perimeter footings:** 24" × 10", on undisturbed soil 11'-5" below
+  overall, running from the footing to the sill (about 13'-0" of wall).
+  - About 11¾ ft of backfill against a 13 ft wall is past most prescriptive
+    ICF tables, so it needs an **engineered design**. Expect 15M verticals
+    and horizontals at about 400 mm (16") or closer.
+  - Build in a buck for the exit door (section 6), and for any windows.
+- **Perimeter footings:** 24" × 10", on undisturbed soil 13'-5" below
   grade. Frost does not govern at this depth.
 - **Interior bearing lines:** thickened-slab strip footings, 20" wide,
   under the main floor's bearing walls:
@@ -294,7 +316,7 @@ The pool pit adds a second, deeper drain loop (section 4.4).
 
 ### 4.4 Below the shell: water, insulation, drainage
 
-- **Groundwater.** The pit bottom is 16'-3" below grade. Before anything
+- **Groundwater.** The pit bottom is 18'-3" below grade. Before anything
   else, the geotech must establish the seasonal-high water table.
   - The design must resist uplift when the pool is drained. A drained shell
     in high groundwater can float.
@@ -397,37 +419,79 @@ front spectator's eye. It is the standard way to size risers [S17].
   way.
 - **Cheaper alternative:** build a framed 15" riser on a flat slab. This
   needs no depressed concrete, but it puts a step at the door and leaves the
-  rear row 8'-9" of headroom.
+  rear row 10'-9" of headroom.
 
-## 6. Open questions for you
+## 6. Basement exit stair
 
-1. **Basement egress and daylight.** The basement sketch has no windows or
-   outside door. With no basement bedrooms the NBC does not require an
-   egress window. Even so, a pool room, gym, theater and music room
-   deserve:
-   - at least one egress-size window in a window well, or an exterior
-     stair out of the basement (the previous design had one);
-   - some daylight.
+![The exit stair, cut along its length](exit_stair_cut.png)
 
-   Window bucks have to go into the ICF before the pour.
-2. **Utility tunnel to the shop.**
-   - The shop plan (`docs/shop/Shop-Base-Plan.md`, `models/site.scad`)
-     brings the tunnel due south on x = 80 into the old basement's
-     north-side UTILITIES room.
-   - The new basement's UTILITY room is on the west side, 14'-6" × 7', and
-     on x = 80 the north wall is now the pool room's.
-   - The site model draws the tunnel to that wall so the conflict shows.
-     Its landing needs re-planning: move the tunnel, or move a utility
-     room to the north wall.
+The basement plan has no way out but the main stair. As in the previous
+design, the model adds an exterior stair in an **areaway**: a walled,
+open-topped stairwell outside the foundation.
+
+### 6.1 Where it can go
+
+An outdoor stair needs open sky above it for headroom. Most of the
+basement's outside walls are under the main floor or its porches, which
+rules them out.
+
+| Basement wall | What is above or beside it | Verdict |
+|---|---|---|
+| **Gym's north wall** | Open back yard behind the sitting room and the nook; the deck to the east, the study stoop to the west | **Chosen** |
+| Music room's north wall | The bunk room above it as far as x = 32.6; the study stoop and its steps beside the rest | No room for the stair |
+| Living room's south wall | Open front yard, west of the front porch | Possible, but it sits in the front elevation, next to the main stair |
+| Living room's west wall | An 11 ft gap between the garage and the kitchen, with the side-entry steps in it | Too small for a straight stair |
+| Pool room and pool equipment (north, east) | Under the deck and the office porch, which are 2 ft above grade | No headroom; a pool-room exit also fights condensation |
+| Every other outside wall | The main floor | — |
+
+### 6.2 The design
+
+![The exit stair from the back yard](exit_stair.png)
+
+- **Door:** a 3'-6" exterior door in the gym's north wall, between the
+  treadmill and the power rack.
+  - It opens inward, so drifting snow can't block it.
+  - It is at the opposite end of the basement from the foot of the main
+    stair, so the two ways out are far apart.
+- **Areaway:** 4'-0" clear, running along the outside of the house.
+  - A 4'-8" landing at the basement floor.
+  - Then a straight flight rising east along the north walls of the sitting
+    room and the nook.
+  - It reaches grade just west of the deck, beside the deck steps, on a
+    2'-2" landing slab.
+- **Stair:** 19 risers × 7.42" (188 mm) = 11'-9", and 18 treads × 11"
+  (279 mm) = 16'-6". The treads are a little deeper than indoors, for snow
+  and boots.
+- **Walls:**
+  - 8" concrete retaining walls on 20" footings, on the north and west
+    sides, up to a 6" curb above grade.
+  - A **42" guard** on the curb. Over a drop this deep the NBC calls for
+    1 070 mm *verify*.
+- **The house side:**
+  - Along the gym it is the basement's ICF wall.
+  - East of the gym it is the nook's frost wall, which must be **carried
+    down to the areaway floor** for about 12 ft; the model shows this.
+- **Water and snow:**
+  - a drain at the bottom landing, piped to the sump;
+  - a cover, at least over the lower half, so the stair doesn't fill with
+    snow: a shed roof or a canopy off the house wall;
+  - heated or heat-traced treads are worth considering.
+- **Service entrance.** A straight stair and a 3'-6" door are also how the
+  piano, the gym equipment and the pool plant get into the basement.
+
+## 7. Open questions for you
+
+1. **Utility tunnel to the shop.** It will connect to the basement's
+   UTILITY room: 14'-6" × 7', on the west side, behind the storage room.
+   Its route comes later.
+   - Until then, `models/site.scad` keeps drawing it on x = 80, which meets
+     the pool room's north wall.
    - The site and shop renders in `docs/shop/` still show the old house.
-3. **Deck access.** The plan shows no door from the great room or the
-   breakfast nook onto the north deck; the deck is reached only by its
-   steps.
-4. **Basement height.** It is 10 ft clear here, against 12 ft in the
-   earlier research. That is one parameter (section 1.1).
-5. **Geotech first.** These all hang on the report:
+2. **Daylight in the basement.** There are still no windows. Window bucks
+   have to go into the ICF before the pour, so decide before then.
+3. **Geotech first.** These all hang on the report:
    - sulphate class (cement type);
-   - seasonal-high groundwater against a pool pit 16 ft down;
+   - seasonal-high groundwater against a pool pit 18 ft down;
    - bearing capacity for the deepened footings.
 
 ## Sources

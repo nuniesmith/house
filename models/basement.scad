@@ -14,7 +14,9 @@
 //   1.7 ft shorter) to give the foot of the stair a proper landing;
 // - doors added (the drawing has none);
 // - the theatre floor steps down toward the screen (stadium tiers), and
-//   the pool and spa are shown with their shells (foundation.scad).
+//   the pool and spa are shown with their shells (foundation.scad);
+// - an exit stair out of the gym's north wall up to the back yard (the
+//   sketch has no way out but the main stair).
 
 use <house_lib.scad>
 use <foundation.scad>
@@ -35,6 +37,7 @@ carpet = [0.66, 0.36, 0.36];
 stage  = [0.36, 0.20, 0.20];
 screen = [0.96, 0.96, 0.96];
 steel  = [0.70, 0.72, 0.74];
+rail   = [0.22, 0.22, 0.24];
 counter= [0.97, 0.97, 0.95];
 white  = [0.97, 0.97, 0.97];
 tile   = [0.55, 0.75, 0.85];
@@ -51,7 +54,7 @@ function base_rooms() = [
     ["STORAGE",         22.16, 42.77, 37.37, 50.35, basement_ceiling(), "closet", 0, "", [29.8, 46.6, 1.4]],
     ["UTILITY",         22.16, 35.08, 37.37, 42.77, basement_ceiling(), "utility", 0, "", [29.8, 40.3, 1.4]],
     ["HALL",            37.37, 35.08, 42.65, 50.35, basement_ceiling(), "hall", 0, "", [40, 42.7, 1.0, 90]],
-    ["STAIR UP",        42.65, stair_foot_y(), 47.27, 45.34, basement_ceiling(), "stair", 0, "", [44.95, 30.2, 0.7]],   // label at the foot
+    ["STAIR UP",        42.65, stair_foot_y(), 47.27, 45.34, basement_ceiling(), "stair", 0, "", [44.95, 28.1, 0.55]],  // label at the foot
     ["BATH",            47.27, 35.08, 54.14, 45.34, basement_ceiling(), "bath", 0, "", [49.4, 39.6, 1.0]],
     ["HALLWAY",         35.27, 27.6,  54.14, stair_foot_y(), 0, "hall", 0, "", [39.3, 29.4, 1.0]],
     ["",                35.27, stair_foot_y(), 42.65, 35.08, 0, "hall"],
@@ -65,6 +68,8 @@ function base_rooms() = [
     ["HALL",            54.14, 13.43, 103.04, 18.15, basement_ceiling(), "hall", 0, "", [86, 15.8, 1.2]],
     ["BATH",            54.14, 5.79,  67.4,  13.43, basement_ceiling(), "bath", 0, "", [58.6, 10.4, 1.1]],
     ["LAUNDRY",         67.4,  5.79,  81.68, 13.43, basement_ceiling(), "utility", 0, "", [74.6, 10.2, 1.3]],
+    // the exit stair's areaway, outside the gym (foundation.scad)
+    [["EXIT", "STAIR"], exit_areaway()[0], 63.16, exit_areaway()[2], exit_areaway()[3], 0, "stairwell", 0, "", [47.95, 65.75, 0.6]],
 ];
 
 // [x, y, axis, width, type, swing, tag]  (the drawing shows no doors)
@@ -88,6 +93,7 @@ function base_doors() = [
     [96.33,  33.5,  "y", 3.0, "door",  1],          // pool equipment
     [59.0,   13.43, "x", 2.8, "door", -1],          // bath
     [73.0,   13.43, "x", 3.0, "door", -1],          // laundry
+    [exit_door()[0], 63.16, "x", exit_door()[1], "door", -1],   // exit door: opens in, so snow can't block it
 ];
 
 // [x0, y0, x1, y1, z0, z1, colour, tag, shape]
@@ -169,6 +175,23 @@ module pool_and_spa_water() {
     paint(spa_w) translate([s[0], s[1], spa_water() + f - spa_depth()]) cube([s[2] - s[0], s[3] - s[1], spa_depth()]);
 }
 
+// the exit stair: the flight from the landing up to grade, east along the
+// house, and a 42" guard on the areaway's curb (walls: foundation.scad)
+module exit_stair() {
+    a = exit_areaway(); t = exit_wall_t();
+    zg = exit_rise();                      // grade, above the basement floor
+    flight(exit_landing_x()[1], a[1], a[2], a[3], "-x", zg, 0, exit_risers(), 0);
+    paint(rail) {
+        y = a[3] + t / 2;
+        for (x = [a[0] - t / 2 : (a[2] - a[0] + t / 2) / 4 : a[2] + 0.01])
+            translate([x - 0.08, y - 0.08, zg + 0.5]) cube([0.16, 0.16, 3]);
+        translate([a[0] - t / 2 - 0.08, y - 0.1, zg + 3.35]) cube([a[2] - a[0] + t / 2 + 0.16, 0.2, 0.15]);
+        for (yy = [a[1], (a[1] + y) / 2])
+            translate([a[0] - t / 2 - 0.08, yy - 0.08, zg + 0.5]) cube([0.16, 0.16, 3]);
+        translate([a[0] - t / 2 - 0.1, a[1], zg + 3.35]) cube([0.2, y - a[1], 0.15]);
+    }
+}
+
 module basement_level(show_stair = true, audit = false, show_furniture = true) {
     rooms = base_rooms();
     doors = base_doors();
@@ -179,6 +202,7 @@ module basement_level(show_stair = true, audit = false, show_furniture = true) {
     fixtures(base_fixtures());
     if (show_furniture) fixtures(base_furniture());
     fixtures(theatre_seats());
+    exit_stair();
     pool_and_spa_water();
     // the concrete (walls, footings, slab, tiers, pool + spa shells),
     // drawn at its real elevation and lifted to this level's frame

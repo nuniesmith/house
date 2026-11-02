@@ -123,6 +123,27 @@ function porch_piers() = [
     [137.21, 43.2], [137.21, 35.2], [137.21, 27.29],
 ];
 
+// ---- basement exit stair ----------------------------------------------------
+// An areaway outside the gym's north wall, in the back yard and clear of
+// every porch: a 3'-6" door in the gym's north wall opening in (so snow
+// can't block it), a landing at the basement floor, and a straight
+// flight rising east along the house to grade, just west of the deck.
+// East of the gym its house side is the nook's frost wall, carried down
+// to the areaway floor. exit_areaway() = [x0, y0, x1, y1], the clear
+// inside; the flight runs from exit_landing_x()[1] to x1.
+function exit_door()      = [46.2, 3.5];                    // [x, width] in the gym's north wall, y = 63.16
+function exit_rise()      = floor_to_floor() + grade();      // basement floor up to grade
+function exit_risers()    = ceil(exit_rise() * 12 / 7.5);    // 19 of 7.42" for a 12 ft basement
+function exit_run()       = 11 / 12;                         // 11" treads outdoors
+function exit_landing_x() = [45.6, 50.3];
+function exit_areaway()   = [45.6, 63.75, exit_landing_x()[1] + (exit_risers() - 1) * exit_run(), 67.75];
+function exit_wall_t()    = 8 / 12;
+function exit_top_pad()   = 2.2;                             // landing at grade past the top step, up to the deck
+// its footprint with the walls and the top landing, from the house face
+// out [x0, y0, x1, y1]
+function exit_footprint(g = 0) = let(a = exit_areaway(), t = exit_wall_t())
+    [a[0] - t - g, 63.09 - g, a[2] + exit_top_pad() + g, a[3] + t + g];
+
 // ---- 2D helpers -------------------------------------------------------------
 module outline2d(d = 0) { offset(delta = d) polygon(basement_outline()); }
 module ring2d(d_out, d_in) { difference() { outline2d(d_out); outline2d(d_in); } }
@@ -144,9 +165,12 @@ module theatre_low2d(grow = 0) {
 module basement_concrete() {
     w = icf_wall_t();
     core = 8 / 12;
-    // ICF walls: concrete core between two foam faces
-    paint(concrete) zslab(footing_top(), sill()) ring2d(core / 2, -core / 2);
-    paint(eps) zslab(footing_top(), sill()) difference() { ring2d(w / 2, -w / 2); ring2d(core / 2, -core / 2); }
+    // ICF walls: concrete core between two foam faces, with the exit door
+    paint(concrete) difference() { zslab(footing_top(), sill()) ring2d(core / 2, -core / 2); exit_door_cut(); }
+    paint(eps) difference() {
+        zslab(footing_top(), sill()) difference() { ring2d(w / 2, -w / 2); ring2d(core / 2, -core / 2); }
+        exit_door_cut();
+    }
     // perimeter footings and the interior bearing-line footings
     paint(concrete) zslab(footing_top() - footing_t(), footing_top()) ring2d(footing_w() / 2, -footing_w() / 2);
     paint(concrete) for (s = bearing_lines()) strip(s, 1.67, footing_top() - footing_t(), footing_top());
@@ -172,6 +196,33 @@ module basement_concrete() {
         paint(concrete) translate([x[0], tier[0], z - slab_t()]) cube([x[1] - x[0], tier[1] - tier[0], slab_t()]);
     }
     pool_shell();
+    exit_areaway_concrete();
+}
+
+module exit_door_cut() {
+    d = exit_door();
+    translate([d[0], 63.16 - 1, slab_top()]) cube([d[1], 2, 7]);
+}
+
+// the exit stair's areaway: slab, the outer (north) and west retaining
+// walls on 20" footings, up to a 6" curb above grade, the nook's frost
+// wall carried down to the areaway floor, and a landing slab at grade
+// past the top step (the steps themselves: basement.scad)
+module exit_areaway_concrete() {
+    a = exit_areaway(); t = exit_wall_t();
+    zf = slab_top() - slab_t();
+    ft = zf - footing_t();
+    top = grade() + 0.5;
+    paint(stone) translate([a[0], a[1], zf - base_t()]) cube([a[2] - a[0], a[3] - a[1], base_t()]);
+    paint(concrete) {
+        translate([a[0], a[1], zf]) cube([a[2] - a[0], a[3] - a[1], slab_t()]);
+        translate([a[0] - t, a[3], zf]) cube([a[2] - a[0] + t, t, top - zf]);              // north wall
+        translate([a[0] - t, a[1], zf]) cube([t, a[3] - a[1], top - zf]);                    // west wall
+        translate([a[0] - t - 0.5, a[3] + t / 2 - 0.835, ft]) cube([a[2] - a[0] + t + 0.5, 1.67, footing_t()]);
+        translate([a[0] - t / 2 - 0.835, a[1], ft]) cube([1.67, a[3] - a[1], footing_t()]);
+        translate([54.14, 63.09, ft]) cube([a[2] - 54.14, 2 / 3, frost_bottom() - ft]);    // nook frost wall, deepened
+        translate([a[2], a[1], grade() - 0.33]) cube([exit_top_pad(), a[3] + t - a[1], 0.33]);   // top landing
+    }
 }
 
 // pool + spa: 9" shotcrete walls and 10" floors on 2" rigid insulation and
@@ -224,6 +275,7 @@ module frost_foundation() {
                 translate([0.33, 1.58, -1.5 - slab_t()]) cube([23.68, 33.55, slab_t()]);   // garage slab
             }
             basement_footprint();
+            let(a = exit_areaway()) translate([a[0], a[1], slab_top()]) cube([a[2] - a[0], a[3] - a[1], 20]);
         }
     paint(stone)
         difference() {
@@ -270,6 +322,7 @@ module lawn2d(crawl_rooms, g = 0.02) {
             translate([min(f[0], f[2]) - w / 2, min(f[1], f[3]) - w / 2]) square([abs(f[2] - f[0]) + w, abs(f[3] - f[1]) + w]);
         for (p = piers()) translate([p[0], p[1]]) circle(d = 1.0 + 2 * g, $fn = 24);
         translate([0.33 - g, 1.58 - g]) square([23.68 + 2 * g, 33.55 + 2 * g]);   // garage slab
+        rect2d(exit_footprint(g));                                               // exit stair
     }
 }
 // Each volume is 0.01 ft bigger than what it makes room for: in the
@@ -296,6 +349,14 @@ module dug_out(crawl_rooms) {
             translate([p[0], p[1], frost_bottom()]) cylinder(d = 1.0 + 2 * g, h = 10, $fn = 24);
         }
         translate([0.33 - g, 1.58 - g, -1.5 - slab_t() - base_t() - g]) cube([23.68 + 2 * g, 33.55 + 2 * g, 3]);
+        // the exit stair's areaway with its walls, footings and stone
+        let(a = exit_areaway(), t = exit_wall_t(), e = exit_footprint(g), ft = slab_top() - slab_t() - footing_t()) {
+            translate([e[0], e[1], slab_top() - slab_t() - base_t() - g]) cube([a[2] + g - e[0], e[3] - e[1], 20]);
+            translate([a[2], e[1], grade() - 0.33 - g]) cube([e[2] - a[2], e[3] - e[1], 5]);     // top landing
+            translate([a[0] - t - 0.5 - g, a[3] + t / 2 - 0.835 - g, ft - g]) cube([a[2] - a[0] + t + 0.5 + 2 * g, 1.67 + 2 * g, footing_t() + 2 * g]);
+            translate([a[0] - t / 2 - 0.835 - g, a[1] - g, ft - g]) cube([1.67 + 2 * g, a[3] - a[1] + 2 * g, footing_t() + 2 * g]);
+            translate([54.14 - g, 63.09 - g, ft - g]) cube([a[2] - 54.14 + 2 * g, 2 / 3 + 2 * g, frost_bottom() - ft + 2 * g]);
+        }
         // crawlspace: 18" clear under the floor assembly
         zslab(sill() - 1.5, 1)
             difference() {

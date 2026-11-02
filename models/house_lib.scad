@@ -100,11 +100,11 @@ module cut_face(cut) {
 // ---- levels ---------------------------------------------------------------
 // main floor (finished) at z = 0; grade 2 ft below it; basement slab
 // (top) floor_to_floor() below it. The main floor assembly is 18" open-web
-// floor trusses + subfloor + finish, so the basement gets a 10 ft ceiling.
-// For 12 ft (the earlier research's figure) set floor_to_floor() = 13.75:
-// the stair becomes 22 risers of 7 1/2" and its foot moves 2.6 ft south,
-// still in the basement hallway, with the same opening and headroom.
-function floor_to_floor()   = 11.75;
+// floor trusses + subfloor + finish, so 13.75 ft gives the basement a
+// 12 ft ceiling. For 10 ft set floor_to_floor() = 11.75: the stair drops
+// to 19 risers of 7.42" and its foot moves 2.6 ft north; the rooms, the
+// foundation and the exit stair follow.
+function floor_to_floor()   = 13.75;
 function main_floor_depth() = 1.625;
 function grade()            = -2;
 function basement_ceiling() = floor_to_floor() - main_floor_depth() - 0.125;
@@ -112,12 +112,13 @@ function basement_ceiling() = floor_to_floor() - main_floor_depth() - 0.125;
 // ---- main stair -----------------------------------------------------------
 // One straight flight between the floors, running north -> south: the
 // top nosing on the main floor's upper hall, the foot in the basement
-// hallway. 19 risers of 7.42" (188 mm), 18 treads of 10.5" (267 mm);
-// NBC 9.8 private stair: rise <= 200 mm, run >= 255 mm. The opening in
-// the main floor runs from the main hall wall to the top nosing, long
-// enough for 1950 mm headroom under the floor assembly.
+// hallway, at the archway into the living room. 22 risers of 7 1/2"
+// (190.5 mm), 21 treads of 10.5" (267 mm); NBC 9.8 private stair: rise
+// <= 200 mm, run >= 255 mm. The opening in the main floor runs from the
+// main hall wall to the top nosing, long enough for 1950 mm headroom
+// under the floor assembly.
 function stair_x()      = [42.65, 47.27];        // wall centre lines
-function stair_risers() = ceil(floor_to_floor() * 12 / 7.5);   // risers of at most 7 1/2"; 19 at 11.75 ft
+function stair_risers() = ceil(floor_to_floor() * 12 / 7.5);   // risers of at most 7 1/2": 22 at 13.75 ft
 function stair_rise()   = floor_to_floor() / stair_risers();
 function stair_run()    = 10.5 / 12;
 function stair_top_y()  = 47.1;                   // top nosing

@@ -141,6 +141,7 @@ function main_doors() = [
     [47.27,  47.3,  "y", 3.2,  "full"],            // stair landing / upper hall
     [53.95,  45.75, "y", 2.7,  "door",   -1],      // upper hall door (sitting room / nook line)
     [69.14,  45.6,  "y", 4.9,  "full"],            // upper hall / great room
+    [70.65,  52.53, "x", 6.0,  "double", -1],      // great room to the deck (French doors, in place of the drawn window)
     [47.8,   45.39, "x", 2.9,  "door",   -1],      // hall bath
     [58.3,   45.39, "x", 6.5,  "slider"],          // flex room (glass sliders)
     [47.5,   50.69, "x", 5.9,  "double",  1],      // sitting room
@@ -174,8 +175,7 @@ function main_windows() = [
     [7.27,   36.3,  "y", 5.4, 2.75, 5],      // bedroom 2
     [7.27,   42.3,  "y", 5.4, 2.75, 5],
     [69.14,  53.6,  "y", 9.4, 1.5,  6.5],    // nook: glass wall to the deck
-    [70.2,   52.53, "x", 6.9, 2,    6],      // great room
-    [77.8,   52.53, "x", 3.6, 2,    6],
+    [77.8,   52.53, "x", 3.6, 2,    6],      // great room
     [89.4,   52.53, "x", 4.3, 2,    6],
     [110.0,  52.86, "x", 2.5, 2.5,  5],      // master bedroom
     [126.97, 46.0,  "y", 4.7, 2.5,  5],
