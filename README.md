@@ -1,61 +1,117 @@
 # house
 
-OpenSCAD models of the house. Units are feet; visualisation only, not
-construction documents. See [REVIEW.md](REVIEW.md) for the plan and model
-review and Kayla's notes.
+OpenSCAD models of the house, the shop and the site. Units are feet;
+visualisation only, not construction documents.
 
-![The house with its blue roof](docs/house_front.png)
+The house was redesigned in November 2026. The new plans are
+[`docs/house/main_floor.jpg`](docs/house/main_floor.jpg) and
+[`docs/house/basement.jpg`](docs/house/basement.jpg). See
+[`docs/house/Redesign-and-Spec-2026-11-02.md`](docs/house/Redesign-and-Spec-2026-11-02.md)
+for:
+
+- how the plans became the model, and what changed;
+- the stair between the floors;
+- the foundation;
+- the concrete for the indoor pool and its hot tub;
+- the stadium-tiered theater floor;
+- the open questions.
+
+![Both levels, cut east-west](docs/house/cutaway.png)
 
 | File | What |
 |---|---|
-| `main_floor.scad` | Main level, measured off the architect's plan: rooms, doors, windows, kitchen and bath fixtures, porches, hipped roof |
-| `basement.scad` | Lower level from the hand-drawn sketch: theater, pool + hot tub + pool bath, utilities, rec room / library, music room, exit stair, foundation |
-| `house_combined.scad` | Both levels stacked (`use`s the two files above) |
-| `house_lib.scad` | Shared modules and the basement alignment |
-| `shop.scad` | The 100 × 100 ft 4-bay shop (v3: behind the house, front faces west, Bay 1 utilities southernmost) with pit, wash-bay drain and the Bay 1 utility rooms |
-| `site.scad` | The whole property: house + shop + the utility tunnel from Bay 1's south side into the basement UTILITIES room's north wall, west shared driveway, front loop + garden, shop tree belt, well and septic zones |
-| `tools/check_layout.py` | Optional layout checker (needs `openscad` on `PATH`) |
+| `models/main_floor.scad` | Main level from `main_floor.jpg`: rooms, doors, windows, kitchen and bath fixtures, furniture, porches, hipped roof, the floor framing |
+| `models/basement.scad` | Lower level from `basement.jpg`: music room, gym, theater, pool + spa + pool bath, pet room, living room, utility, laundry |
+| `models/foundation.scad` | The concrete: ICF basement walls and footings, slab, theater tiers, pool + spa shells, frost walls, garage slab, porch piers, and the earth for sections |
+| `models/house_combined.scad` | Everything together (it `use`s the files above): assembled, exploded, foundation and section views |
+| `models/house_lib.scad` | Shared modules, the floor-to-floor height and the stair |
+| `models/shop.scad` | The 100 × 100 ft 4-bay shop (v3: behind the house, front faces west, Bay 1 utilities southernmost) with pit, wash-bay drain and the Bay 1 utility rooms |
+| `models/site.scad` | The whole property: house, shop, west shared driveway, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement; its landing needs re-planning for the new basement (spec §6) |
+| `tools/check_layout.py` | Layout checker (needs `openscad` on `PATH`) |
 
-Research and planning documents live in `docs/`: the house review and
-build research in `docs/House-Review-and-Research-2026-10-28.md`, and
-the shop base plan (utility hub, tunnel, septic, build order, decision
-list) with its drawn plans and renders in `docs/shop/`.
+Research and planning documents live in `docs/`:
+
+- `docs/house/` has the plans, the redesign notes and spec, and the renders.
+- `docs/House-Review-and-Research-2026-10-28.md` is the earlier house review
+  and build research for Alberta.
+- `docs/shop/` has the shop base plan (utility hub, tunnel, septic, build
+  order, decision list) with its drawn plans and renders.
+
+| | |
+|---|---|
+| ![Main floor](docs/house/main_floor_plan.png) | ![Basement](docs/house/basement_plan.png) |
+| ![Section A](docs/house/section_a.png) | ![Section D: pool and spa](docs/house/section_d.png) |
 
 ## Options
 
-Set them in the OpenSCAD Customizer or with `-D name=value`:
+Set them in the OpenSCAD Customizer or with `-D name=value`.
 
-- `changes`: `true` shows the proposed changes from Kayla's review (new
-  doors drawn green, kitchen work zone, central bedroom hall, master
-  laundry, kitchen-to-dining hall, bigger shower, basement stair in the old
-  bar, porches round the front corners, wider Bath 2);
-  `false` shows the main floor as drawn. The basement has no as-drawn
-  variant, so in `house_combined.scad` its stair rises into the as-drawn
-  bar.
-- `show_roof`, `roof_opacity`, `roof_color`: the roof (blue by default).
-- `mode` (combined only): `assembled`, `exploded`, `basement_only` or
-  `main_only`; `show_ground` draws the lawn at grade in the assembled view.
+`house_combined.scad`:
+
+- **`mode`**:
+  - `assembled`: the house on its lot.
+  - `exploded`: the main floor lifted off the basement; `explode_gap` sets
+    the distance.
+  - `basement_only`, `main_only`.
+  - `foundation`: the concrete alone.
+  - `section`: a vertical cut through everything, earth included.
+- **`section`** (with `mode="section"`):
+  - `A`: east-west through the stair, theater and pool.
+  - `B`: along the stair.
+  - `C`: through the theater.
+  - `D`: through the pool and spa.
+  - `custom`: set `cut_axis` (`x`/`y`) and `cut_at` yourself.
+
+  Cut faces are drawn darker than the surfaces beyond them.
+- **`show_roof`, `roof_opacity`, `roof_color`**: the roof (blue by
+  default). `show_furniture`, and `show_ground` (the lawn in the assembled
+  view).
+
+`foundation.scad`:
+
+- **`part`**: `all`, `basement` or `frost`.
+- **`show_earth`**: draw the earth around it.
 
 ## Editing
 
-Each floor is a set of tables at the top of its file, e.g. in
-`main_floor.scad`:
+Each floor is a set of tables at the top of its file. In
+`models/main_floor.scad`:
 
 - `main_rooms()`: `[label, x0, y0, x1, y1, ceiling, kind, ...]`
 - `main_doors()`: `[x, y, axis, width, type, swing, ...]`
-- `main_windows()`
+- `main_windows()`, `main_fixtures()`, `main_furniture()`
 
-x runs east and y north; on the main floor x = 0 is the garage's west wall
-and y = 0 the front wall of the dining room and lounge. Every format is
-described at the top of `house_lib.scad`. After editing, run the checker:
+The coordinates:
+
+- Both floors use the same frame, in feet. x runs east and y north; x = 0
+  is the garage's west wall and y = 0 the front wall of the den and the
+  breakfast bay.
+- z = 0 is the main floor. The basement floor is `floor_to_floor()`
+  (11.75 ft) below it.
+- Every table format is described at the top of `models/house_lib.scad`.
+
+After editing, run the checker:
 
 ```bash
 python3 tools/check_layout.py
 ```
 
-Rendering from the command line, e.g. the main-floor plan:
+It checks:
+
+- every door joins the rooms it should;
+- every leaf swings clear of walls, fixtures and other leaves;
+- every room is reachable;
+- rooms neither overlap nor leave slivers between them.
+
+Rendering from the command line (from `models/`), e.g. the main-floor plan
+and section A:
 
 ```bash
-openscad -o plan.png --imgsize=2000,1300 --viewall --autocenter \
-  --projection=o --camera=0,0,0,0,0,0,0 -D show_roof=false main_floor.scad
+openscad -o plan.png --imgsize=3600,2300 --projection=o \
+  --camera=69,25.7,0,0,0,0,235 -D show_roof=false main_floor.scad
+openscad -o section_a.png --imgsize=3000,1000 --projection=o \
+  --camera=69,40,-3,90,0,0,190 -D 'mode="section"' -D 'section="A"' house_combined.scad
 ```
+
+For sections B–D, look east with `--camera=<x>,25,-3,90,0,270,150`.
+Sections take a minute or two each: every cut face is computed exactly.

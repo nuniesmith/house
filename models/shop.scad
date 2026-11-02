@@ -25,7 +25,8 @@ show_roof = true;
 roof_opacity = 1.0;    // [0.1:0.1:1]
 roof_color = [0.55, 0.58, 0.62];  // steel grey
 
-shop_level(show_roof, roof_color, roof_opacity);
+// ($cut: no section cut - house_lib's paint() reads it)
+let ($cut = undef) shop_level(show_roof, roof_color, roof_opacity);
 
 /* [Hidden] */
 wall_h = 20;           // eave height (14 ft doors + truck stacks / lifts)

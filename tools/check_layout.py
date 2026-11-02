@@ -7,14 +7,14 @@ fixture tables it echoes, and checks that:
     room on each side along its whole width (no doors into voids or
     outside, except garage doors, and no cuts into a neighbouring room);
   * every door leaf swings clear of walls, fixtures and other leaves;
-  * every room is reachable from the foyer (main floor) or the rec room
-    (basement) without going outside;
+  * every room is reachable from the foyer (main floor) or the living
+    room (basement) without going outside;
   * no door overlaps a window, and every window has walls on one side only;
   * rooms don't overlap and leave no thin voids between them.
-The main floor is checked with the changes on and off.
+Both levels are checked as drawn.
 
     python3 tools/check_layout.py             # both levels
-    python3 tools/check_layout.py basement.scad
+    python3 tools/check_layout.py basement.scad   # one (a name in models/, or a path)
 """
 import ast
 import math
@@ -25,13 +25,13 @@ from collections import defaultdict, deque
 from itertools import combinations
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+MODELS = Path(__file__).resolve().parent.parent / "models"
 VARIANTS = {
-    "main_floor.scad": [[], ["-D", "changes=false"]],
+    "main_floor.scad": [[]],
     "basement.scad": [[]],
 }
 # rooms deliberately drawn inside another room (own floor level or no plate)
-NESTED_OK = {("GARAGE", "STORAGE"), ("GARAGE", "STAIR DN"), ("REC ROOM / LIBRARY", "STAIR UP"), ("", "STAIR UP")}
+NESTED_OK = set()
 
 
 def tables(scad, extra):
@@ -175,8 +175,7 @@ def check(scad, extra):
             problems.append(f"window {win} is between {name(a)} and {name(b)}")
     # reachability without going outside (porches excluded)
     inside = {name(r) for r in rooms if r[6] != "porch"}
-    start = next((name(r) for r in rooms if label(r) == "FOYER" or label(r).startswith("REC ROOM")),
-                 name(rooms[0]))
+    start = next((name(r) for r in rooms if label(r) in ("FOYER", "LIVING ROOM")), name(rooms[0]))
     seen, todo = {start}, deque([start])
     while todo:
         for nxt in graph[todo.popleft()]:
@@ -216,7 +215,7 @@ def main():
     files = sys.argv[1:] or list(VARIANTS)
     total = 0
     for f in files:
-        scad = (ROOT / f) if not Path(f).is_absolute() else Path(f)
+        scad = Path(f) if Path(f).exists() else MODELS / Path(f).name
         for extra in VARIANTS.get(scad.name, [[]]):
             total += check(scad, extra)
     sys.exit(1 if total else 0)
