@@ -11,7 +11,8 @@ This document covers:
 4. the concrete for the indoor pool and the hot tub that spills into it;
 5. the stadium-tiered home theater floor;
 6. the basement exit stair;
-7. the open questions.
+7. basement windows;
+8. the open questions.
 
 **Update, Nov 2:**
 
@@ -20,6 +21,9 @@ This document covers:
 - The basement has an exit stair up to the back yard (section 6).
 - The shop tunnel will connect to the basement utility room; its route
   comes later.
+
+**Update, Nov 2 (later):** basement windows are planned: two light wells
+and a glazed exit door (section 7).
 
 The site is rural Alberta (see
 [`../House-Review-and-Research-2026-10-28.md`](../House-Review-and-Research-2026-10-28.md)).
@@ -46,6 +50,8 @@ Code references are to the National Building Code, Alberta Edition (NBC-AE), and
 | Section D: through the pool and spa | [`section_d.png`](section_d.png) |
 | Section E: along the basement exit stair | [`section_e.png`](section_e.png) |
 | The exit stair, from the back yard and cut open | [`exit_stair.png`](exit_stair.png), [`exit_stair_cut.png`](exit_stair_cut.png) |
+| The basement light wells | [`light_wells.png`](light_wells.png) |
+| The basement alone, in 3D | [`basement_3d.png`](basement_3d.png) |
 | Foundation alone | [`foundation.png`](foundation.png) |
 | Both levels, apart | [`house_exploded.png`](house_exploded.png) |
 | Outside | [`house_front.png`](house_front.png), [`house_back.png`](house_back.png) |
@@ -117,6 +123,7 @@ For 10 ft ceilings, set it to 11.75.
    room's north wall, nearest the kitchen and the nook. The plan had no
    door onto the deck.
 9. **Basement exit stair**: added outside the gym (section 6).
+10. **Basement windows**: two windows in light wells (section 7).
 
 `tools/check_layout.py` checks both levels after every edit. It confirms:
 
@@ -479,16 +486,70 @@ rules them out.
 - **Service entrance.** A straight stair and a 3'-6" door are also how the
   piano, the gym equipment and the pool plant get into the basement.
 
-## 7. Open questions for you
+## 7. Basement windows
+
+### 7.1 Do you need them?
+
+**Egress windows: no.** The NBC requires an egress window, or an outside
+door, from each bedroom (9.9.10). The basement has no bedrooms, and the
+exit stair (section 6) is a second way out anyway.
+
+**Natural light: probably not, but ask.**
+- NBC 9.7.2 sets minimum window glass by room type. Living rooms, dining
+  rooms and bedrooms are the strictest.
+- Basement recreation rooms and unfinished basements carry the smallest
+  requirement, and electric lighting can often stand in.
+- Whether the building official reads the basement "living room" and
+  "music room" as recreation rooms is their call: ask the municipality
+  *verify*.
+- If they class the living room as a living room, it needs glass equal to
+  about 10 % of its floor, roughly 40 ft². Two windows would be needed.
+
+**Livability: yes, a few.** A 3,000 ft² basement with a gym, a music room
+and a living room is a lot of space with no daylight.
+
+**What makes windows expensive here.** The floor is 11'-9" below grade.
+Every window needs a light well about 8 ft deep:
+- concrete walls and a drain;
+- a guard or a walkable grate;
+- a buck and lintel in the ICF before the pour.
+
+And most of the basement's outside walls sit under the house or its
+porches, where no well can go.
+
+### 7.2 The plan
+
+![Basement light wells](light_wells.png)
+
+| Room | Window | Light well | Notes |
+|---|---|---|---|
+| Living room | 8'-0" × 4'-0", sill 4'-6" above the floor, south-facing | 9 × 5 ft, in front of the kitchen's front wall, beside the front porch | The best one: the main room, with south sun. Terrace or plant the well's outer side so it reads as a sunken garden, not a pit |
+| Music room | 3'-0" × 4'-0", north | 3'-5" × 5'-3", between the bunk room and the study stoop | Small, but the room's only daylight. The bunk room's frost wall is carried down to the well floor, as at the exit stair |
+| Gym | a full-glass 3'-6" exit door | the exit stair's areaway | No extra digging |
+
+**Optional:**
+- **Pool room:** the only place for a well is under the deck. Daylight
+  could come down through a glazed or open section of the deck floor above
+  a well at the pool room's north wall. Worth pricing, since an indoor pool
+  with no daylight is gloomy, but it is not modelled.
+- **Living room, second window:** a second well in the corner between the
+  garage and the kitchen, west of the living room. Use it if the official
+  wants about 10 % glass there.
+
+**For the ICF crew:**
+- Window bucks at the right heights before the pour.
+- Lintels sized for the 13 ft walls.
+- Each well's drain tied to the weeping tile and the sump.
+
+## 8. Open questions for you
 
 1. **Utility tunnel to the shop.** It will connect to the basement's
    UTILITY room: 14'-6" × 7', on the west side, behind the storage room.
    Its route comes later.
    - Until then, `models/site.scad` keeps drawing it on x = 80, which meets
      the pool room's north wall.
-   - The site and shop renders in `docs/shop/` still show the old house.
-2. **Daylight in the basement.** There are still no windows. Window bucks
-   have to go into the ICF before the pour, so decide before then.
+2. **Natural light.** Confirm with the municipality how the basement
+   living room is classed (section 7.1).
 3. **Geotech first.** These all hang on the report:
    - sulphate class (cement type);
    - seasonal-high groundwater against a pool pit 18 ft down;

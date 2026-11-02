@@ -22,6 +22,33 @@ side of the basement, so v3 gives the tunnel the direct landing v2
 couldn't: **no basement room is touched at all**, and v2's theater
 receiving-room proposal is dead. §5 and §6 carry the details.
 
+**Update v4 (2026-11-02, Jordan):** the two truck bays and the wash
+bay become **pull-through**: each gets a second 14 × 14 door in the
+**east** wall, opposite its west door, so there are 3 bays with 6 doors.
+Bay 1 keeps its single west equipment door. The drive **wraps round the
+shop** for this:
+- from the west apron along the **north** side (32 ft wide);
+- to a **60 ft deep east apron** in front of the new doors (x 100–160).
+
+A truck drives in from the west, out to the east, and loops back without
+entering the back yard.
+
+As a result:
+- the tree belt's north and east rows move out past the drive (north
+  row at y ≈ 276, east row at x ≈ 174);
+- the Bay 2/3 benches move from the east wall to the bays' sides near the
+  east end;
+- the wash plant moves from the east end to the wash bay's north wall.
+
+Lay out the drive corners for a tractor-trailer's ~50 ft outside turning
+radius. Keep trucks off the well with bollards: it is at (140, 110),
+16 ft south of the east apron. Where the text below says "doors on the
+west wall" or "benches/wash plant at the east end", this update
+supersedes it.
+
+Renders: `site_3d.png`, `site_3d_ne.png`, `site_plan.png`, `shop_3d.png`,
+`shop_plan.png`.
+
 **The concept, in Jordan's words:** the shop is the property's utility hub.
 Power, water, gas, internet and heat originate in the shop's utility bay,
 cross to the house in a heated, walkable tunnel with the services under floor
@@ -39,7 +66,7 @@ shop the same way.
 |---|---|---|
 | A1 | Shop sits **behind (north of) the house**: south wall at house-frame y = 130, west wall aligned with the garage's west wall (x = 0), so the shop occupies x 0–100, y 130–230 | Jordan v3. Leaves ~62 ft of back yard between the house's north porches and the shop |
 | A2 | The tunnel runs on house-frame **x = 80**, the centreline of both the basement UTILITIES room (x 60.1–100.1) and Bay 1's portal room (shop-local x 72–88) | One straight north–south line: Bay 1 → tunnel → UTILITIES north wall. Tunnel length ~70 ft |
-| A3 | Bays run **east–west** (100 ft deep), doors on the **west** wall, each bay 25 ft wide, stacking south → north: utilities, work, work + pit, wash (v3, Jordan) | Bay 1 southernmost = shortest tunnel and shortest runs to the house |
+| A3 | Bays run **east–west** (100 ft deep), doors on the **west** wall, each bay 25 ft wide, stacking south → north: utilities, work, work + pit, wash (v3, Jordan). **v4:** Bays 2–4 also get east-wall doors (pull-through), with a wrap-round drive | Bay 1 southernmost = shortest tunnel and shortest runs to the house |
 | A4 | The tunnel lands **directly in the UTILITIES room** through its north foundation wall (§5) | UTILITIES' north wall IS foundation — v3 needs no new basement room and touches no other room |
 | A5 | The drilled well itself is **outside** the shop (east side); what lives in Bay 1 is the well *equipment*. Septic tank/field go west/north-west, as far from the well as the layout allows | §4.3, §7 — wellheads inside buildings are a contamination/access problem; ≥ 30 m well-to-septic separation |
 | A6 | **Gas does not run inside the tunnel** by default; it goes direct-buried alongside it | §6.3 — gas in an enclosed occupied tunnel is the one part of the concept an inspector is likely to refuse as drawn |

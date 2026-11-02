@@ -22,12 +22,12 @@ for:
 | File | What |
 |---|---|
 | `models/main_floor.scad` | Main level from `main_floor.jpg`: rooms, doors, windows, kitchen and bath fixtures, furniture, porches, hipped roof, the floor framing |
-| `models/basement.scad` | Lower level from `basement.jpg`, with 12 ft ceilings: music room, gym, theater, pool + spa + pool bath, pet room, living room, utility, laundry, and the exit stair up to the back yard |
+| `models/basement.scad` | Lower level from `basement.jpg`, with 12 ft ceilings: music room, gym, theater, pool + spa + pool bath, pet room, living room, utility, laundry, the exit stair up to the back yard, and windows in two light wells |
 | `models/foundation.scad` | The concrete: ICF basement walls and footings, slab, theater tiers, pool + spa shells, the exit stair's areaway, frost walls, garage slab, porch piers, and the earth for sections |
 | `models/house_combined.scad` | Everything together (it `use`s the files above): assembled, exploded, foundation and section views |
 | `models/house_lib.scad` | Shared modules, the floor-to-floor height and the stair |
-| `models/shop.scad` | The 100 × 100 ft 4-bay shop (v3: behind the house, front faces west, Bay 1 utilities southernmost) with pit, wash-bay drain and the Bay 1 utility rooms |
-| `models/site.scad` | The whole property: house, shop, west shared driveway, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement, which will connect to the basement utility room; its route is still to be planned (spec §7) |
+| `models/shop.scad` | The 100 × 100 ft 4-bay shop (behind the house, Bay 1 utilities southernmost) with pull-through doors on the two truck bays and the wash bay (3 bays, 6 doors), the pit, the wash-bay drain and the Bay 1 utility rooms |
+| `models/site.scad` | The whole property: house, shop, west shared driveway with the wrap-round drive (north side and east apron) for the pull-through bays, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement, which will connect to the basement utility room; its route is still to be planned (spec §7) |
 | `tools/check_layout.py` | Layout checker (needs `openscad` on `PATH`) |
 
 Research and planning documents live in `docs/`:

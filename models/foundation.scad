@@ -144,6 +144,33 @@ function exit_top_pad()   = 2.2;                             // landing at grade
 function exit_footprint(g = 0) = let(a = exit_areaway(), t = exit_wall_t())
     [a[0] - t - g, 63.09 - g, a[2] + exit_top_pad() + g, a[3] + t + g];
 
+// ---- basement windows in light wells -------------------------------------
+// [x, y, axis, width, sill, height, well]: a window in the basement's ICF
+// wall (sill and height above the basement floor), and its light well's
+// clear inside [x0, y0, x1, y1]. The floor is 11'-9" below grade, so a
+// window needs a well about 8 ft deep. Only two stretches of outside wall
+// are clear of the house and its porches above:
+// - the living room's south wall, in front of the kitchen's front wall
+//   (the front porch stops it at x = 49.2): a 9 x 5 ft well, south light;
+// - the music room's north wall, between the bunk room and the study
+//   stoop: a 3.4 ft wide well. Its west side is the bunk room's frost
+//   wall, carried down to the well floor.
+// (The gym has the exit stair's areaway outside its glazed exit door.)
+function basement_windows() = [
+    [40.0,  5.79, "x", 8.0, 4.5, 4.0, [39.5, 0.24, 48.5, 5.24]],     // living room
+    [33.15, 63.16, "x", 3.0, 4.5, 4.0, [32.93, 63.71, 36.3, 69.0]],  // music room
+];
+function well_floor(w) = slab_top() + w[4] - 0.5;                     // 6" below the sill
+// a well's footprint with its walls [x0, y0, x1, y1] (open on the house side)
+function well_footprint(w, g = 0) = let(c = w[6], t = exit_wall_t())
+    c[1] > 30 ? [c[0] - t - g, c[1] - 0.55 - g, c[2] + t + g, c[3] + t + g]
+              : [c[0] - t - g, c[1] - t - g, c[2] + t + g, c[3] + 0.55 + g];
+// everything open to the sky beside the basement: the exit stair and the wells
+module basement_openings2d(g = 0) {
+    rect2d(exit_footprint(g));
+    for (w = basement_windows()) rect2d(well_footprint(w, g));
+}
+
 // ---- 2D helpers -------------------------------------------------------------
 module outline2d(d = 0) { offset(delta = d) polygon(basement_outline()); }
 module ring2d(d_out, d_in) { difference() { outline2d(d_out); outline2d(d_in); } }
@@ -197,11 +224,32 @@ module basement_concrete() {
     }
     pool_shell();
     exit_areaway_concrete();
+    light_wells();
 }
 
-module exit_door_cut() {
+module exit_door_cut() {      // and the windows: every opening in the ICF wall
     d = exit_door();
     translate([d[0], 63.16 - 1, slab_top()]) cube([d[1], 2, 7]);
+    for (w = basement_windows()) translate([w[0], w[1] - 1, slab_top() + w[4]]) cube([w[3], 2, w[5]]);
+}
+
+// the light wells: 8" walls on 20" footings on the three outer sides, up
+// to a 6" curb above grade, and a stone floor with a drain to the weeping
+// tile, 6" below the sill
+module light_wells() {
+    t = exit_wall_t();
+    for (w = basement_windows()) {
+        c = w[6]; zf = well_floor(w); top = grade() + 0.5;
+        north = c[1] > 30;                         // the well is on the north side of the house
+        ya = north ? c[3] : c[1] - t;              // outer wall
+        paint(stone) translate([c[0], c[1], zf - base_t()]) cube([c[2] - c[0], c[3] - c[1], base_t()]);
+        paint(concrete) {
+            translate([c[0] - t, ya, zf - base_t()]) cube([c[2] - c[0] + 2 * t, t, top - zf + base_t()]);
+            for (x = [c[0] - t, c[2]]) translate([x, c[1], zf - base_t()]) cube([t, c[3] - c[1], top - zf + base_t()]);
+            translate([c[0] - t - 0.5, ya + t / 2 - 0.835, zf - base_t() - footing_t()]) cube([c[2] - c[0] + 2 * t + 1, 1.67, footing_t()]);
+            for (x = [c[0] - t / 2, c[2] + t / 2]) translate([x - 0.835, c[1], zf - base_t() - footing_t()]) cube([1.67, c[3] - c[1], footing_t()]);
+        }
+    }
 }
 
 // the exit stair's areaway: slab, the outer (north) and west retaining
@@ -276,6 +324,7 @@ module frost_foundation() {
             }
             basement_footprint();
             let(a = exit_areaway()) translate([a[0], a[1], slab_top()]) cube([a[2] - a[0], a[3] - a[1], 20]);
+            for (w = basement_windows()) let(c = w[6]) translate([c[0], c[1], well_floor(w) - base_t()]) cube([c[2] - c[0], c[3] - c[1], 20]);
         }
     paint(stone)
         difference() {
@@ -322,7 +371,7 @@ module lawn2d(crawl_rooms, g = 0.02) {
             translate([min(f[0], f[2]) - w / 2, min(f[1], f[3]) - w / 2]) square([abs(f[2] - f[0]) + w, abs(f[3] - f[1]) + w]);
         for (p = piers()) translate([p[0], p[1]]) circle(d = 1.0 + 2 * g, $fn = 24);
         translate([0.33 - g, 1.58 - g]) square([23.68 + 2 * g, 33.55 + 2 * g]);   // garage slab
-        rect2d(exit_footprint(g));                                               // exit stair
+        basement_openings2d(g);                                                  // exit stair, light wells
     }
 }
 // Each volume is 0.01 ft bigger than what it makes room for: in the
@@ -356,6 +405,11 @@ module dug_out(crawl_rooms) {
             translate([a[0] - t - 0.5 - g, a[3] + t / 2 - 0.835 - g, ft - g]) cube([a[2] - a[0] + t + 0.5 + 2 * g, 1.67 + 2 * g, footing_t() + 2 * g]);
             translate([a[0] - t / 2 - 0.835 - g, a[1] - g, ft - g]) cube([1.67 + 2 * g, a[3] - a[1] + 2 * g, footing_t() + 2 * g]);
             translate([54.14 - g, 63.09 - g, ft - g]) cube([a[2] - 54.14 + 2 * g, 2 / 3 + 2 * g, frost_bottom() - ft + 2 * g]);
+        }
+        // the light wells with their walls, footings and stone
+        for (w = basement_windows()) let(e = well_footprint(w, g), zb = well_floor(w) - base_t() - footing_t()) {
+            translate([e[0] - 0.5, e[1] - 0.5, zb - g]) cube([e[2] - e[0] + 1, e[3] - e[1] + 1, 0.01 + footing_t()]);
+            translate([e[0], e[1], zb + footing_t() - g]) cube([e[2] - e[0], e[3] - e[1], 20]);
         }
         // crawlspace: 18" clear under the floor assembly
         zslab(sill() - 1.5, 1)

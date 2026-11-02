@@ -68,7 +68,7 @@ if (mode == "foundation") {
                        show_stair = !stair_below);
     if (mode == "assembled" || mode == "section")
         foundation("frost", show_earth = mode == "section", crawl_rooms = crawl);
-    if (mode == "assembled" && show_ground)   // the lawn, open over the exit stair
+    if (mode == "assembled" && show_ground)   // the lawn, open over the exit stair and the light wells
         paint([0.56, 0.68, 0.45]) translate([0, 0, grade() - 0.1]) linear_extrude(0.1)
-            difference() { translate([-25, -45]) square([190, 140]); let(e = exit_footprint()) translate([e[0], e[1]]) square([e[2] - e[0], e[3] - e[1]]); }
+            difference() { translate([-25, -45]) square([190, 140]); basement_openings2d(); }
 }
