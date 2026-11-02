@@ -3,9 +3,9 @@
 // NOT construction documents.
 //
 // Coordinates are the house model's (x = east, y = north; main floor
-// at z = 0, grade 2 ft below it at z = -2, basement floor 13 ft below
-// the main floor). Land is not yet chosen: positions are RELATIVE to
-// the house, not a survey.
+// at z = 0, grade 2 ft below it at z = -2, basement floor
+// floor_to_floor() = 11.75 ft below the main floor). Land is not yet
+// chosen: positions are RELATIVE to the house, not a survey.
 //
 // Shop v3 (Jordan, 2026-10-29): the shop moves BEHIND the house, to
 // the north side, rotated 90 degrees right from v2 - front faces
@@ -19,10 +19,18 @@
 // through its north foundation wall - UTILITIES is on the north side
 // of the basement, so the landing is direct: no other basement room
 // is touched. See docs/shop/Shop-Base-Plan.md.
+//
+// NOTE - house redesign of November 2026: the new basement has no
+// UTILITIES room on its north side. Its UTILITY room (14'6" x 7') is on
+// the west side, behind the storage room, and on x = 80 the basement's
+// north wall is now the POOL ROOM's. The tunnel below is drawn to that
+// wall so the conflict shows; its landing needs re-planning (see
+// docs/house/Redesign-and-Spec-2026-11-02.md).
 
 use <house_lib.scad>
 use <main_floor.scad>
 use <basement.scad>
+use <foundation.scad>
 use <shop.scad>
 
 show_roof = true;
@@ -32,7 +40,6 @@ show_ground = true;
 show_tunnel = true;
 
 /* [Hidden] */
-off = basement_offset();
 grade_z = -2;
 
 // Shop placement: behind the house. Its west wall aligns with the
@@ -40,11 +47,13 @@ grade_z = -2;
 // shop sits at x 0..100, y 130..230, with ~62 ft of back yard between
 // the house's north porches and the shop.
 function shop_origin() = [0, 130];
-// Tunnel centreline: x = 80, the centre of the basement UTILITIES
-// room (main-frame x 60.1..100.1) and of Bay 1's portal room
+// Tunnel centreline: x = 80, the centre of Bay 1's portal room
 // (shop-local x 72..88, centred 80 - the shop sits at x 0..100, so
-// local and site x agree).
+// local and site x agree); it was also the centre of the old basement's
+// UTILITIES room. It ends at the basement's north wall on that line
+// (the outside face of the pool room's ICF wall, y = 52.76 + 0.55).
 function tunnel_x() = 80;
+function tunnel_end_y() = 52.76 + icf_wall_t() / 2;
 
 module flat_text(s, at, size = 4, col = [0.2, 0.2, 0.2]) {
     color(col) translate([at[0], at[1], grade_z + 0.25])
@@ -89,24 +98,21 @@ module tree_belt() {
 }
 
 module tunnel() {
-    // Floor at basement level (z = -13), 8 ft wide, 7.5 ft clear.
-    // From Bay 1's south wall (y = 130) to the basement north wall
-    // (y = 60): 70 ft, entering UTILITIES through the foundation.
+    // Floor at basement level, 8 ft wide, 7.5 ft clear, from Bay 1's
+    // south wall (y = 130) to the basement's north wall (~77 ft).
+    zf = -floor_to_floor();
     color([0.62, 0.62, 0.60])
-        translate([tunnel_x() - 4, 60, -13]) cube([8, 70, 7.5]);
-    // Entry frame where it meets the UTILITIES north wall
+        translate([tunnel_x() - 4, tunnel_end_y(), zf]) cube([8, 130 - tunnel_end_y(), 7.5]);
+    // Entry frame where it meets the basement wall
     color([1.0, 0.55, 0.15, 0.55])
-        translate([tunnel_x() - 4.5, 58.5, -13]) cube([9, 3, 9]);
+        translate([tunnel_x() - 4.5, tunnel_end_y() - 1.5, zf]) cube([9, 3, 9]);
 }
 
 module ground() {
-    ex = exit_areaway();
     color([0.56, 0.68, 0.45]) difference() {
         translate([-175, -100, grade_z - 0.1]) cube([370, 370, 0.1]);
-        // exit-stair areaway stays open (as in house_combined)
-        translate([ex[0] + off[0], ex[1] + off[1], grade_z - 1]) cube([ex[2] - ex[0], ex[3] - ex[1], 2]);
         // a slot over the tunnel so the tunnel reads from above
-        if (show_tunnel) translate([tunnel_x() - 5.5, 58, grade_z - 1]) cube([11, 74, 2]);
+        if (show_tunnel) translate([tunnel_x() - 5.5, tunnel_end_y() - 2, grade_z - 1]) cube([11, 134 - tunnel_end_y(), 2]);
     }
 }
 
@@ -119,15 +125,18 @@ module well_and_septic() {
     flat_text("FIELD", [-135, 177], 4, [0.2, 0.4, 0.2]);
 }
 
-if (show_ground) ground();
-drives();
-garden();
-tree_belt();
-well_and_septic();
-translate([off[0], off[1], -floor_to_floor()]) basement_level();
-translate([0, 0, 0]) main_level(true, show_roof, roof_color, roof_opacity);
-translate([shop_origin()[0], shop_origin()[1], grade_z]) shop_level(show_roof);
-if (show_tunnel) {
-    tunnel();
-    flat_text("UTILITY TUNNEL", [57, 95], 4, [0.75, 0.15, 0.15]);
+// ($cut: no section cut - house_lib's paint() reads it)
+let ($cut = undef) {
+    if (show_ground) ground();
+    drives();
+    garden();
+    tree_belt();
+    well_and_septic();
+    translate([0, 0, -floor_to_floor()]) basement_level(show_stair = false);
+    main_level(show_roof, roof_color, roof_opacity);
+    translate([shop_origin()[0], shop_origin()[1], grade_z]) shop_level(show_roof);
+    if (show_tunnel) {
+        tunnel();
+        flat_text("UTILITY TUNNEL", [57, 95], 4, [0.75, 0.15, 0.15]);
+    }
 }

@@ -1,22 +1,26 @@
 // house_lib.scad - shared drawing modules for the house models.
 // Units: feet. x = east, y = north, z = up; the main floor is z = 0.
+// Both levels use the same plan coordinates: x = 0 is the garage's west
+// wall, y = 0 the front wall line of the den and breakfast bay.
 // Visualisation only - NOT construction documents.
 //
 // The level files (main_floor.scad, basement.scad) describe each floor
 // as tables and call draw_level() below, so one table row drives a
 // room's floor plate, label and walls, and one door row drives both
-// the wall cut and the door leaf.
+// the wall cut and the door leaf. foundation.scad does the same for
+// the concrete.
 //
 // room   = [label, x0, y0, x1, y1, ceiling, kind, z0, tag, label_at]
 //   (x0, y0)-(x1, y1) are wall centre lines. ceiling = wall height
 //   above the room's floor; 0 = no walls (porches and open-plan zones,
 //   which are bounded by their neighbours' walls). kind picks the
-//   colour; "stairwell" also leaves out the floor plate. z0 (optional)
-//   is the floor elevation, e.g. a garage slab below the house floor.
-//   tag (optional) - see keep() below. label "" = no label; a list of
-//   strings is a multi-line label. label_at (optional) = [x, y, size]
-//   or [x, y, size, angle] moves the label off the room centre, e.g.
-//   clear of an island or a door swing.
+//   colour; "stairwell", "tiered" and "pit" leave out the floor plate
+//   (stair opening, theatre tiers, pool deck - drawn separately).
+//   z0 (optional) is the floor elevation, e.g. a garage slab below the
+//   house floor. tag (optional) - see keep() below. label "" = no
+//   label; a list of strings is a multi-line label. label_at
+//   (optional) = [x, y, size] or [x, y, size, angle] moves the label
+//   off the room centre, e.g. clear of an island or a door swing.
 // door   = [x, y, axis, width, type, swing, tag]
 //   axis "x": the opening sits in a horizontal wall at y and spans
 //   x .. x+width; axis "y": vertical wall at x, spans y .. y+width.
@@ -26,9 +30,12 @@
 //   swing: +1 / -1 = the leaf opens toward +y / -y (axis "x") or
 //   +x / -x (axis "y"); the hinge is at the x / y start of the opening.
 // window = [x, y, axis, width, sill, height]
+// fixture = [x0, y0, x1, y1, z0, z1, colour, tag, shape]
+//   a box (counters, appliances, furniture); shape "round" draws the
+//   cylinder that fits the box instead (round tables, tanks).
 //
-// Tags let one table carry alternatives: a row tagged "new" is drawn
-// only with the proposed changes on, "old" only with them off.
+// Tags let one table carry alternatives: a row is drawn only when its
+// tag (if any) is among the active tags.
 
 wall_t = 0.4;   // wall thickness
 door_h = 7.0;   // single-door height
@@ -37,21 +44,81 @@ open_h = 8.0;   // double doors, cased openings, sliders
 wall_color  = [0.93, 0.91, 0.87];
 glass_color = [0.55, 0.78, 0.92, 0.45];
 leaf_color  = [0.55, 0.35, 0.20];
-new_color   = [0.10, 0.60, 0.25];  // leaves of doors added by the changes
+new_color   = [0.10, 0.60, 0.25];  // door leaves that the review added
 label_color = [0.15, 0.15, 0.15];
 post_color  = [0.96, 0.95, 0.92];
 step_color  = [0.80, 0.80, 0.78];
 stair_color = [0.75, 0.72, 0.68];
 icf_color   = [0.45, 0.45, 0.45];
+floor_frame = [0.80, 0.68, 0.50];   // main-floor trusses / subfloor
 
-// ---- basement alignment (shared by basement.scad and house_combined.scad)
-// basement (x, y) + basement_offset() = main-floor (x, y). The basement's
-// south wall sits under the front wall line (y = 0) and its east wall
-// under the master bath's east wall, which keeps the sketch's exit stair
-// outside the house body.
-function basement_offset() = [30.1, 0];
-// basement floor to main floor: 12 ft basement ceiling + 1 ft floor
-function floor_to_floor() = 13;
+// `use <house_lib.scad>` brings in functions and modules but not
+// variables, so the level files read these through functions
+function wall_t()      = wall_t;
+function stair_color() = stair_color;
+function floor_frame() = floor_frame;
+
+// Colour a part. When a section cut is active ($cut = [axis, at], set by
+// house_combined.scad) the part is also cut, with a cutting box of the
+// same colour, so each material keeps its colour on the cut face.
+// The level files call their top module inside let ($cut = undef); a
+// top-level $cut assignment in a used file would hide the caller's.
+module paint(c) {
+    if (is_undef($cut)) color(c) children();
+    else {
+        intersection() { color(c) children(); color(c) keep_side($cut); }
+        color(cut_shade(c)) cut_face($cut) children();
+    }
+}
+// cut faces are drawn darker than the faces seen beyond the cut
+function cut_shade(c) = [c[0] * 0.72, c[1] * 0.72, c[2] * 0.72, len(c) > 3 ? c[3] : 1];
+module keep_side(cut) {        // the half kept by a section: x >= at or y >= at
+    if (cut[0] == "x") translate([cut[1], -150, -100]) cube([300, 300, 200]);
+    else               translate([-150, cut[1], -100]) cube([300, 300, 200]);
+}
+// The cut face as a thin slab just in front of the cut. OpenSCAD's preview
+// gives every face that lies in the cut plane the colour of the last part
+// drawn, so each part's outline in the plane is drawn again as its own
+// object: projection(cut = true) with the plane moved to z = 0. A marker
+// cube far off the model keeps an empty cut from failing.
+module cut_face(cut) {
+    a = cut[1];
+    module outline() {
+        difference() {
+            projection(cut = true) { children(); translate([4000, 4000, -0.5]) cube(1); }
+            translate([3999, 3999]) square(3);
+        }
+    }
+    if (cut[0] == "x")
+        rotate([0, 90, 0]) translate([0, 0, a - 0.03]) linear_extrude(0.02)
+            outline() translate([0, 0, -a]) rotate([0, -90, 0]) children();
+    else
+        rotate([-90, 0, 0]) translate([0, 0, a - 0.03]) linear_extrude(0.02)
+            outline() translate([0, 0, -a]) rotate([90, 0, 0]) children();
+}
+
+// ---- levels ---------------------------------------------------------------
+// main floor (finished) at z = 0; grade 2 ft below it; basement slab
+// (top) floor_to_floor() below it. The main floor assembly is 18" open-web
+// floor trusses + subfloor + finish, so the basement gets a 10 ft ceiling.
+function floor_to_floor()   = 11.75;
+function main_floor_depth() = 1.625;
+function grade()            = -2;
+function basement_ceiling() = floor_to_floor() - main_floor_depth() - 0.125;
+
+// ---- main stair -----------------------------------------------------------
+// One straight flight between the floors, running north -> south: the
+// top nosing on the main floor's upper hall, the foot in the basement
+// hallway. 19 risers of 7.42" (188 mm), 18 treads of 10.5" (267 mm);
+// NBC 9.8 private stair: rise <= 200 mm, run >= 255 mm. The opening in
+// the main floor runs from the main hall wall to the top nosing, long
+// enough for 1950 mm headroom under the floor assembly.
+function stair_x()      = [42.65, 47.27];        // wall centre lines
+function stair_risers() = 19;
+function stair_rise()   = floor_to_floor() / stair_risers();
+function stair_run()    = 10.5 / 12;
+function stair_top_y()  = 47.1;                   // top nosing
+function stair_foot_y() = stair_top_y() - (stair_risers() - 1) * stair_run();
 
 function kind_color(k) =
     k == "bed"       ? [0.86, 0.91, 0.98] :
@@ -82,9 +149,9 @@ function active(rows, i, tags) = [for (r = rows) if (keep(r, i, tags)) r];
 
 // ---- rooms -------------------------------------------------------------
 
-module floor_plate(r) {
-    color(kind_color(r[6]))
-        translate([r[1], r[2], room_z0(r) - 0.15])
+module floor_plate(r) {     // its top 0.005 ft proud, so it shows over a slab at the floor level
+    paint(kind_color(r[6]))
+        translate([r[1], r[2], room_z0(r) - 0.145])
             cube([r[3] - r[1], r[4] - r[2], 0.15]);
 }
 
@@ -101,13 +168,13 @@ module room_label(r) {
     turn = is_undef(at) && sh < 1.0 && sv > 1.3 * sh;
     size = max(is_undef(at) ? (turn ? sv : sh) : at[2], 0.5);
     if (lines[0] != "")
-        color(label_color)
+        paint(label_color)
             translate([is_undef(at) ? (r[1] + r[3]) / 2 : at[0],
                        is_undef(at) ? (r[2] + r[4]) / 2 : at[1], room_z0(r) + 0.01])
                 rotate([0, 0, is_undef(at) ? (turn ? 90 : 0) : (len(at) > 3 ? at[3] : 0)])
                     for (i = [0 : k - 1])
                         translate([0, ((k - 1) / 2 - i) * 1.4 * size, 0])
-                            linear_extrude(0.05)
+                            linear_extrude(0.05, convexity = 10)
                                 text(lines[i], size = size, halign = "center", valign = "center");
 }
 
@@ -136,7 +203,7 @@ module window_cut(w) {
 }
 
 module pane(x, y, axis, width, z, h) {
-    color(glass_color)
+    paint(glass_color)
         if (axis == "x") translate([x, y - 0.05, z]) cube([width, 0.1, h]);
         else             translate([x - 0.05, y, z]) cube([0.1, width, h]);
 }
@@ -148,13 +215,13 @@ module leaf(d, end, lw) {
     n = d[2] == "x" ? [0, door_swing(d)] : [door_swing(d), 0];
     du = end == 0 ? u : -u;                            // hinge -> closed leaf
     hinge = [d[0], d[1]] + (end == 0 ? [0, 0] : d[3] * u);
-    color(door_is_new(d) ? new_color : leaf_color)
+    paint(door_is_new(d) ? new_color : leaf_color)
         multmatrix([[du[0], n[0], 0, hinge[0]],
                     [du[1], n[1], 0, hinge[1]],
                     [0, 0, 1, 0],
                     [0, 0, 0, 1]]) {
             translate([-0.08, 0, 0]) cube([0.16, lw, door_h]);
-            translate([0, 0, 0.02]) linear_extrude(0.04)
+            translate([0, 0, 0.02]) linear_extrude(0.04, convexity = 4)
                 intersection() {
                     difference() { circle(lw, $fn = 64); circle(lw - 0.12, $fn = 64); }
                     square([lw, lw]);
@@ -169,18 +236,18 @@ module door_parts(d) {
     if (t == "slider") pane(d[0], d[1], d[2], d[3], 0, open_h);
     if (t == "glass")  pane(d[0], d[1], d[2], d[3], 0, door_h);
     if (t == "garage")
-        color([0.92, 0.92, 0.90])
+        paint([0.92, 0.92, 0.90])
             if (d[2] == "x") translate([d[0], d[1] - 0.1, -1.5]) cube([d[3], 0.2, 8]);
             else             translate([d[0] - 0.1, d[1], -1.5]) cube([0.2, d[3], 8]);
 }
 
 // Draw one level: floor plates, labels, walls with every door and window
-// cut, door leaves and glass. Children are extra wall solids (e.g. the
-// basement's foundation) that the door cuts must also go through.
+// cut, door leaves and glass. Children are extra wall solids that the
+// door and window cuts must also go through.
 module draw_level(rooms, doors, windows) {
-    for (r = rooms) if (r[6] != "stairwell") floor_plate(r);
+    for (r = rooms) if (r[6] != "stairwell" && r[6] != "tiered" && r[6] != "pit") floor_plate(r);
     for (r = rooms) room_label(r);
-    color(wall_color) difference() {
+    paint(wall_color) difference() {
         union() {
             for (r = rooms) if (r[5] > 0) room_walls(r);
             children();
@@ -194,20 +261,25 @@ module draw_level(rooms, doors, windows) {
 
 // ---- fixtures ----------------------------------------------------------
 
-// fixture = [x0, y0, x1, y1, z0, z1, colour, tag] (a box: counters, appliances...)
 module fixtures(list) {
     for (f = list)
-        color(f[6]) translate([f[0], f[1], f[4]]) cube([f[2] - f[0], f[3] - f[1], f[5] - f[4]]);
+        paint(f[6])
+            if (len(f) > 8 && f[8] == "round")
+                translate([(f[0] + f[2]) / 2, (f[1] + f[3]) / 2, f[4]])
+                    resize([f[2] - f[0], f[3] - f[1], f[5] - f[4]])
+                        cylinder(d = 1, h = 1, $fn = 48);
+            else
+                translate([f[0], f[1], f[4]]) cube([f[2] - f[0], f[3] - f[1], f[5] - f[4]]);
 }
 
 module post(x, y, h, s = 0.75) {
-    color(post_color) translate([x - s / 2, y - s / 2, 0]) cube([s, s, h]);
+    paint(post_color) translate([x - s / 2, y - s / 2, 0]) cube([s, s, h]);
 }
 
 // Steps from a porch edge down to grade: n risers, starting at the edge
 // point (x, y), `width` wide along the edge, leading away toward dir.
 module porch_steps(x, y, dir, width, n = 4, rise = 0.5, run = 1.0) {
-    color(step_color)
+    paint(step_color)
         for (i = [1 : n]) {
             z = -i * rise - 0.5;
             a = (i - 1) * run;
@@ -218,26 +290,8 @@ module porch_steps(x, y, dir, width, n = 4, rise = 0.5, run = 1.0) {
         }
 }
 
-// ICF foundation wall: 8 in concrete core + two 2 5/8 in EPS faces
-function icf_wall_t() = (8 + 2 * 2.625) / 12;
-
-// Foundation walls (ICF, t thick) centred on the outline [x0,y0]-[x1,y1].
-module foundation_walls(x0, y0, x1, y1, h, t = icf_wall_t()) {
-    color(icf_color) {
-        translate([x0 - t / 2, y0 - t / 2, 0]) cube([x1 - x0 + t, t, h]);
-        translate([x0 - t / 2, y1 - t / 2, 0]) cube([x1 - x0 + t, t, h]);
-        translate([x0 - t / 2, y0 - t / 2, 0]) cube([t, y1 - y0 + t, h]);
-        translate([x1 - t / 2, y0 - t / 2, 0]) cube([t, y1 - y0 + t, h]);
-    }
-}
-
-module foundation_slab(x0, y0, x1, y1, t = 1) {
-    w = icf_wall_t();
-    color(icf_color) translate([x0 - w / 2, y0 - w / 2, -t - 0.15]) cube([x1 - x0 + w, y1 - y0 + w, t]);
-}
-
 module landing(x0, y0, x1, y1, z0, z1) {
-    color(stair_color) translate([x0, y0, z0]) cube([x1 - x0, y1 - y0, z1 - z0]);
+    paint(stair_color) translate([x0, y0, z0]) cube([x1 - x0, y1 - y0, z1 - z0]);
 }
 
 // A straight stair flight drawn as solid steps. Footprint [x0,y0]-[x1,y1];
@@ -247,7 +301,7 @@ module landing(x0, y0, x1, y1, z0, z1) {
 module flight(x0, y0, x1, y1, dir, z_top, z_bottom, n, z_floor) {
     rise = (z_top - z_bottom) / n;
     run = ((dir == "+x" || dir == "-x") ? x1 - x0 : y1 - y0) / (n - 1);
-    color(stair_color)
+    paint(stair_color)
         for (i = [1 : n - 1]) {
             z = z_top - i * rise;
             a = (i - 1) * run;
@@ -258,30 +312,35 @@ module flight(x0, y0, x1, y1, dir, z_top, z_bottom, n, z_floor) {
         }
 }
 
-// The proposed basement stair: a U-stair in the main floor's former bar,
-// in main-floor coordinates with the main floor at z_main. Main floor at
-// the top, 21 risers of 7.4" down to the basement. upper = false leaves
-// out the main-floor landing and guard (for the basement-only model).
-module bar_stair(z_main = 0, upper = true) {
+// The main stair in house coordinates (main floor at z_main). Treads run
+// from the top nosing south; each is a solid block down to the basement
+// floor, except where the flight still sits in the floor assembly above
+// the basement's gym wall (north of y_box), where it stops at the
+// basement ceiling. rail = true adds the handrails.
+module main_stair(z_main = 0, y_box = 45.34, rail = true) {
+    x0 = stair_x()[0] + wall_t / 2;
+    x1 = stair_x()[1] - wall_t / 2;
     zb = z_main - floor_to_floor();
-    zl = z_main - 10 * floor_to_floor() / 21;          // landing after 10 risers
-    flight(84.3, 26.9, 92.0, 30.9, "+x", z_main, zl, 10, zb);   // upper flight
-    landing(92.0, 21.4, 96.8, 30.9, zb, zl);
-    flight(83.5, 21.4, 92.0, 25.4, "-x", zl, zb, 11, zb);       // lower flight
-    color(wall_color) translate([83.5, 25.6, zb]) cube([8.5, 1.1, z_main - zb + 3]);
-    if (upper) {
-        color(kind_color("stair")) translate([82.3, 21, z_main - 0.15]) cube([2, 10.4, 0.15]);
-        color(wall_color) {
-            translate([84.3, 31.15, z_main]) cube([12.9, 0.3, 3]);   // guard, family-room side
-            translate([84.15, 21, z_main]) cube([0.3, 4.6, 3]);      // guard at the top landing
+    paint(stair_color)
+        for (i = [1 : stair_risers() - 1]) {
+            ya = stair_top_y() - i * stair_run();       // south edge of tread i
+            z = z_main - i * stair_rise();
+            zf = ya + stair_run() / 2 > y_box ? z_main - main_floor_depth() - 0.125 : zb;
+            translate([x0, ya, zf]) cube([x1 - x0, stair_run() + 0.08, z - zf]);
         }
-    }
+    if (rail)
+        paint([0.40, 0.28, 0.18])
+            for (x = [x0 + 0.1, x1 - 0.2])
+                hull() {
+                    translate([x, stair_top_y(), z_main + 2.8]) cube([0.1, 0.1, 0.12]);
+                    translate([x, stair_foot_y(), zb + 2.8]) cube([0.1, 0.1, 0.12]);
+                }
 }
 
 // ---- roof --------------------------------------------------------------
 
 // Hip roof over [x0,y0]-[x1,y1] plus an overhang, eave at z = eave,
-// pitch = rise / run (8/12 = 0.667). Ridge runs along the longer side.
+// pitch = rise / run (6/12 = 0.5). Ridge runs along the longer side.
 module hip_roof(x0, y0, x1, y1, eave, pitch, overhang = 1.5) {
     a = x0 - overhang; b = y0 - overhang;
     c = x1 + overhang; e = y1 + overhang;
@@ -302,6 +361,6 @@ module hip_roof(x0, y0, x1, y1, eave, pitch, overhang = 1.5) {
 
 // roof block = [x0, y0, x1, y1, eave, pitch, overhang]
 module roofs(blocks, roof_color, opacity = 1) {
-    color(concat(roof_color, [opacity]))
+    paint(concat(roof_color, [opacity]))
         for (b = blocks) hip_roof(b[0], b[1], b[2], b[3], b[4], b[5], b[6]);
 }
