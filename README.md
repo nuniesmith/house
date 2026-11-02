@@ -14,6 +14,7 @@ for:
 - the foundation;
 - the concrete for the indoor pool and its hot tub;
 - the stadium-tiered theater floor;
+- the basement exit stair;
 - the open questions.
 
 ![Both levels, cut east-west](docs/house/cutaway.png)
@@ -21,12 +22,12 @@ for:
 | File | What |
 |---|---|
 | `models/main_floor.scad` | Main level from `main_floor.jpg`: rooms, doors, windows, kitchen and bath fixtures, furniture, porches, hipped roof, the floor framing |
-| `models/basement.scad` | Lower level from `basement.jpg`: music room, gym, theater, pool + spa + pool bath, pet room, living room, utility, laundry |
-| `models/foundation.scad` | The concrete: ICF basement walls and footings, slab, theater tiers, pool + spa shells, frost walls, garage slab, porch piers, and the earth for sections |
+| `models/basement.scad` | Lower level from `basement.jpg`, with 12 ft ceilings: music room, gym, theater, pool + spa + pool bath, pet room, living room, utility, laundry, and the exit stair up to the back yard |
+| `models/foundation.scad` | The concrete: ICF basement walls and footings, slab, theater tiers, pool + spa shells, the exit stair's areaway, frost walls, garage slab, porch piers, and the earth for sections |
 | `models/house_combined.scad` | Everything together (it `use`s the files above): assembled, exploded, foundation and section views |
 | `models/house_lib.scad` | Shared modules, the floor-to-floor height and the stair |
 | `models/shop.scad` | The 100 × 100 ft 4-bay shop (v3: behind the house, front faces west, Bay 1 utilities southernmost) with pit, wash-bay drain and the Bay 1 utility rooms |
-| `models/site.scad` | The whole property: house, shop, west shared driveway, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement; its landing needs re-planning for the new basement (spec §6) |
+| `models/site.scad` | The whole property: house, shop, west shared driveway, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement, which will connect to the basement utility room; its route is still to be planned (spec §7) |
 | `tools/check_layout.py` | Layout checker (needs `openscad` on `PATH`) |
 
 Research and planning documents live in `docs/`:
@@ -60,6 +61,7 @@ Set them in the OpenSCAD Customizer or with `-D name=value`.
   - `B`: along the stair.
   - `C`: through the theater.
   - `D`: through the pool and spa.
+  - `E`: along the basement exit stair.
   - `custom`: set `cut_axis` (`x`/`y`) and `cut_at` yourself.
 
   Cut faces are drawn darker than the surfaces beyond them.
@@ -87,7 +89,7 @@ The coordinates:
   is the garage's west wall and y = 0 the front wall of the den and the
   breakfast bay.
 - z = 0 is the main floor. The basement floor is `floor_to_floor()`
-  (11.75 ft) below it.
+  (13.75 ft, for 12 ft ceilings) below it.
 - Every table format is described at the top of `models/house_lib.scad`.
 
 After editing, run the checker:
@@ -110,8 +112,9 @@ and section A:
 openscad -o plan.png --imgsize=3600,2300 --projection=o \
   --camera=69,25.7,0,0,0,0,235 -D show_roof=false main_floor.scad
 openscad -o section_a.png --imgsize=3000,1000 --projection=o \
-  --camera=69,40,-3,90,0,0,190 -D 'mode="section"' -D 'section="A"' house_combined.scad
+  --camera=69,40,-4,90,0,0,190 -D 'mode="section"' -D 'section="A"' house_combined.scad
 ```
 
-For sections B–D, look east with `--camera=<x>,25,-3,90,0,270,150`.
+For sections B–D, look east with `--camera=<x>,25,-4,90,0,270,150`;
+for E, look north with `--camera=57,65.75,-7,90,0,0,70`.
 Sections take a minute or two each: every cut face is computed exactly.
