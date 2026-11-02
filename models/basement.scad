@@ -31,8 +31,8 @@ water  = [0.39, 0.70, 0.93, 0.75];
 spa_w  = [0.51, 0.90, 0.85, 0.80];
 deck   = [0.86, 0.84, 0.78];
 seat   = [0.25, 0.25, 0.28];
-carpet = [0.42, 0.20, 0.22];
-stage  = [0.30, 0.18, 0.18];
+carpet = [0.66, 0.36, 0.36];
+stage  = [0.36, 0.20, 0.20];
 screen = [0.96, 0.96, 0.96];
 steel  = [0.70, 0.72, 0.74];
 counter= [0.97, 0.97, 0.95];
@@ -46,25 +46,25 @@ table  = [0.66, 0.50, 0.34];
 
 // [label, x0, y0, x1, y1, ceiling, kind, z0, tag, label_at]
 function base_rooms() = [
-    ["MUSIC ROOM",      22.16, 50.35, 42.65, 63.16, 10, "living", 0, "", [32.4, 61.2, 1.6]],
-    ["GYM",             42.65, 45.34, 54.14, 63.16, 10, "rec"],
-    ["STORAGE",         22.16, 42.77, 37.37, 50.35, 10, "closet", 0, "", [29.8, 46.6, 1.4]],
-    ["UTILITY",         22.16, 35.08, 37.37, 42.77, 10, "utility", 0, "", [29.8, 40.3, 1.4]],
-    ["HALL",            37.37, 35.08, 42.65, 50.35, 10, "hall", 0, "", [40, 42.7, 1.0, 90]],
-    ["STAIR UP",        42.65, stair_foot_y(), 47.27, 45.34, 10, "stair", 0, "", [44.95, 30.2, 0.7]],   // label at the foot
-    ["BATH",            47.27, 35.08, 54.14, 45.34, 10, "bath", 0, "", [49.4, 39.6, 1.0]],
+    ["MUSIC ROOM",      22.16, 50.35, 42.65, 63.16, basement_ceiling(), "living", 0, "", [32.4, 61.2, 1.6]],
+    ["GYM",             42.65, 45.34, 54.14, 63.16, basement_ceiling(), "rec"],
+    ["STORAGE",         22.16, 42.77, 37.37, 50.35, basement_ceiling(), "closet", 0, "", [29.8, 46.6, 1.4]],
+    ["UTILITY",         22.16, 35.08, 37.37, 42.77, basement_ceiling(), "utility", 0, "", [29.8, 40.3, 1.4]],
+    ["HALL",            37.37, 35.08, 42.65, 50.35, basement_ceiling(), "hall", 0, "", [40, 42.7, 1.0, 90]],
+    ["STAIR UP",        42.65, stair_foot_y(), 47.27, 45.34, basement_ceiling(), "stair", 0, "", [44.95, 30.2, 0.7]],   // label at the foot
+    ["BATH",            47.27, 35.08, 54.14, 45.34, basement_ceiling(), "bath", 0, "", [49.4, 39.6, 1.0]],
     ["HALLWAY",         35.27, 27.6,  54.14, stair_foot_y(), 0, "hall", 0, "", [39.3, 29.4, 1.0]],
     ["",                35.27, stair_foot_y(), 42.65, 35.08, 0, "hall"],
     ["",                47.27, stair_foot_y(), 54.14, 35.08, 0, "hall"],
     ["LIVING ROOM",     35.27, 5.79,  54.14, 27.6,  10, "living", 0, "", [44.7, 9.5, 1.8]],
-    [["HOME", "THEATER"], 54.14, 29.12, 69.38, 50.35, 11.25, "tiered", -1.25, "", [61.8, 45.4, 1.5]],
-    ["PET ROOM",        54.14, 18.15, 69.38, 29.12, 10, "utility", 0, "", [61.8, 23.3, 1.5]],
-    [["POOL", "ROOM"],  69.38, 18.15, 96.33, 52.76, 10, "pit", 0, "", [77.4, 24.5, 1.6]],
-    [["POOL", "EQUIP."], 96.33, 29.12, 103.04, 41.94, 10, "utility", 0, "", [98.2, 37.7, 0.7]],
-    [["POOL", "BATH"],  96.33, 18.15, 103.04, 29.12, 10, "bath", 0, "", [99.4, 24.4, 0.8]],
-    ["HALL",            54.14, 13.43, 103.04, 18.15, 10, "hall", 0, "", [86, 15.8, 1.2]],
-    ["BATH",            54.14, 5.79,  67.4,  13.43, 10, "bath", 0, "", [58.6, 10.4, 1.1]],
-    ["LAUNDRY",         67.4,  5.79,  81.68, 13.43, 10, "utility", 0, "", [74.6, 10.2, 1.3]],
+    [["HOME", "THEATER"], 54.14, 29.12, 69.38, 50.35, basement_ceiling() + 1.25, "tiered", -1.25, "", [61.8, 45.4, 1.5]],
+    ["PET ROOM",        54.14, 18.15, 69.38, 29.12, basement_ceiling(), "utility", 0, "", [61.8, 23.3, 1.5]],
+    [["POOL", "ROOM"],  69.38, 18.15, 96.33, 52.76, basement_ceiling(), "pit", 0, "", [77.4, 24.5, 1.6]],
+    [["POOL", "EQUIP."], 96.33, 29.12, 103.04, 41.94, basement_ceiling(), "utility", 0, "", [98.2, 37.7, 0.7]],
+    [["POOL", "BATH"],  96.33, 18.15, 103.04, 29.12, basement_ceiling(), "bath", 0, "", [98.9, 24.6, 0.75]],
+    ["HALL",            54.14, 13.43, 103.04, 18.15, basement_ceiling(), "hall", 0, "", [86, 15.8, 1.2]],
+    ["BATH",            54.14, 5.79,  67.4,  13.43, basement_ceiling(), "bath", 0, "", [58.6, 10.4, 1.1]],
+    ["LAUNDRY",         67.4,  5.79,  81.68, 13.43, basement_ceiling(), "utility", 0, "", [74.6, 10.2, 1.3]],
 ];
 
 // [x, y, axis, width, type, swing, tag]  (the drawing shows no doors)
@@ -78,7 +78,7 @@ function base_doors() = [
     [35.5,   stair_foot_y(), "x", 6.9, "full"],     // hallway pieces
     [47.5,   stair_foot_y(), "x", 6.4, "full"],
     [49.2,   35.08, "x", 2.8, "door",  1],          // bath
-    [54.14,  31.7,  "y", 3.0, "door",  1],          // theatre, at the back (top) tier
+    [54.14,  31.7,  "y", 3.0, "door", -1],          // theatre, at the back (top) tier; swings out
     [40.0,   27.6,  "x", 8.0, "open"],              // living room
     [54.14,  13.8,  "y", 4.0, "open"],              // living room / east hall
     [56.5,   18.15, "x", 3.0, "door",  1],          // pet room
@@ -154,13 +154,12 @@ function base_furniture() = [
     [70.4,  29.0,  72.9,  35.5,  0, 1.2,  white],
 ];
 
-// theatre seating: two rows of four recliners, centred on the lowered
-// tiers; the back row on the rear (entrance) tier
-module theatre_seats() {
-    paint(seat)
-        for (row = [[30.5, 0], [38.4, -1.25]], x = [56.55, 59.15, 61.75, 64.35])
-            translate([x, row[0], row[1]]) cube([2.55, 3.2, 3.3]);
-}
+// theatre seating, as fixture rows: two rows of four recliners centred on
+// the lowered tiers, the back row on the rear (entrance) tier
+function theatre_seats() = [
+    for (row = [[30.5, 0], [38.4, -1.25]], x = [56.55, 59.15, 61.75, 64.35])
+        [x, row[0], x + 2.55, row[0] + 3.2, row[1], row[1] + 3.3, seat]
+];
 
 // water in the pool and the raised spa (shells and levels: foundation.scad,
 // whose elevations are from the main floor, hence + floor_to_floor())
@@ -174,12 +173,12 @@ module basement_level(show_stair = true, audit = false, show_furniture = true) {
     rooms = base_rooms();
     doors = base_doors();
     if (audit) echo(rooms = rooms, doors = doors, windows = [],
-                    fixtures = concat(base_fixtures(), base_furniture()));
+                    fixtures = concat(base_fixtures(), base_furniture(), theatre_seats()));
 
     draw_level(rooms, doors, []);
     fixtures(base_fixtures());
     if (show_furniture) fixtures(base_furniture());
-    theatre_seats();
+    fixtures(theatre_seats());
     pool_and_spa_water();
     // the concrete (walls, footings, slab, tiers, pool + spa shells),
     // drawn at its real elevation and lifted to this level's frame

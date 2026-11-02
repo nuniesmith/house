@@ -101,6 +101,9 @@ module cut_face(cut) {
 // main floor (finished) at z = 0; grade 2 ft below it; basement slab
 // (top) floor_to_floor() below it. The main floor assembly is 18" open-web
 // floor trusses + subfloor + finish, so the basement gets a 10 ft ceiling.
+// For 12 ft (the earlier research's figure) set floor_to_floor() = 13.75:
+// the stair becomes 22 risers of 7 1/2" and its foot moves 2.6 ft south,
+// still in the basement hallway, with the same opening and headroom.
 function floor_to_floor()   = 11.75;
 function main_floor_depth() = 1.625;
 function grade()            = -2;
@@ -114,7 +117,7 @@ function basement_ceiling() = floor_to_floor() - main_floor_depth() - 0.125;
 // the main floor runs from the main hall wall to the top nosing, long
 // enough for 1950 mm headroom under the floor assembly.
 function stair_x()      = [42.65, 47.27];        // wall centre lines
-function stair_risers() = 19;
+function stair_risers() = ceil(floor_to_floor() * 12 / 7.5);   // risers of at most 7 1/2"; 19 at 11.75 ft
 function stair_rise()   = floor_to_floor() / stair_risers();
 function stair_run()    = 10.5 / 12;
 function stair_top_y()  = 47.1;                   // top nosing

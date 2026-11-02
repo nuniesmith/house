@@ -14,7 +14,9 @@
 //                  theatre tiers, pool + spa shell, frost walls, piers
 //   section        a vertical cut through everything, earth included;
 //                  `section` picks the cut (see below), or set cut_axis
-//                  and cut_at directly with section = "custom"
+//                  and cut_at directly with section = "custom"; cut faces
+//                  are drawn darker than the surfaces beyond (house_lib's
+//                  paint() does the cutting, so every part keeps its colour)
 
 use <house_lib.scad>
 use <main_floor.scad>

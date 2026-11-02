@@ -210,20 +210,43 @@ module pool_shell() {
 }
 
 // ---- frost walls, garage slab, porch piers --------------------------------
+// Frost walls and the garage slab stop at the basement walls' outside
+// face (where they meet, the basement wall carries the floor), and a
+// porch post that stands on a basement wall needs no pier.
 module frost_foundation() {
     paint(concrete)
-        for (f = frost_walls()) {
-            strip(f, 8 / 12, frost_bottom() + 8 / 12, f[4]);
-            strip(f, 20 / 12, frost_bottom(), frost_bottom() + 8 / 12);
+        difference() {
+            union() {
+                for (f = frost_walls()) {
+                    strip(f, 8 / 12, frost_bottom() + 8 / 12, f[4]);
+                    strip(f, 20 / 12, frost_bottom(), frost_bottom() + 8 / 12);
+                }
+                translate([0.33, 1.58, -1.5 - slab_t()]) cube([23.68, 33.55, slab_t()]);   // garage slab
+            }
+            basement_footprint();
         }
-    paint(concrete) translate([0.33, 1.58, -1.5 - slab_t()]) cube([23.68, 33.55, slab_t()]);   // garage slab
-    paint(stone) translate([0.33, 1.58, -1.5 - slab_t() - base_t()]) cube([23.68, 33.55, base_t()]);
+    paint(stone)
+        difference() {
+            translate([0.33, 1.58, -1.5 - slab_t() - base_t()]) cube([23.68, 33.55, base_t()]);
+            basement_footprint();
+        }
     paint(concrete)
-        for (p = porch_piers()) {
+        for (p = piers()) {
             translate([p[0], p[1], frost_bottom() - 0.5]) cylinder(d = 2.0, h = 0.67, $fn = 24);   // bell
             translate([p[0], p[1], frost_bottom()]) cylinder(d = 1.0, h = grade() - frost_bottom() + 1.5, $fn = 24);
         }
 }
+module basement_footprint() { zslab(frost_bottom() - 2, 2) outline2d(icf_wall_t() / 2); }
+
+// the porch piers that are not on (or within 6" of) a basement wall
+function piers() = [for (p = porch_piers()) if (!near_outline(p, icf_wall_t() / 2 + 0.5)) p];
+function near_outline(p, d) = let(o = basement_outline(), n = len(o))
+    inside(p, o) || min([for (i = [0 : n - 1]) seg_dist(p, o[i], o[(i + 1) % n])]) < d;
+// point in polygon (even-odd rule) and point-to-segment distance
+function inside(p, poly) = len([for (i = [0 : len(poly) - 1])
+    let(a = poly[i], b = poly[(i + 1) % len(poly)])
+    if ((a[1] > p[1]) != (b[1] > p[1]) && p[0] < a[0] + (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1])) 1]) % 2 == 1;
+function seg_dist(p, a, b) = let(ab = b - a, t = max(0, min(1, ((p - a) * ab) / (ab * ab)))) norm(p - (a + t * ab));
 
 // ---- earth (for sections) ---------------------------------------------------
 // The ground round the house from grade down, with everything that is dug
@@ -233,15 +256,27 @@ module frost_foundation() {
 // basement (crawl_rooms: the main floor's heated rooms).
 module earth(crawl_rooms = []) {
     // (each colour wraps a finished shape, so a section's cut face is right)
-    // (the lawn's dug faces sit 0.01 ft further out than the earth's, or
-    // the preview would draw the earth's faces in the lawn's colour)
     paint(earth_c) difference() { translate([-25, -45, -28]) cube([190, 140, 28 + grade() - 0.1]); dug_out(crawl_rooms); }
-    paint(lawn) difference() { translate([-25, -45, grade() - 0.1]) cube([190, 140, 0.1]); dug_out(crawl_rooms, 0.02); }
+    // the lawn is cut in 2D: a 3D cut-out's faces would take the lawn's
+    // colour wherever they line up with a visible face in the preview
+    paint(lawn) translate([0, 0, grade() - 0.1]) linear_extrude(0.1, convexity = 10) lawn2d(crawl_rooms);
+}
+module lawn2d(crawl_rooms, g = 0.02) {
+    difference() {
+        translate([-25, -45]) square([190, 140]);
+        outline2d(icf_wall_t() / 2 + g);
+        for (r = crawl_rooms) translate([r[1], r[2]]) square([r[3] - r[1], r[4] - r[2]]);
+        for (f = frost_walls()) let(w = 8 / 12 + 2 * g)
+            translate([min(f[0], f[2]) - w / 2, min(f[1], f[3]) - w / 2]) square([abs(f[2] - f[0]) + w, abs(f[3] - f[1]) + w]);
+        for (p = piers()) translate([p[0], p[1]]) circle(d = 1.0 + 2 * g, $fn = 24);
+        translate([0.33 - g, 1.58 - g]) square([23.68 + 2 * g, 33.55 + 2 * g]);   // garage slab
+    }
 }
 // Each volume is 0.01 ft bigger than what it makes room for: in the
 // preview a dug face that coincides with a visible face would paint it
 // earth-coloured.
-module dug_out(crawl_rooms, g = 0.01) {
+module dug_out(crawl_rooms) {
+    g = 0.01;
     w = icf_wall_t();
     ft = footing_top();
     union() {
@@ -256,7 +291,7 @@ module dug_out(crawl_rooms, g = 0.01) {
             strip(f, 8 / 12 + 2 * g, frost_bottom() - g, 1);
             strip(f, 20 / 12 + 2 * g, frost_bottom() - g, frost_bottom() + 8 / 12 + g);
         }
-        for (p = porch_piers()) {
+        for (p = piers()) {
             translate([p[0], p[1], frost_bottom() - 0.5 - g]) cylinder(d = 2.0 + 2 * g, h = 0.67 + 2 * g, $fn = 24);
             translate([p[0], p[1], frost_bottom()]) cylinder(d = 1.0 + 2 * g, h = 10, $fn = 24);
         }
@@ -265,7 +300,7 @@ module dug_out(crawl_rooms, g = 0.01) {
         zslab(sill() - 1.5, 1)
             difference() {
                 union() for (r = crawl_rooms) translate([r[1], r[2]]) square([r[3] - r[1], r[4] - r[2]]);
-                outline2d(w / 2);
+                outline2d(w / 2 + g);
                 translate([0, 1.25]) square([24.34, 34.21]);           // garage
             }
     }
