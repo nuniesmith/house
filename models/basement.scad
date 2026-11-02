@@ -16,7 +16,9 @@
 // - the theatre floor steps down toward the screen (stadium tiers), and
 //   the pool and spa are shown with their shells (foundation.scad);
 // - an exit stair out of the gym's north wall up to the back yard (the
-//   sketch has no way out but the main stair).
+//   sketch has no way out but the main stair);
+// - two windows in light wells, for the living room and the music room
+//   (foundation.scad's basement_windows()).
 
 use <house_lib.scad>
 use <foundation.scad>
@@ -192,17 +194,35 @@ module exit_stair() {
     }
 }
 
+// a 42" guard round each light well, on its curb (wells: foundation.scad)
+module well_guards() {
+    t = exit_wall_t(); zg = exit_rise();
+    paint(rail)
+        for (w = basement_windows()) {
+            c = w[6]; north = c[1] > 30;
+            yo = north ? c[3] + t / 2 : c[1] - t / 2;          // outer wall's centre line
+            yh = north ? c[1] : c[3];                            // the house side
+            for (x = [c[0] - t / 2, c[2] + t / 2], y = [yo, (yo + yh) / 2])
+                translate([x - 0.08, y - 0.08, zg + 0.5]) cube([0.16, 0.16, 3]);
+            translate([c[0] - t / 2 - 0.08, yo - 0.1, zg + 3.35]) cube([c[2] - c[0] + t + 0.16, 0.2, 0.15]);
+            for (x = [c[0] - t / 2, c[2] + t / 2])
+                translate([x - 0.1, min(yo, yh), zg + 3.35]) cube([0.2, abs(yh - yo), 0.15]);
+        }
+}
+
 module basement_level(show_stair = true, audit = false, show_furniture = true) {
     rooms = base_rooms();
     doors = base_doors();
-    if (audit) echo(rooms = rooms, doors = doors, windows = [],
+    windows = [for (w = basement_windows()) [w[0], w[1], w[2], w[3], w[4], w[5]]];
+    if (audit) echo(rooms = rooms, doors = doors, windows = windows,
                     fixtures = concat(base_fixtures(), base_furniture(), theatre_seats()));
 
-    draw_level(rooms, doors, []);
+    draw_level(rooms, doors, windows);
     fixtures(base_fixtures());
     if (show_furniture) fixtures(base_furniture());
     fixtures(theatre_seats());
     exit_stair();
+    well_guards();
     pool_and_spa_water();
     // the concrete (walls, footings, slab, tiers, pool + spa shells),
     // drawn at its real elevation and lifted to this level's frame

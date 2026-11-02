@@ -21,6 +21,13 @@
 // of the basement, so the landing is direct: no other basement room
 // is touched. See docs/shop/Shop-Base-Plan.md.
 //
+// v4 (2026-11-02): the shop's two truck bays and the wash bay are
+// pull-through (doors in the east wall too, shop.scad), and the drive
+// wraps round the shop: from the west apron along the north side to a
+// 60 ft deep east apron, so a truck drives in from the west, out to the
+// east and loops back - without coming through the back yard. The tree
+// belt's north and east rows move out past the new drive.
+//
 // NOTE - house redesign of November 2026: the new basement has no
 // UTILITIES room on its north side; its UTILITY room (14'6" x 7') is on
 // the west side, behind the storage room. Decision (Nov 2): the tunnel
@@ -67,6 +74,11 @@ module drives() {
         translate([-32, -70, grade_z + 0.05]) cube([30, 300, 0.12]);
         // shop apron (west front)
         translate([-72, 130, grade_z + 0.06]) cube([70, 100, 0.12]);
+        // the wrap-round: north of the shop, then the east apron in front
+        // of the pull-through doors (corners sized for a tractor-trailer's
+        // ~50 ft outside turning radius when it is laid out)
+        translate([-72, 230, grade_z + 0.06]) cube([232, 32, 0.12]);   // north leg
+        translate([100, 126, grade_z + 0.06]) cube([60, 136, 0.12]);   // east apron
         // front loop driveway (ring) south of the house
         translate([25, -72, grade_z + 0.05]) cube([105, 14, 0.12]);    // south leg
         translate([25, -28, grade_z + 0.05]) cube([105, 14, 0.12]);    // north leg
@@ -91,11 +103,13 @@ module tree(x, y) {
     color([0.32, 0.55, 0.30]) translate([x, y, grade_z + 9]) sphere(r = 6, $fn = 12);
 }
 
-module tree_belt() {
-    for (x = [8, 26, 44, 62, 80, 98]) tree(x, 244);              // north edge
-    for (y = [140, 158, 176, 194, 212, 228]) tree(114, y);       // east edge
+module tree_belt() {   // outside the wrap-round drive on the north and east
+    for (x = [-58, -40, -22, -4, 14, 32, 50, 68, 86, 104, 122, 140, 158]) tree(x, 276);   // north edge
+    for (y = [134, 152, 170, 188, 206, 224, 242, 260]) tree(174, y);                       // east edge
     for (x = [8, 26, 44, 62, 98]) tree(x, 116);                  // south edge (gap at the tunnel, x 72..88)
-    flat_text("TREE BELT - 3 SIDES", [53, 258], 4, [0.2, 0.4, 0.2]);
+    flat_text("TREE BELT - 3 SIDES", [53, 290], 4, [0.2, 0.4, 0.2]);
+    flat_text("EAST APRON", [130, 180], 4);
+    flat_text("WRAP-ROUND DRIVE", [50, 246], 4);
 }
 
 module tunnel() {
@@ -110,11 +124,10 @@ module tunnel() {
 }
 
 module ground() {
-    e = exit_footprint();
     color([0.56, 0.68, 0.45]) difference() {
         translate([-175, -100, grade_z - 0.1]) cube([370, 370, 0.1]);
-        // the basement exit stair's areaway stays open
-        translate([e[0], e[1], grade_z - 1]) cube([e[2] - e[0], e[3] - e[1], 2]);
+        // the basement exit stair and the light wells stay open
+        translate([0, 0, grade_z - 1]) linear_extrude(2) basement_openings2d();
         // a slot over the tunnel so the tunnel reads from above
         if (show_tunnel) translate([tunnel_x() - 5.5, tunnel_end_y() - 2, grade_z - 1]) cube([11, 134 - tunnel_end_y(), 2]);
     }

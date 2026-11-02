@@ -10,6 +10,12 @@
 //   Bay 1 utilities | Bay 2 truck work | Bay 3 truck work + pit | Bay 4 wash
 //
 // Bay 1 (utilities) is the SOUTHERNMOST bay, closest to the house.
+//
+// Update 2026-11-02 (v4): the two truck bays and the wash bay are
+// pull-through - each has a second 14 x 14 door in the east wall, so 3
+// bays with 6 doors - and a drive wraps round the shop's north side to
+// an east apron (site.scad). The east-wall benches and the wash plant
+// move off the drive lanes.
 // The utility tunnel leaves the SOUTH SIDE of Bay 1 at its portal
 // room (near the bay's east end) and runs due SOUTH into the house
 // basement's UTILITIES room through its north foundation wall -
@@ -64,6 +70,12 @@ function shop_doors() = [
     [30.5, 14, 14],    // truck work
     [5,    10, 12],    // utilities (equipment only, no trucks)
 ];
+// and on the east wall: the pull-through doors, opposite the west ones
+function shop_east_doors() = [
+    [80.5, 14, 14],    // wash bay
+    [55.5, 14, 14],    // truck work + pit
+    [30.5, 14, 14],    // truck work
+];
 
 module txt(lines, at, size = 1.6, rot = 0) {
     color([0.15, 0.15, 0.15])
@@ -81,6 +93,7 @@ module room_box(r) {   // r = [label, x0, y0, x1, y1, ceil, kind, z0, tag, label
 
 module perimeter_walls() {
     doors = shop_doors();
+    east = shop_east_doors();
     color([0.93, 0.91, 0.87]) difference() {
         union() {
             translate([-wall_t / 2, -wall_t / 2, 0]) cube([wall_t, 100 + wall_t, wall_h]);          // west (front)
@@ -89,10 +102,13 @@ module perimeter_walls() {
             translate([-wall_t / 2, 100 - wall_t / 2, 0]) cube([100 + wall_t, wall_t, wall_h]);      // north
         }
         for (d = doors) translate([-1, d[0], -0.1]) cube([2, d[1], d[2] + 0.1]);
+        for (d = east) translate([99, d[0], -0.1]) cube([2, d[1], d[2] + 0.1]);
         translate([-1, 17, -0.1]) cube([2, 3, 7.1]);   // Bay 1 man door
     }
     for (d = doors)   // door panels, drawn closed
         color([0.88, 0.88, 0.86]) translate([-0.12, d[0], 0]) cube([0.24, d[1], d[2]]);
+    for (d = east)
+        color([0.88, 0.88, 0.86]) translate([99.88, d[0], 0]) cube([0.24, d[1], d[2]]);
 }
 
 module util_partitions() {
@@ -117,12 +133,14 @@ module shop_fixtures() {
     // wash bay trench drain
     color(waterc) translate([15, 86.5, 0.02]) cube([70, 2, 0.06]);
     txt(["TRENCH DRAIN"], [50, 82], 1.2);
-    // wash-bay separator / pressure-washer zone at the east end
-    color(steel) translate([88, 77, 0]) cube([10, 21, 3]);
-    // benches along the east wall of Bays 2 + 3
+    // wash-bay pressure-washer plant and hose reels on the north wall,
+    // off the pull-through lane (the separator is below the slab)
+    color(steel) translate([40, 96.5, 0]) cube([20, 3, 4]);
+    // benches along the sides of Bays 2 + 3 near the east end, clear of
+    // the doors and the pit
     color(steel) {
-        translate([96, 28, 0]) cube([3, 19, 3]);
-        translate([96, 53, 0]) cube([3, 19, 3]);
+        translate([66, 25.5, 0]) cube([30, 2.5, 3]);
+        translate([72, 72, 0]) cube([24, 2.5, 3]);
     }
     // Bay 1: generator (1A), batteries + switchgear (1B), racks (1D),
     // tanks + boiler (1C)
