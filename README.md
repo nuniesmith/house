@@ -40,7 +40,7 @@ the building code as drawn.
 | `models/house_combined.scad` | Everything together (it `use`s the files above): assembled, exploded, foundation and section views |
 | `models/house_lib.scad` | Shared modules, the floor-to-floor height and the stair |
 | `models/shop.scad` | The 100 × 100 ft 4-bay shop (behind the house, Bay 1 utilities southernmost) with pull-through doors on the two truck bays and the wash bay (3 bays, 6 doors), the pit, the wash-bay drain and the Bay 1 utility rooms |
-| `models/site.scad` | The whole property: house, shop, west shared driveway with the wrap-round drive (north side and east apron) for the pull-through bays, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement, which will connect to the basement utility room; its route is still to be planned (spec §7) |
+| `models/site.scad` | The property. `phase = "house"` (the default) shows the house first, with what it needs: the driveway from the road on the south, the power / gas / fibre corridor, a propane tank option, Starlink, the well on the west side, and the septic tank and field on the east side. The future shop's spot is dashed. `phase = "full"` adds the shop, its wrap-round drive and tree belt, and the buried service lines from the house. There is no tunnel any more |
 | `models/export.scad` | Echoes every table of the model, one per line, for the tools |
 | `tools/check_layout.py` | Layout checker (needs `openscad` on `PATH`) |
 | `tools/model_data.py` | Reads the model's tables through `models/export.scad` |
@@ -52,8 +52,9 @@ Research and planning documents live in `docs/`:
 - `docs/permit/` has the engineering review and permit package.
 - `docs/House-Review-and-Research-2026-10-28.md` is the earlier house review
   and build research for Alberta.
-- `docs/shop/` has the shop base plan (utility hub, tunnel, septic, build
-  order, decision list) with its drawn plans and renders.
+- `docs/shop/` has the shop base plan, with its drawn plans and renders.
+  The shop is a later, separate project. The plan's utility-hub and tunnel
+  ideas are superseded (see its Nov 3 note).
 
 | | |
 |---|---|
@@ -86,6 +87,11 @@ Set them in the OpenSCAD Customizer or with `-D name=value`.
   default). Section views leave the roof out unless `section_roof=true`.
 - **`show_furniture`**, and **`show_ground`** (the lawn in the assembled
   view).
+
+`site.scad`:
+
+- **`phase`**: `house` (the house and its services, built first) or
+  `full` (with the future shop).
 
 `foundation.scad`:
 

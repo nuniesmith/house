@@ -67,8 +67,9 @@ function main_rooms() = [
     ["HALL",            53.95, 45.39, 69.14, 50.69, 10, "hall", 0, "", [64.6, 48.1, 1.1]],
     ["BATH",            47.27, 35.46, 53.95, 45.39, 10, "bath", 0, "", [50.2, 42.5, 1.0]],
     [["FLEX", "ROOM"],  53.95, 35.46, 69.14, 45.39, 10, "office"],
-    ["SITTING ROOM",    42.65, 50.69, 53.95, 63.42, 10, "living", 0, "", [49.75, 54.55, 0.8]],
-    [["BREAKFAST", "NOOK"], 53.95, 50.69, 69.14, 63.42, 10, "dining", 0, "", [61.3, 54.2, 1.3]],
+    ["SUN ROOM",        42.65, 50.69, 53.95, 63.42, 10, "living", 0, "", [49.75, 54.55, 0.9]],
+    // a covered patio at floor level (not a room: no walls), beside the deck
+    ["PATIO",           53.95, 50.69, 69.14, 63.42, 0,  "porch", 0, "", [61.3, 54.2, 1.3]],
     ["HALL",            24.34, 29.51, 105.2, 35.46, 10, "hall", 0, "", [61, 33.2, 1.3]],
     // ---- great room, kitchen, front rooms
     ["GREAT ROOM",      69.14, 35.46, 95.63, 52.53, 12, "living", 0, "", [83, 48.6, 2]],
@@ -139,14 +140,14 @@ function main_doors() = [
     [42.65,  47.15, "y", 2.4,  "door",    1],      // north-south hall to the stair landing
     [42.9,   stair_top_y(), "x", 4.1, "full"],     // top of the stair
     [47.27,  47.3,  "y", 3.2,  "full"],            // stair landing / upper hall
-    [53.95,  45.75, "y", 2.7,  "door",   -1],      // upper hall door (sitting room / nook line)
+    [53.95,  45.75, "y", 2.7,  "door",   -1],      // upper hall door (sun room / patio line)
     [69.14,  45.6,  "y", 4.9,  "full"],            // upper hall / great room
     [70.65,  52.53, "x", 6.0,  "double", -1],      // great room to the deck (French doors, in place of the drawn window)
     [47.8,   45.39, "x", 2.9,  "door",   -1],      // hall bath
     [58.3,   45.39, "x", 6.5,  "slider"],          // flex room (glass sliders)
-    [47.5,   50.69, "x", 5.9,  "double",  1],      // sitting room
-    [53.95,  53.9,  "y", 4.9,  "double",  1],      // sitting room / nook
-    [58.55,  50.69, "x", 6.0,  "double", -1],      // nook
+    [47.5,   50.69, "x", 5.9,  "double",  1],      // sun room
+    [53.95,  53.9,  "y", 4.9,  "double",  1],      // sun room -> patio
+    [58.55,  50.69, "x", 6.0,  "double", -1],      // hall -> patio
     // ---- main hall, kitchen, front rooms
     [38.2,   29.51, "x", 4.0,  "full"],            // hall / kitchen
     [48.9,   29.51, "x", 5.9,  "full"],
@@ -174,7 +175,8 @@ function main_windows() = [
     [21.45,  66.64, "x", 3.5, 2.5,  5],      // bunk room
     [7.27,   36.3,  "y", 5.4, 2.75, 5],      // bedroom 2
     [7.27,   42.3,  "y", 5.4, 2.75, 5],
-    [69.14,  53.6,  "y", 9.4, 1.5,  6.5],    // nook: glass wall to the deck
+    [44.3,   63.42, "x", 7.4, 1.5,  6.5],    // sun room: tall glass to the north
+    [53.95,  59.3,  "y", 3.6, 1.5,  6.5],    //   and beside its doors to the patio
     [77.8,   52.53, "x", 3.6, 2,    6],      // great room
     [89.4,   52.53, "x", 4.3, 2,    6],
     [110.0,  52.86, "x", 2.5, 2.5,  5],      // master bedroom
@@ -252,7 +254,7 @@ function main_furniture() = [
     [46.84,  60.76, 51.78,  62.99, 0, 2.6,  sofa],      // sitting room
     [43.09,  53.85, 45.53,  59.77, 0, 2.6,  sofa],
     [47.83,  55.49, 50.46,  59.11, 0, 1.5,  table, "", "round"],
-    [58.68,  56.48, 62.96,  60.76, 0, 2.5,  table, "", "round"],   // nook table
+    [58.68,  56.48, 62.96,  60.76, 0, 2.5,  table, "", "round"],   // patio table
     [59.34,  12.73, 62.96,  21.94, 0, 2.5,  table],     // dining table
     [54.41,  0.56,  55.39,  5.49,  0, 1.5,  sofa],      // breakfast banquette
     [55.39,  0.36,  60.33,  1.88,  0, 1.5,  sofa],
@@ -293,6 +295,7 @@ function main_posts() = [
     [81.1, -14.81, 9.5], [88.6, -14.81, 9.5], [96.3, -14.81, 9.5], [100.96, -14.81, 9.5],
     [49.69, -7.0, 9.5], [49.69, 5.83, 9.5], [100.96, -7.0, 9.5], [100.96, 8.86, 9.5],
     [69.59, 64.25, 10], [95.18, 64.25, 10],
+    [68.89, 63.17, 10], [61.55, 63.17, 10],                 // patio: open corner + north edge
     [108.17, 59.02, 10], [109.07, 61.95, 10], [126.52, 61.95, 10],
     [127.42, 59.02, 10], [137.21, 59.02, 10], [137.21, 51.1, 10], [137.21, 43.2, 10],
     [137.21, 35.2, 10], [137.21, 27.29, 10],
@@ -302,7 +305,7 @@ function main_posts() = [
 function main_roof() = [
     [0,      1.25,  24.34,  35.46, 8.5, 0.5,   1.5],   // garage
     [7.27,   35.46, 37.3,   66.64, 10,  0.5,   1.5],   // bedroom wing
-    [37.3,   35.46, 69.14,  63.42, 10,  0.5,   1.5],   // study, sitting room, nook
+    [37.3,   35.46, 69.14,  63.42, 10,  0.5,   1.5],   // study, sun room, patio
     [69.14,  29.51, 95.63,  52.53, 12,  0.5,   1.5],   // great room
     [95.63,  29.51, 126.97, 52.86, 10,  0.5,   1.5],   // office, master bedroom
     [24.34,  6.28,  69.14,  35.46, 12,  0.5,   1.5],   // kitchen, scullery, side entry, and the main hall
@@ -336,6 +339,20 @@ module floor_assembly(rooms) {
         }
 }
 
+// The patio's north edge stands over the basement exit stair's areaway
+// (about 11 ft down), so it gets a 42" guard from the sun room's corner to
+// the patio's corner post; the deck carries on at the same level to the east.
+module patio_guard() {
+    rail = [0.22, 0.22, 0.24];
+    y = 63.3; x0 = 53.95; x1 = 68.89;
+    paint(rail) {
+        for (x = [x0 + 0.1 : (x1 - x0 - 0.2) / 4 : x1 + 0.01])
+            translate([x - 0.08, y - 0.08, 0]) cube([0.16, 0.16, 3.5]);
+        translate([x0, y - 0.1, 3.35]) cube([x1 - x0, 0.2, 0.15]);
+        translate([x0, y - 0.06, 1.75]) cube([x1 - x0, 0.12, 0.1]);
+    }
+}
+
 module main_level(show_roof = true, roof_color = [0.20, 0.38, 0.62], roof_opacity = 1,
                   show_furniture = true, audit = false, show_stair = true) {
     rooms = main_rooms();
@@ -360,6 +377,7 @@ module main_level(show_roof = true, roof_color = [0.20, 0.38, 0.62], roof_opacit
         }
 
     for (p = main_posts()) post(p[0], p[1], p[2]);
+    patio_guard();
     for (p = main_porch_steps()) porch_steps(p[0], p[1], p[2], p[3]);
 
     if (show_roof) roofs(main_roof(), roof_color, roof_opacity);

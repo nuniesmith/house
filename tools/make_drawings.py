@@ -406,7 +406,7 @@ def exit_walls():
     return unary_union([
         box(a[0] - t, a[3], a[2], a[3] + t),                 # north (outer) wall
         box(a[0] - t, a[1], a[0], a[3]),                     # west wall
-        box(54.14, 63.09, a[2], 63.09 + 2 / 3),              # the nook's frost wall, carried down
+        box(54.14, 63.09, a[2], 63.09 + 2 / 3),              # the patio's frost wall, carried down
     ])
 
 
@@ -858,7 +858,7 @@ FRAMING = [
     ("F8", 81.68, 13.43, 103.04, 18.15, "y", "hall"),
     ("C1", 7.27, 35.46, 22.16, 62.04, "x", "bedroom wing, crawlspace"),
     ("C2", 24.34, 20.82, 35.27, 35.46, "x", "scullery, side entry, crawlspace"),
-    ("C3", 54.14, 50.35, 69.14, 63.42, "y", "nook, crawlspace"),
+    ("C3", 54.14, 50.35, 69.14, 63.42, "y", "patio floor (exterior), on the frost walls"),
     ("C4", 103.04, 9.31, 126.97, 48.16, "x", "office, master wing - NEW crawlspace beam line x = 103.04 north of y 41.94"),
     ("C5", 108.62, 48.16, 126.97, 52.86, "x", "master bedroom north, crawlspace"),
     ("C6", 81.68, 0.0, 95.95, 13.43, "y", "den front, crawlspace"),
@@ -1239,7 +1239,7 @@ VIEWS = {
     "roof": ("main_floor.scad", "D", (PLAN_CENTER[0] - PLAN_RECT[2] * S316 / 2, PLAN_CENTER[0] + PLAN_RECT[2] * S316 / 2),
              (PLAN_CENTER[1] - PLAN_RECT[3] * S316 / 2, PLAN_CENTER[1] + PLAN_RECT[3] * S316 / 2), 0.0, S316, 150,
              NOFURN),
-    "site": ("site.scad", "D", (-180.0, 200.0), (-105.0, 275.0), 0.0, S_SITE, 150, ()),
+    "site": ("site.scad", "D", (-112.0, 262.0), (-127.0, 240.0), 0.0, S_SITE, 150, ('phase="house"',)),
 }
 
 
@@ -1477,31 +1477,32 @@ def sheet_site(pdf, paths):
     view_title(bg, DRAW[0] + 0.2, 2.35, 1, "SITE PLAN - SCHEMATIC, NOT A SURVEY", SCALE_TXT[S_SITE], "A0.1")
     north_arrow(bg, DRAW[0] + 13.5, 1.6)
     scale_bar(bg, DRAW[0] + 15.0, 1.6, S_SITE, feet=(0, 20, 40, 80, 160))
-    labels = [((69, 25), "HOUSE"), ((50, 180), "SHOP"), ((0.0, 0.0), "")]
-    for (x, y), t in labels:
-        if t:
-            ax.text(x, y, t, fontsize=8, weight="bold", ha="center", va="center", color="white", zorder=6,
-                    bbox=dict(fc="#203f66", ec="none", pad=1.0, alpha=0.85))
-    notes_column(bg, DRAW[0] + 20.4, 22.6, "THIS IS NOT THE PERMIT SITE PLAN", [
-        "Land is not chosen yet: positions are relative to the house, from models/site.scad.",
-        "For the development and building permits, replace this sheet with a plot plan by an "
-        "Alberta Land Surveyor (ALS) on the real parcel, showing:",
-        "property lines, the legal land description and the parcel area;",
-        "setbacks from every property line and from the road (municipal land-use bylaw);",
-        "easements, rights-of-way, pipelines and power lines (Utility Safety Partners locate);",
-        "the house, the shop and every other building, with their distances apart;",
-        "the water well and the private sewage (PSDS) system with their separation distances "
-        "(Alberta Private Sewage Systems Standard of Practice 2021);",
-        "the driveway and its approach to the road (municipal approach permit);",
-        "existing and finished grades, the geodetic elevation of the main floor (0'-0\" here), "
-        "and drainage away from the buildings;",
-        "any watercourse, wetland, slope or flood hazard.",
-        "**SITE SERVICES (separate permits)",
-        "Water well by a licensed driller (household use under 1 250 m3/yr needs no licence; "
-        "register the well).",
-        "PSDS by a certified installer after a site evaluation (soil test pits).",
-        "Power, gas or propane, and the shop tunnel (to the basement UTILITY room later).",
-    ], 9.4, fs=8.0)
+    ax.text(69, 25, "HOUSE", fontsize=8, weight="bold", ha="center", va="center", color="white", zorder=6,
+            bbox=dict(fc="#203f66", ec="none", pad=1.0, alpha=0.85))
+    y = notes_column(bg, DRAW[0] + 20.0, 22.6, "THE HOUSE FIRST - ITS SITE AND SERVICES", [
+        "The house is built first, on its own; the shop is a separate project with its own permits, later "
+        "(its spot is kept clear, dashed).",
+        "Driveway from the road (assumed on the south) up the west side to the garage's west-facing doors, "
+        "plus the front loop round the garden. A road approach permit from the municipality.",
+        "Power: underground from the road (the utility or REA sets the transformer and route) to a meter on "
+        "the west wall; the panel is in the basement UTILITY room on that side.",
+        "Gas: natural gas from the road if a gas utility or co-op serves it; otherwise a propane tank "
+        "(1 000 US gal shown) on the west side, placed to the supplier's and CSA B149 clearances.",
+        "Internet: fibre from an ISP on Alberta SuperNet if it reaches the road (in the same corridor), "
+        "or Starlink (a dish with a clear view of the northern sky); either can back up the other.",
+        "Water: a drilled well on the west side, near the UTILITY room, uphill of and at least 30 m "
+        "(100 ft) from every septic part (our planning rule; the Standard of Practice minimums are smaller).",
+        "Septic: tank east of the master wing, treatment field (where the treated water soaks into the "
+        "soil) further east; a certified installer sizes both after the site evaluation.",
+        "No utility tunnel: the shop will get buried service lines from the house's west side.",
+    ], 9.6, fs=7.6)
+    notes_column(bg, DRAW[0] + 20.0, y - 0.15, "THIS IS NOT THE PERMIT SITE PLAN", [
+        "Land is not chosen yet: positions are relative to the house (models/site.scad, phase = house).",
+        "For the development and building permits, replace this sheet with a plot plan by an Alberta Land "
+        "Surveyor on the real parcel: property lines and setbacks; easements and pipelines; the buildings; "
+        "the well and septic with their separation distances; the driveway and road approach; existing "
+        "and finished grades with the main floor's geodetic elevation; drainage; any watercourse or slope.",
+    ], 9.6, fs=7.6)
     pdf.savefig(fig)
     plt.close(fig)
 
@@ -2365,8 +2366,9 @@ def sheet_brief(pdf):
         "Sill plates pressure-treated on a gasket",
         "**Phase 1 embeds and sleeves",
         "Plumbing under the slab, sump, radon pipe, pool and spa",
-        "piping and drains, conduits, the tunnel knock-out in",
-        "the UTILITY room wall (future), window and door bucks",
+        "piping and drains, conduits, a spare sleeve in the",
+        "UTILITY room's west wall for the future shop lines,",
+        "window and door bucks",
     ]
     notes_column(bg, cols[3], 22.7, "4. MATERIALS ASSUMED", mats, 6.4, fs=fs)
     # key plan: where each element is

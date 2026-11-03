@@ -37,18 +37,22 @@ buildings with a **building area of up to 600 m²** [P2][P3].
 
 | | ft² | m² |
 |---|---:|---:|
-| House + attached garage, at the wall centre lines | 6 513 | **605** |
-| House + attached garage, to the outside face of the walls | 6 736 | **626** |
-| House alone, to the outside face | 5 876 | 546 |
+| House + attached garage, at the wall centre lines | 6 319 | **587** |
+| House + attached garage, to the outside face of the walls | 6 544 | **608** |
+| House alone, to the outside face | 5 685 | 528 |
 
-As drawn, the house is about 26 m² over the limit, so **Part 3** would
-apply. Part 3 is the code for large buildings. It brings professional
-design throughout and many rules that a house normally never sees.
+These numbers count the old breakfast nook as the open, covered patio it
+is meant to be (§9). That took about 18 m² off.
+
+As drawn, the house is still about 8 m² over the limit, so **Part 3**
+would apply. Part 3 is the code for large buildings. It brings
+professional design throughout and many rules that a house normally
+never sees.
 
 There are four ways to get back under 600 m²:
 
 1. **Detach the garage.** It becomes a separate building.
-   - The house alone is about 546 m².
+   - The house alone is about 528 m².
    - Ask the permit office how it treats a covered walkway between them.
      A roof that joins the two can make them one building again.
 2. **Separate the garage with a firewall.** Each side then counts as its
@@ -56,8 +60,9 @@ There are four ways to get back under 600 m²:
    - A firewall is a heavy, rated concrete or masonry wall that has to
      carry through the roof.
    - It is costly at a house scale.
-3. **Trim about 35 m² (375 ft²)** of enclosed area. That leaves a
-   margin under 600 m² once wall thicknesses are final.
+3. **Trim about 15 m² (160 ft²)** of enclosed area. That is enough for
+   a margin under 600 m² once wall thicknesses are final. This is now
+   the smallest change.
 4. **Accept Part 3** and have the house designed to it.
 
 This changes the code path for the whole design. Settle it with the
@@ -98,6 +103,10 @@ these [P4][P5][P6]:
   than 600 mm above the ground next to it [P17]. Choose one:
   - raise the finished grade along the porch edges by an inch or two;
   - add guards (railings).
+
+  The new patio's north edge is different: it stands right over the
+  exit stair's areaway, about 11 ft down. It has a 42" guard in the
+  model, and that guard is required.
 - **Great room fireplace.** Gas or wood decides how it is vented and
   which code and permit apply to it.
 - **Energy path.** NBC 9.36 has a prescriptive checklist and a
@@ -109,6 +118,12 @@ these [P4][P5][P6]:
 ---
 
 ## 2. Phasing
+
+The house is built first, on its own. **The shop is a separate, later
+project with its own permits**, once the house is lived in. There is no
+utility tunnel any more. When the shop is built, it gets buried service
+lines in a trench from the house's west side. The basement UTILITY room
+is on that side.
 
 ### Phase 1: the house, and all of the basement concrete
 
@@ -129,6 +144,28 @@ these [P4][P5][P6]:
 - **The mechanical room:** heating, HRV, water heater, water treatment,
   the electrical panel and the sump pump.
 - **The main floor, roof and envelope**, finished for occupancy.
+- **The site and services**, the bare minimum to live in the house (sheet
+  A0.1):
+  - **Driveway** from the road on the south, up the west side to the
+    garage's west-facing doors. The front loop round the garden is
+    optional.
+  - **Power**, run underground from the road to a meter on the west
+    wall. The panel is in the basement UTILITY room.
+  - **Gas.** Natural gas from the road if a gas utility or co-op serves
+    it. If not, a **propane tank** (1 000 US gal shown) on the west
+    side, where the supplier can reach it from the driveway.
+  - **Water.** A drilled **well** on the west side, near the UTILITY
+    room. It sits uphill of the septic and at least 30 m (100 ft) from
+    every part of it.
+  - **Septic.** The **tank** goes east of the master wing. The
+    **treatment field** goes further east: it is where the treated water
+    soaks into the soil.
+  - **Internet.**
+    - **Fibre**, if an internet provider on the Alberta SuperNet
+      network reaches the road. It runs in the same trench corridor as
+      the power.
+    - **Starlink.** A dish with a clear view of the northern sky.
+    - Either one can back up the other.
 - **In the unfinished basement:**
   - a **thermal barrier over all of the ICF foam** inside, for example
     ½" gypsum board [P18][P19];
@@ -152,7 +189,7 @@ permit, plus electrical and plumbing permits**.
 | Sheet | Title | Contents |
 |---|---|---|
 | A0.0 | Cover | Project data, building areas and the Part 9 flag, code basis, phasing, the Alberta roadmap, drawing index |
-| A0.1 | Site plan (schematic) | The site model at 1" = 20'. **Must be replaced** by a surveyed plot plan (what it needs to show is listed on the sheet) |
+| A0.1 | Site plan (schematic) | The house-first site at 1" = 20': driveway, power, gas or propane, fibre or Starlink, well, septic tank and field, and the future shop's spot. **Must be replaced** by a surveyed plot plan (what it needs is listed on the sheet) |
 | S0.1 | Structural design brief | Design criteria for the engineer to fill in, the elements that need engineering, questions, materials assumed |
 | S1.0 | Foundation plan | ICF walls and footings, bearing-line and deepened footings, pool and spa shells, theater tiers, exit stair, light wells, frost walls, piers, crawlspaces, elevations, dimension chains |
 | S1.1 | Main floor framing concept | The supports below the main floor and indicative clear spans; two **added supports** (red); the stair opening |
@@ -314,6 +351,9 @@ change.
 | **Plumber, gas fitter** | Under-slab drains, sump, gas or propane |
 | **Private sewage (PSDS) installer** | Site evaluation (test pits) and the system design; they take out the permit [P11][P12] |
 | **Water well driller** | A licensed driller; household use doesn't need a water licence [P13] |
+| **Electric utility or REA** | The power service from the road: transformer, route, meter location |
+| **Gas utility or co-op, or a propane supplier** | Natural gas from the road, or the propane tank and its placement |
+| **Internet provider** | Fibre over Alberta SuperNet if it reaches the road, or Starlink |
 
 ---
 
@@ -340,6 +380,7 @@ separate approval [P23].
 | 6 | **Electrical, gas and plumbing permits** | The contractors, or you where homeowner permits are allowed | — | ☐ |
 | 7 | **Private sewage permit** [P11][P12] | Certified PSDS installer | Site evaluation per the 2021 Standard of Practice, Part 7 | ☐ |
 | 8 | **Water well** [P13] | Licensed driller | Separation distances from the PSDS [P22] | ☐ |
+| 8a | **Power, gas and internet**: apply for the power service early, because a rural connection can take months; natural gas service or a propane supplier; a fibre provider or Starlink | Electric utility or REA; gas utility, co-op or propane supplier; ISP | The site plan with the service route | ☐ |
 | 9 | **Locate utilities** before any digging, at least 3 working days ahead [P14] | Utility Safety Partners (Click Before You Dig) | — | ☐ |
 | 10 | **Inspections:** footings and foundation before backfill, framing, insulation and vapour barrier, final; each trade separately; the engineer's field reviews | Safety codes officers, engineer | — | ☐ |
 | 11 | **Phase 2:** building, electrical and plumbing permits for the basement finish | Municipality or agency | Phase 2 drawings | ☐ |
@@ -397,10 +438,10 @@ interior work only.
 - [ ] **Conduits** under the slab or in the ICF for:
   - the theater's power, data and speakers;
   - the music room;
-  - the pool equipment;
-  - the future shop tunnel connection.
-- [ ] **The utility room wall:** a knock-out or sleeve where the shop
-  tunnel will join (the route is to be planned).
+  - the pool equipment.
+- [ ] **Service entries on the west side**, by the UTILITY room:
+  - sleeves for power, water, gas and fibre;
+  - one spare sleeve for the future buried lines to the shop.
 - [ ] **Window and door bucks** in the ICF: the exit door and the two
   light-well windows.
 - [ ] **Floor heat**, if it is wanted anywhere in the basement: tubing
@@ -419,6 +460,17 @@ interior work only.
   before; a gap of about 3 ft had shown between the eaves.
   - That block's ridge is now about 20'-0" above the main floor (22'-0"
     above grade), the highest on the house.
+- **Sun room and patio** (Nov 3).
+  - The north room beside the study is the **sun room**, not a sitting
+    room. It gets tall windows to the north and beside its patio doors.
+  - The old "breakfast nook" is an open, **covered patio** at floor
+    level. It has no walls, posts at its open corner, a 42" guard over
+    the exit stair's areaway, and it continues straight onto the deck.
+  - The hall's north wall and the sun room's east wall are now outside
+    walls.
+  - The building area drops by about 18 m² (§1.1).
+- **Site** (Nov 3). The site model now builds the house first (§2). The
+  shop and its drives are a later phase. The utility tunnel is gone.
 - **Steps as tables.** The porch and garage steps are now tables,
   `main_porch_steps()` and `garage_steps()`, so the drawings can read
   them.

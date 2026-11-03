@@ -20,10 +20,25 @@ This document covers:
 - The great room has a door onto the deck.
 - The basement has an exit stair up to the back yard (section 6).
 - The shop tunnel will connect to the basement utility room; its route
-  comes later.
+  comes later. *(Superseded Nov 3: no tunnel.)*
 
 **Update, Nov 2 (later):** basement windows are planned: two light wells
 and a glazed exit door (section 7).
+
+**Update, Nov 3:**
+
+- **Sun room and patio.**
+  - The room north of the upper hall, beside the study, is the
+    **sun room**. It was labelled "sitting room" before, and now has
+    tall windows.
+  - The "breakfast nook" beside it is an open, covered **patio** at
+    floor level, running onto the deck. It has no walls, and a guard
+    along its edge over the exit stair.
+- **House first.** The house is built first. The shop is a separate,
+  later project.
+- **No tunnel.** The shop tunnel is dropped. The shop will get buried
+  service lines from the house's west side, by the UTILITY room.
+- See [`../permit/README.md`](../permit/README.md).
 
 The site is rural Alberta (see
 [`../House-Review-and-Research-2026-10-28.md`](../House-Review-and-Research-2026-10-28.md)).
@@ -110,7 +125,7 @@ For 10 ft ceilings, set it to 11.75.
 3. **Basement doors**: the sketch has none, so 19 were added. Two to note:
    - the theater door swings out into the hallway, clear of the back row;
    - the pool room and the pool bath each open off the long hall.
-4. **Main floor upper hall**: split at the sitting room / nook line by a
+4. **Main floor upper hall**: split at the sun room / patio line by a
    wall with a 2'-8" door, as drawn.
 5. **Master-suite double doors**: set where the plan shows them,
    1.3 ft west of the closet wall.
@@ -120,7 +135,7 @@ For 10 ft ceilings, set it to 11.75.
    equipment in the utility and pool equipment rooms.
 8. **Great room to the deck**: 6'-0" French doors, swinging in, take the
    place of the drawn 6'-9" two-pane window at the west end of the great
-   room's north wall, nearest the kitchen and the nook. The plan had no
+   room's north wall, nearest the kitchen and the patio. The plan had no
    door onto the deck.
 9. **Basement exit stair**: added outside the gym (section 6).
 10. **Basement windows**: two windows in light wells (section 7).
@@ -227,7 +242,7 @@ The pool pit adds a second, deeper drain loop (section 4.4).
   under every main-floor outside wall that is not over the basement:
   - the bedroom wing;
   - the scullery;
-  - the nook;
+  - the patio's edges (the old nook);
   - the office and master wing;
   - the den, foyer and breakfast-bay fronts;
   - the garage.
@@ -444,7 +459,7 @@ rules them out.
 
 | Basement wall | What is above or beside it | Verdict |
 |---|---|---|
-| **Gym's north wall** | Open back yard behind the sitting room and the nook; the deck to the east, the study stoop to the west | **Chosen** |
+| **Gym's north wall** | Open back yard behind the sun room and the patio; the deck to the east, the study stoop to the west | **Chosen** |
 | Music room's north wall | The bunk room above it as far as x = 32.6; the study stoop and its steps beside the rest | No room for the stair |
 | Living room's south wall | Open front yard, west of the front porch | Possible, but it sits in the front elevation, next to the main stair |
 | Living room's west wall | An 11 ft gap between the garage and the kitchen, with the side-entry steps in it | Too small for a straight stair |
@@ -462,8 +477,8 @@ rules them out.
     stair, so the two ways out are far apart.
 - **Areaway:** 4'-0" clear, running along the outside of the house.
   - A 4'-8" landing at the basement floor.
-  - Then a straight flight rising east along the north walls of the sitting
-    room and the nook.
+  - Then a straight flight rising east along the north wall of the sun
+    room and the edge of the patio.
   - It reaches grade just west of the deck, beside the deck steps, on a
     2'-2" landing slab.
 - **Stair:** 19 risers × 7.42" (188 mm) = 11'-9", and 18 treads × 11"
@@ -476,7 +491,7 @@ rules them out.
     1 070 mm *verify*.
 - **The house side:**
   - Along the gym it is the basement's ICF wall.
-  - East of the gym it is the nook's frost wall, which must be **carried
+  - East of the gym it is the patio's frost wall, which must be **carried
     down to the areaway floor** for about 12 ft; the model shows this.
 - **Water and snow:**
   - a drain at the bottom landing, piped to the sump;
@@ -543,11 +558,12 @@ porches, where no well can go.
 
 ## 8. Open questions for you
 
-1. **Utility tunnel to the shop.** It will connect to the basement's
-   UTILITY room: 14'-6" × 7', on the west side, behind the storage room.
-   Its route comes later.
-   - Until then, `models/site.scad` keeps drawing it on x = 80, which meets
-     the pool room's north wall.
+1. **Services to the shop.** The tunnel is dropped (Nov 3).
+   - The shop is a separate, later project.
+   - It will get buried service lines in a trench from the house's west
+     side. That is where the basement's UTILITY room is: 14'-6" × 7',
+     behind the storage room.
+   - `models/site.scad` draws those lines dashed when `phase = "full"`.
 2. **Natural light.** Confirm with the municipality how the basement
    living room is classed (section 7.1).
 3. **Geotech first.** These all hang on the report:
