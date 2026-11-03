@@ -274,6 +274,19 @@ function main_furniture() = [
     [96.84,  13.39, 98.82,  16.02, 0, 3,    wood],
 ];
 
+// steps from the porches down to grade [x, y, direction, width]: four
+// 6" risers (house_lib's porch_steps)
+function main_porch_steps() = [
+    [69.6,  -15.26, "-y", 11.0],   // front entry
+    [70.0,   64.7,  "+y", 24.8],   // deck to the yard
+    [111.0,  62.4,  "+y", 13.6],   // master porch to the yard
+    [24.8,   13.39, "-y", 10.3],   // side entry
+    [37.0,   66.6,  "+y", 3.8],    // study stoop
+];
+// garage steps up to the house [y0, y1]: a landing at house level
+// (x 21.8-24.14) and two 6" steps down to the garage slab
+function garage_steps() = [[30.5, 35.2], [15.6, 19.6]];
+
 // porch posts [x, y, height]
 function main_posts() = [
     [49.69, -14.81, 9.5], [57.4, -14.81, 9.5], [65.1, -14.81, 9.5], [69.2, -14.81, 9.5],
@@ -292,7 +305,7 @@ function main_roof() = [
     [37.3,   35.46, 69.14,  63.42, 10,  0.5,   1.5],   // study, sitting room, nook
     [69.14,  29.51, 95.63,  52.53, 12,  0.5,   1.5],   // great room
     [95.63,  29.51, 126.97, 52.86, 10,  0.5,   1.5],   // office, master bedroom
-    [24.34,  6.28,  69.14,  29.51, 12,  0.5,   1.5],   // kitchen, scullery, side entry
+    [24.34,  6.28,  69.14,  35.46, 12,  0.5,   1.5],   // kitchen, scullery, side entry, and the main hall
     [54.1,   0,     69.14,  6.28,  10,  0.5,   1.5],   // breakfast bay
     [69.14,  0,     95.95,  29.51, 12,  0.5,   1.5],   // foyer, den
     [95.95,  9.31,  128.13, 29.51, 10,  0.5,   1.5],   // master closets + bath
@@ -339,7 +352,7 @@ module main_level(show_roof = true, roof_color = [0.20, 0.38, 0.62], roof_opacit
     if (show_stair) main_stair();
     // garage steps up to the house (hall) and to the side entry: a landing
     // at house level and two steps, from the garage slab 1.5 ft below
-    for (y = [[30.5, 35.2], [15.6, 19.6]])
+    for (y = garage_steps())
         paint(stair_color()) {
             translate([21.8, y[0], -1.5]) cube([2.34, y[1] - y[0], 1.5]);
             translate([20.6, y[0], -1.5]) cube([1.2, y[1] - y[0], 1.0]);
@@ -347,11 +360,7 @@ module main_level(show_roof = true, roof_color = [0.20, 0.38, 0.62], roof_opacit
         }
 
     for (p = main_posts()) post(p[0], p[1], p[2]);
-    porch_steps(69.6,  -15.26, "-y", 11.0);   // front entry
-    porch_steps(70.0,   64.7,  "+y", 24.8);   // deck to the yard
-    porch_steps(111.0,  62.4,  "+y", 13.6);   // master porch to the yard
-    porch_steps(24.8,   13.39, "-y", 10.3);   // side entry
-    porch_steps(37.0,   66.6,  "+y", 3.8);    // study stoop
+    for (p = main_porch_steps()) porch_steps(p[0], p[1], p[2], p[3]);
 
     if (show_roof) roofs(main_roof(), roof_color, roof_opacity);
 }

@@ -31,6 +31,7 @@ show_roof = true;
 roof_opacity = 1.0;    // [0.1:0.1:1]
 roof_color = [0.20, 0.38, 0.62];  // blue
 show_furniture = true;
+section_roof = false;  // draw the roof in section views too (the drawing set does)
 explode_gap = 16;
 show_ground = true;    // the lawn at grade (assembled view)
 
@@ -64,7 +65,7 @@ if (mode == "foundation") {
             basement_level(show_stair = stair_below, show_furniture = show_furniture);
     if (mode != "basement_only")
         translate([0, 0, main_z])
-            main_level(show_roof && mode != "section", roof_color, roof_opacity, show_furniture,
+            main_level(show_roof && (mode != "section" || section_roof), roof_color, roof_opacity, show_furniture,
                        show_stair = !stair_below);
     if (mode == "assembled" || mode == "section")
         foundation("frost", show_earth = mode == "section", crawl_rooms = crawl);
