@@ -554,6 +554,11 @@ porches, where no well can go.
    - sulphate class (cement type);
    - seasonal-high groundwater against a pool pit 18 ft down;
    - bearing capacity for the deepened footings.
+4. **Building area.** With the attached garage, the house is about
+   626 m² to the outside face of its walls. Part 9 of the building code
+   stops at 600 m². See
+   [the permit package, §1.1](../permit/README.md#11-the-house-is-over-the-part-9-size-limit)
+   for the options; decide before the engineering starts.
 
 ## Sources
 

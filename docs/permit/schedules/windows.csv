@@ -1,0 +1,19 @@
+mark,level,room,width,height,sill,head,area_m2,notes
+W101,MAIN,BUNK ROOM,"3'-6""","5'-0""","2'-6""","7'-6""",1.63,"BEDROOM: EGRESS 0.35 m2 MIN., NO SIDE < 380 mm (9.9.10.1)"
+W102,MAIN,BREAKFAST NOOK,"9'-4 3/4""","6'-6""","1'-6""","8'-0""",5.68,
+W103,MAIN,GREAT ROOM,"3'-7 1/4""","6'-0""","2'-0""","8'-0""",2.01,
+W104,MAIN,GREAT ROOM,"4'-3 5/8""","6'-0""","2'-0""","8'-0""",2.40,
+W105,MAIN,MASTER BEDROOM,"2'-6""","5'-0""","2'-6""","7'-6""",1.16,"BEDROOM: EGRESS 0.35 m2 MIN., NO SIDE < 380 mm (9.9.10.1)"
+W106,MAIN,MASTER BEDROOM,"4'-8 3/8""","5'-0""","2'-6""","7'-6""",2.18,"BEDROOM: EGRESS 0.35 m2 MIN., NO SIDE < 380 mm (9.9.10.1)"
+W107,MAIN,BEDROOM 2,"5'-4 3/4""","5'-0""","2'-9""","7'-9""",2.51,"BEDROOM: EGRESS 0.35 m2 MIN., NO SIDE < 380 mm (9.9.10.1)"
+W108,MAIN,BEDROOM 2,"5'-4 3/4""","5'-0""","2'-9""","7'-9""",2.51,"BEDROOM: EGRESS 0.35 m2 MIN., NO SIDE < 380 mm (9.9.10.1)"
+W109,MAIN,MASTER BEDROOM,"4'-0""","5'-0""","2'-6""","7'-6""",1.86,"BEDROOM: EGRESS 0.35 m2 MIN., NO SIDE < 380 mm (9.9.10.1)"
+W110,MAIN,MASTER BATH,"4'-7 1/4""","4'-0""","3'-6""","7'-6""",1.71,PRIVACY / SAFETY GLAZING NEAR TUB OR SHOWER
+W111,MAIN,LINEN,"3'-7 1/4""","3'-0""","4'-0""","7'-0""",1.00,
+W112,MAIN,KITCHEN / DINING,"7'-6""","4'-0""","3'-6""","7'-6""",2.79,
+W113,MAIN,PORCH,"4'-9 5/8""","6'-0""","2'-0""","8'-0""",2.68,
+W114,MAIN,FRONT PORCH,"5'-7 1/4""","6'-0""","2'-0""","8'-0""",3.12,
+W115,MAIN,FRONT PORCH,"8'-0""","5'-6""","2'-6""","8'-0""",4.09,
+W116,MAIN,DEN,"5'-9 5/8""","5'-6""","2'-6""","8'-0""",2.96,
+WB01,BSMT,MUSIC ROOM,"3'-0""","4'-0""","4'-6""","8'-6""",1.11,IN A LIGHT WELL (A5.1)
+WB02,BSMT,LIVING ROOM,"8'-0""","4'-0""","4'-6""","8'-6""",2.97,IN A LIGHT WELL (A5.1)

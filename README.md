@@ -17,6 +17,19 @@ for:
 - the basement exit stair;
 - the open questions.
 
+**Engineering and permits:**
+[`docs/permit/`](docs/permit/README.md) is the hand-off package for the
+engineer. It holds:
+
+- a 14-sheet drawing set (PDF), generated from the model;
+- the plans as DXF files;
+- the door, window and room schedules;
+- the engineering brief;
+- the Alberta permit roadmap and checklist.
+
+Read its §1 first: the house is over the 600 m² size limit for Part 9 of
+the building code as drawn.
+
 ![Both levels, cut east-west](docs/house/cutaway.png)
 
 | File | What |
@@ -28,11 +41,15 @@ for:
 | `models/house_lib.scad` | Shared modules, the floor-to-floor height and the stair |
 | `models/shop.scad` | The 100 × 100 ft 4-bay shop (behind the house, Bay 1 utilities southernmost) with pull-through doors on the two truck bays and the wash bay (3 bays, 6 doors), the pit, the wash-bay drain and the Bay 1 utility rooms |
 | `models/site.scad` | The whole property: house, shop, west shared driveway with the wrap-round drive (north side and east apron) for the pull-through bays, front loop + garden, shop tree belt, well and septic zones. It also has the utility tunnel from Bay 1 to the basement, which will connect to the basement utility room; its route is still to be planned (spec §7) |
+| `models/export.scad` | Echoes every table of the model, one per line, for the tools |
 | `tools/check_layout.py` | Layout checker (needs `openscad` on `PATH`) |
+| `tools/model_data.py` | Reads the model's tables through `models/export.scad` |
+| `tools/make_drawings.py` | Writes the drawing set, DXF plans and schedules into `docs/permit/` (needs `openscad`, matplotlib, shapely, ezdxf) |
 
 Research and planning documents live in `docs/`:
 
 - `docs/house/` has the plans, the redesign notes and spec, and the renders.
+- `docs/permit/` has the engineering review and permit package.
 - `docs/House-Review-and-Research-2026-10-28.md` is the earlier house review
   and build research for Alberta.
 - `docs/shop/` has the shop base plan (utility hub, tunnel, septic, build
@@ -66,7 +83,8 @@ Set them in the OpenSCAD Customizer or with `-D name=value`.
 
   Cut faces are drawn darker than the surfaces beyond them.
 - **`show_roof`, `roof_opacity`, `roof_color`**: the roof (blue by
-  default). `show_furniture`, and `show_ground` (the lawn in the assembled
+  default). Section views leave the roof out unless `section_roof=true`.
+- **`show_furniture`**, and **`show_ground`** (the lawn in the assembled
   view).
 
 `foundation.scad`:
@@ -118,3 +136,13 @@ openscad -o section_a.png --imgsize=3000,1000 --projection=o \
 For sections B–D, look east with `--camera=<x>,25,-4,90,0,270,150`;
 for E, look north with `--camera=57,65.75,-7,90,0,0,70`.
 Sections take a minute or two each: every cut face is computed exactly.
+
+The drawing set is regenerated, after any change to the model, with:
+
+```bash
+python3 tools/make_drawings.py
+```
+
+It renders the elevations, sections, roof and site views with OpenSCAD
+and caches them in `build/` (ignored by git) until a model file changes.
+Then it draws every sheet from the model's tables.
