@@ -94,7 +94,7 @@ function frost_walls() = [
     [17.5, 62.04, 17.5, 66.64, sill()], [17.5, 66.64, 32.6, 66.64, sill()],
     [32.6, 63.42, 32.6, 66.64, sill()],
     [24.34, 20.82, 35.27, 20.82, sill()],                              // scullery
-    [54.14, 63.42, 69.14, 63.42, sill()], [69.14, 52.76, 69.14, 63.42, sill()],   // nook
+    [54.14, 63.42, 69.14, 63.42, sill()], [69.14, 52.76, 69.14, 63.42, sill()],   // patio edges (posts bear on them)
     [96.33, 48.16, 108.62, 48.16, sill()], [108.62, 48.16, 108.62, 52.86, sill()],  // office, master wing
     [108.62, 52.86, 126.97, 52.86, sill()], [126.97, 29.51, 126.97, 52.86, sill()],
     [126.97, 29.51, 128.13, 29.51, sill()], [128.13, 9.31, 128.13, 29.51, sill()],
@@ -128,7 +128,7 @@ function porch_piers() = [
 // every porch: a 3'-6" door in the gym's north wall opening in (so snow
 // can't block it), a landing at the basement floor, and a straight
 // flight rising east along the house to grade, just west of the deck.
-// East of the gym its house side is the nook's frost wall, carried down
+// East of the gym its house side is the patio's frost wall, carried down
 // to the areaway floor. exit_areaway() = [x0, y0, x1, y1], the clear
 // inside; the flight runs from exit_landing_x()[1] to x1.
 function exit_door()      = [46.2, 3.5];                    // [x, width] in the gym's north wall, y = 63.16
@@ -253,7 +253,7 @@ module light_wells() {
 }
 
 // the exit stair's areaway: slab, the outer (north) and west retaining
-// walls on 20" footings, up to a 6" curb above grade, the nook's frost
+// walls on 20" footings, up to a 6" curb above grade, the patio's frost
 // wall carried down to the areaway floor, and a landing slab at grade
 // past the top step (the steps themselves: basement.scad)
 module exit_areaway_concrete() {
@@ -268,7 +268,7 @@ module exit_areaway_concrete() {
         translate([a[0] - t, a[1], zf]) cube([t, a[3] - a[1], top - zf]);                    // west wall
         translate([a[0] - t - 0.5, a[3] + t / 2 - 0.835, ft]) cube([a[2] - a[0] + t + 0.5, 1.67, footing_t()]);
         translate([a[0] - t / 2 - 0.835, a[1], ft]) cube([1.67, a[3] - a[1], footing_t()]);
-        translate([54.14, 63.09, ft]) cube([a[2] - 54.14, 2 / 3, frost_bottom() - ft]);    // nook frost wall, deepened
+        translate([54.14, 63.09, ft]) cube([a[2] - 54.14, 2 / 3, frost_bottom() - ft]);    // patio frost wall, deepened
         translate([a[2], a[1], grade() - 0.33]) cube([exit_top_pad(), a[3] + t - a[1], 0.33]);   // top landing
     }
 }

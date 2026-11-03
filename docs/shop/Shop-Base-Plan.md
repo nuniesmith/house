@@ -1,5 +1,26 @@
 # Shop — Base Plan (100 × 100 ft, 4 bays, utility hub + tunnel to house)
 
+> **Update, Nov 3, 2026: read this first.**
+>
+> - **The shop is a separate, later project.** It gets its own permits,
+>   once the house is built and lived in.
+> - **The house stands on its own.** It has its own services from the road
+>   and its own well and septic (see
+>   [`../permit/README.md`](../permit/README.md) §2 and sheet A0.1):
+>   - power, gas or propane, and fibre or Starlink from the road;
+>   - its own well, on the west side;
+>   - its own septic tank and field, on the east side.
+> - **This replaces the "utility hub" idea.** Below, Bay 1 feeds the house
+>   (power, water, heat). That is no longer the plan.
+> - **There is no tunnel.** The basement's utility room is now on the
+>   west side. When the shop is built, it will get **buried service lines
+>   in a trench** from the house's west side. §5, §6 and the tunnel
+>   section drawing describe the dropped tunnel and are kept for
+>   reference only.
+> - **The septic and the well have swapped sides.** The septic is now
+>   east of the house and the well west. Assumption A5 below had them the
+>   other way round.
+
 Compiled 2026-10-29 for Jordan. Companion to *House-Review-and-Research-2026-10-28.md*.
 Planning only — not construction documents. Land is not yet secured, so every
 position below is **relative** (to the house), not a surveyed site plan.
