@@ -17,9 +17,16 @@
 >   in a trench** from the house's west side. §5, §6 and the tunnel
 >   section drawing describe the dropped tunnel and are kept for
 >   reference only.
-> - **The septic and the well have swapped sides.** The septic is now
->   east of the house and the well west. Assumption A5 below had them the
->   other way round.
+> - **The septic and the well have changed sides.** The septic is now on
+>   the house's west side, by the basement utility room, with its field
+>   further west. The well is on the east side.
+> - **Distances.** They follow the Standard of Practice 2021: 10 m from a
+>   tank to a well, and 15 m from a field to a well (see
+>   [`../permit/README.md`](../permit/README.md) §2.1). The ≥ 30 m rule
+>   below is superseded.
+> - **The shop's drains.** The wash bay never goes to the septic; it has
+>   its own oil and grit separator and holding tank. The shop bathroom
+>   pumps to the house tank through a small lift station in Bay 1.
 
 Compiled 2026-10-29 for Jordan. Companion to *House-Review-and-Research-2026-10-28.md*.
 Planning only — not construction documents. Land is not yet secured, so every

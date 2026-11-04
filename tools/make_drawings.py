@@ -1239,7 +1239,7 @@ VIEWS = {
     "roof": ("main_floor.scad", "D", (PLAN_CENTER[0] - PLAN_RECT[2] * S316 / 2, PLAN_CENTER[0] + PLAN_RECT[2] * S316 / 2),
              (PLAN_CENTER[1] - PLAN_RECT[3] * S316 / 2, PLAN_CENTER[1] + PLAN_RECT[3] * S316 / 2), 0.0, S316, 150,
              NOFURN),
-    "site": ("site.scad", "D", (-112.0, 262.0), (-127.0, 240.0), 0.0, S_SITE, 150, ('phase="house"',)),
+    "site": ("site.scad", "D", (-128.0, 215.0), (-127.0, 240.0), 0.0, S_SITE, 150, ('phase="house"',)),
 }
 
 
@@ -1255,10 +1255,13 @@ def camera(name):
 
 def render_all(names):
     CACHE.mkdir(parents=True, exist_ok=True)
-    stamp = max(p.stat().st_mtime for p in (ROOT / "models").glob("*.scad"))
     paths, todo = {}, []
     for k, name in enumerate(names):
         scad, look, ur, vr, depth, fpi, dpi, defs = VIEWS[name]
+        # the house views don't depend on the site and the shop
+        deps = [p for p in (ROOT / "models").glob("*.scad")
+                if scad == "site.scad" or p.name not in ("site.scad", "shop.scad")]
+        stamp = max(p.stat().st_mtime for p in deps)
         cam, size = camera(name)
         key = hashlib.sha1(repr((scad, cam, size, defs)).encode()).hexdigest()[:10]
         png = CACHE / f"{name}-{key}.png"
@@ -1490,10 +1493,15 @@ def sheet_site(pdf, paths):
         "(1 000 US gal shown) on the west side, placed to the supplier's and CSA B149 clearances.",
         "Internet: fibre from an ISP on Alberta SuperNet if it reaches the road (in the same corridor), "
         "or Starlink (a dish with a clear view of the northern sky); either can back up the other.",
-        "Water: a drilled well on the west side, near the UTILITY room, uphill of and at least 30 m "
-        "(100 ft) from every septic part (our planning rule; the Standard of Practice minimums are smaller).",
-        "Septic: tank east of the master wing, treatment field (where the treated water soaks into the "
-        "soil) further east; a certified installer sizes both after the site evaluation.",
+        "Septic, west: the tank by the basement UTILITY room (1 m minimum from the house; within hose "
+        "reach of the driveway for pump-outs) with an effluent pump chamber; the treatment field (where the "
+        "treated water soaks into the soil) further west, 10 m clear of the house's basement and crawl "
+        "space, with a reserve area beside it. Nobody drives on either.",
+        "Water: a drilled well on the east side, uphill of the septic if the land allows. Alberta "
+        "Standard of Practice 2021: a well 10 m from a tank and 15 m from a field; 90 m from a lake, river "
+        "or creek for the field unless the house is between.",
+        "A future house for the parents: if it will join this septic, size the system for both now and keep "
+        "the field 10 m from its basement or crawl space.",
         "No utility tunnel: the shop will get buried service lines from the house's west side.",
     ], 9.6, fs=7.6)
     notes_column(bg, DRAW[0] + 20.0, y - 0.15, "THIS IS NOT THE PERMIT SITE PLAN", [

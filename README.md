@@ -40,7 +40,7 @@ the building code as drawn.
 | `models/house_combined.scad` | Everything together (it `use`s the files above): assembled, exploded, foundation and section views |
 | `models/house_lib.scad` | Shared modules, the floor-to-floor height and the stair |
 | `models/shop.scad` | The 100 × 100 ft 4-bay shop (behind the house, Bay 1 utilities southernmost) with pull-through doors on the two truck bays and the wash bay (3 bays, 6 doors), the pit, the wash-bay drain and the Bay 1 utility rooms |
-| `models/site.scad` | The property. `phase = "house"` (the default) shows the house first, with what it needs: the driveway from the road on the south, the power / gas / fibre corridor, a propane tank option, Starlink, the well on the west side, and the septic tank and field on the east side. The future shop's spot is dashed. `phase = "full"` adds the shop, its wrap-round drive and tree belt, and the buried service lines from the house. There is no tunnel any more |
+| `models/site.scad` | The property. `phase = "house"` (the default) shows the house first, with what it needs: the driveway from the road on the south, the power / gas / fibre corridor, a propane tank option, Starlink, the septic tank, field and reserve area on the west side by the basement utility room, and the well on the east side. The future shop's spot is dashed. `phase = "full"` adds the shop, its wrap-round drive and tree belt, and the buried service lines from the house. There is no tunnel any more |
 | `models/export.scad` | Echoes every table of the model, one per line, for the tools |
 | `tools/check_layout.py` | Layout checker (needs `openscad` on `PATH`) |
 | `tools/model_data.py` | Reads the model's tables through `models/export.scad` |
