@@ -154,12 +154,16 @@ is on that side.
   - **Gas.** Natural gas from the road if a gas utility or co-op serves
     it. If not, a **propane tank** (1 000 US gal shown) on the west
     side, where the supplier can reach it from the driveway.
-  - **Water.** A drilled **well** on the west side, near the UTILITY
-    room. It sits uphill of the septic and at least 30 m (100 ft) from
-    every part of it.
-  - **Septic.** The **tank** goes east of the master wing. The
-    **treatment field** goes further east: it is where the treated water
-    soaks into the soil.
+  - **Septic, on the west side** by the basement UTILITY room (§2.1).
+    - The **tank** sits just off the house, so the sewer run out of the
+      basement is short. It is within hose reach of the driveway for
+      pump-outs, with an **effluent pump chamber**.
+    - The **treatment field** goes further west, where the treated
+      water soaks into the soil. A **reserve area** beside it is kept
+      clear for a replacement field.
+  - **Water.** A drilled **well** on the east side, clear of the septic.
+    - Its line enters the basement at the pool equipment room, which
+      needs water for the pool, and runs on inside to the UTILITY room.
   - **Internet.**
     - **Fibre**, if an internet provider on the Alberta SuperNet
       network reaches the road. It runs in the same trench corridor as
@@ -171,6 +175,49 @@ is on that side.
     ½" gypsum board [P18][P19];
   - smoke and CO alarms;
   - the lighting and outlets the code requires.
+
+### 2.1 Septic and well distances
+
+Alberta's minimum separation distances, from the Private Sewage Systems
+Standard of Practice 2021 [P25][P26]:
+
+| Part | From a water well or source | From a watercourse | From a property line | From a building |
+|---|---|---|---|---|
+| Septic, holding or effluent tank | 10 m (33 ft) | 10 m | 1 m | 1 m |
+| Disposal (treatment) field | 15 m (50 ft) | 15 m * | 1.5 m | 10 m from a basement, cellar or crawl space; 5 m from a foundation without one |
+| Treatment mound | 15 m (50 ft) | 15 m * | 3 m | 10 m from a basement or crawl space |
+| Packaged treatment plant | 10 m | 10 m | 6 m | 1 m |
+
+- A field is also 5 m from its own septic tank.
+- \* If the property adjoins a lake, river, stream or creek, the soil
+  treatment part needs **90 m (300 ft)** from the shore. The exception is
+  when the house sits between it and the water; then the table governs.
+- The well regulations mirror this from the other side: no well within
+  10 m of a watertight tank or 15 m of a field.
+- My earlier plan used 30 m (100 ft) from every septic part. That is
+  more cautious than the rule, and is not needed.
+
+The table doesn't settle everything:
+
+- **The installer's site evaluation** decides two more things: the
+  field's vertical separation to the water table, and how much the soil
+  can take. The evaluation uses soil pits, soil texture and the water
+  table, and it decides between a field, a mound and an at-grade system.
+  Its result can move the field.
+- **Basement drains are pumped.** The building sewer leaves the house
+  deep, so the tank sits deep too. Effluent is usually pumped up to a
+  shallower field from a pump chamber. That is normal practice, and the
+  designer handles it.
+- **Size the system for everything that will connect to it.** A future
+  house for the parents is planned. If it will join this septic system,
+  count its flow now, and keep the field 10 m from its basement or crawl
+  space when it is placed. A second house on the parcel also needs the
+  municipality's approval under its land-use bylaw.
+- **The shop, later:**
+  - The **wash bay never goes to the septic**. It needs its own oil and
+    grit separator and holding tank.
+  - The **shop bathroom** can pump to the house tank through a small
+    lift station.
 
 ### Phase 2: finishing the basement, after you move in
 
@@ -471,6 +518,12 @@ interior work only.
   - The building area drops by about 18 m² (§1.1).
 - **Site** (Nov 3). The site model now builds the house first (§2). The
   shop and its drives are a later phase. The utility tunnel is gone.
+- **Septic west, well east** (Nov 3, later).
+  - The septic tank is now by the basement UTILITY room, with its field
+    and a reserve area further west.
+  - The well moves to the east side.
+  - The distances follow the Standard of Practice 2021 table (§2.1),
+    replacing my 30 m rule.
 - **Steps as tables.** The porch and garage steps are now tables,
   `main_porch_steps()` and `garage_steps()`, so the drawings can read
   them.
@@ -511,3 +564,5 @@ listed in
 - [P22] Alberta Municipal Affairs safety tips, private sewage separation distances: <https://open.alberta.ca/dataset/b8c07f17-395d-4580-8a7f-45b395bc5b2d/resource/616e6f01-a2f1-4224-9ab0-88ffbc46aa20/download/2012-safety-tips-private-sewage-treatment-systems-separation-distances-september-2012.pdf>
 - [P23] Municipal District of Greenview, accredited agencies (a development permit is not a building permit): <https://mdgreenview.ab.ca//standard-document/alberta-municipal-affairs-approved-accredited-agencies>
 - [P24] County of Northern Lights, safety code permits (finding the accredited agency through the Alberta Safety Codes Authority): <https://www.countyofnorthernlights.com/business-and-development/development/safety-code-permits>
+- [P25] Leduc County, private sewage separation distances under the 2021 Standard of Practice (tanks 10 m and mounds 15 m from a water source or well): <https://www.leduc-county.com/public/download/files/353332>
+- [P26] Lamont County, private sewage separation distances: <https://lamontcounty.ca/public/download/files/186489>. The full table above is as published by Alberta counties and the accredited agency Superior Safety Codes from the 2021 Standard of Practice. The Standard itself is a licensed document; confirm the numbers with the installer.
