@@ -53,7 +53,7 @@ def quote_score(quote, text):
 
 
 def base_article(a):
-    m = re.search(r"[A-Z]?-?\d+(?:[.\-]\d+)+", a)
+    m = re.search(r"[A-Z]?-?\d+(?:[.\-]\d+)+", a) or re.search(r"\b[A-Z]-\d+\b", a)
     return m.group(0).rstrip(".") if m else None
 
 
