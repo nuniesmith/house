@@ -31,11 +31,11 @@ _Today's plan (the model on `main`), for reference._
 
 ## The fixed matrix
 
-Every number comes from the same script and the same method (`plan_facts.py` variant mode; coordinator re-runs in the run folder). **Bold** = best in the row.
+Every number comes from the same script and the same method (`plan_facts.py` variant mode; coordinator re-runs in the run folder). **Bold** = best in the row (ties are all bolded; rows where every column is equal aren't bolded).
 
 | Criterion | Current | A | B | C |
 |---|---|---|---|---|
-| **1. Kayla's notes:** plan items in / missing / contradicted (of 164), independent re-score | 62 / 89 / 13 | 76 / 79 / 9 | 98 / 63 / 3 | 112 / 50 / 2 |
+| **1. Kayla's notes:** plan items in / missing / contradicted (of 164), independent re-score | 62 / 89 / 13 | 76 / 79 / 9 | 98 / 63 / 3 | **112 / 50 / 2** |
 | Same, as each designer scored it | — | 78 / 77 / 9 | 109 / 52 / 3 | 120 / 44 / 0 |
 | Deal-breakers met (of 12), independent re-score | 5 | 9 | 9 | **12** |
 | **2. Review Blockers fixed** (of B1–B6) | 0 | 2 (stair, area) | 2 (stair, area) | 2 (stair, area) |
@@ -52,7 +52,7 @@ Every number comes from the same script and the same method (`plan_facts.py` var
 | **6. Public/private and noise:** bedrooms sharing a wall with living rooms / bedroom next to the foyer | 0 / no | 0 / no | 0 / no | 0 / no |
 | Master bed → laundry | 103.1 ft | 42.9 ft | 31.5 ft | **24.9 ft** |
 | Two wings split by the great room (K-075) | yes | yes | yes | **no** |
-| Main wing-to-wing route crosses the kitchen | no | no | **yes** (6 ft lane past the work zone) | no |
+| Main wing-to-wing route crosses the kitchen | **no** | **no** | yes (6 ft lane past the work zone) | **no** |
 | Nearest bedroom to the existing west drive | 9.3 ft | 9.3 ft (south drive noted only) | 9.3 ft (south drive noted only) | **42.0 ft** |
 | **7. Orientation and daylight:** master suite faces | E | E | E | **N + E** (K-013) |
 | Bedrooms with east light | 1 of 3 | 1 of 3 | 1 of 3 | **2 of 3** |
