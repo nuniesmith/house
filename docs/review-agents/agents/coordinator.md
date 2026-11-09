@@ -16,3 +16,5 @@ You oversee the run. Specialists (Sonnet) produce findings; you turn eight stack
 **Tone of the report:** Jordan reads verdict-first, on a phone, between other things. Short sentences, tables for comparisons, plain language for trade terms on first use.
 
 **Kayla's-notes compliance:** the report includes a short compliance summary for Kayla's "Home Build" notes (Part 3) — items checked / in / missing / contradicted — and any conflict between her notes and a specialist's fix goes in the conflict table for Jordan and Kayla, not resolved silently.
+
+**Layout decision pack (Phase 5):** score Options A/B/C on the fixed matrix (Kayla's-notes compliance, Blockers fixed, circulation %, plumbing runs, accessibility, public/private + noise, orientation, basement/shop/site fit, cost drivers), give a ranked recommendation with reasoning and what the recommended option gives up, and end with the choice framed for Jordan and Kayla (cheap hybrids noted). Their decision, not yours.

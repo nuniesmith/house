@@ -2,6 +2,10 @@
 
 _One document, everything the run needs. Prepared 2026-11-07; run after the Claude usage reset, Sunday 2026-11-08, 5:00 p.m. ET._
 
+**Scope update (Jordan, 2026-11-08 evening): this run now has TWO deliverables.**
+1. The multi-agent **review** of the current plan (Parts 1–2, Phases 0–3).
+2. **Three layout options for the new floor plan** (Phase 4–5 + the Layout Options brief in Part 2), each drawn and modelled, with detailed pros and cons scored against Kayla's notes and the review findings, and a coordinator recommendation. Jordan and Kayla choose the final layout from the options — **no option becomes the plan in this run**, and the models on `main` stay untouched.
+
 ## How to start (Jordan)
 
 1. Open a Claude Code session on **oryx**, in `~/github/house`.
@@ -10,7 +14,7 @@ _One document, everything the run needs. Prepared 2026-11-07; run after the Clau
 
 **Kickoff prompt (copy-paste):**
 
-> Read this document end to end and run it. You are the coordinator (Opus). Work in ~/github/house. Follow Part 1 exactly: Phase 0 plan-facts extraction first (one Sonnet sub-agent), then the specialist waves, at most 2 sub-agents at a time, each briefed with its Part 2 section plus plan_facts.md. Enforce the citation rule against ~/code-library/search.py. Review only — no SCAD edits. Deliver the merged review as a document on a branch with a PR, and report the PR status explicitly (ready / not ready, and why).
+> Read this document end to end and run it. You are the coordinator (Opus). Work in ~/github/house. Follow Part 1 exactly: Phase 0 plan-facts extraction first (one Sonnet sub-agent), then the specialist waves, at most 2 sub-agents at a time, each briefed with its Part 2 section plus plan_facts.md. Enforce the citation rule against ~/code-library/search.py. Review specialists make no SCAD edits. Then run the layout phase: three layout options for the new floor plan, built as SCAD variants on a `layout-options` branch only (models on main untouched), each with a readable floor-plan render, its own plan facts, and detailed pros/cons scored against Kayla's notes (Part 3) and the review findings. Deliver two PRs — the merged review, and the layout decision pack with a comparison matrix and your recommendation — and report each PR's status explicitly (ready / not ready, and why). Jordan and Kayla make the final layout choice; do not merge an option into the plan.
 
 ---
 # Part 1 — Runbook
@@ -19,7 +23,7 @@ _One document, everything the run needs. Prepared 2026-11-07; run after the Clau
 
 **When:** after the Claude usage reset, **Sunday 2026-11-08, 5:00 p.m. ET**.
 **Where:** Claude Code session on oryx, in `~/github/house`.
-**What:** a multi-agent plan review of the house (main house + shop + site; parents' house as a second pass if time allows). Review only — no model edits in this run. Fixes are a later run, on Jordan's word.
+**What:** (1) a multi-agent plan review of the house (main house + shop + site; parents' house as a second pass if time allows), and (2) three layout options for the new floor plan with a decision pack (Phase 4–5, Jordan's call 2026-11-08). Review specialists make no model edits; layout variants live only on the `layout-options` branch. The final floor plan is built in a later run, after Jordan and Kayla choose an option.
 
 ## Model assignments (Jordan's call, 2026-11-06)
 
@@ -27,10 +31,20 @@ _One document, everything the run needs. Prepared 2026-11-07; run after the Clau
 - **The coordinator runs on Opus** — it oversees: merges the specialists' findings, enforces the citation rule, builds the conflict table and the decision list. This is the usual pattern for this household: Sonnet builds, Opus reviews.
 - **At most 2 sub-agents at a time** (standing rule — the shared session limit kills background agents mid-task; worktrees survive, resume after reset if it happens anyway).
 
+## Where everything is (repo map — verified on oryx 2026-11-08)
+
+- **Repo:** `~/github/house` on oryx (github.com/nuniesmith/house). Read from `main`; the only writes in this run are the review branch and the `layout-options` branch.
+- **SCAD models:** `models/main_floor.scad`, `models/basement.scad`, `models/foundation.scad`, `models/house_lib.scad` (shared room/door/window tables — door/window x,y is the LOW end of the opening, not the centre), `models/house_combined.scad`, `models/export.scad`, `models/shop.scad`, `models/site.scad`.
+- **Model tools:** `tools/check_layout.py` (layout options must pass it), `tools/make_drawings.py`, `tools/model_data.py`. OpenSCAD is `/usr/bin/openscad` **on oryx only**; PNG export needs `xvfb-run -a`.
+- **Floor-plan images:** `docs/house/floor_plan.JPEG` — the architect's layout sheet (its auto-generated labels/dimensions are unreliable — do not model from its numbers; its geometry matches the current model). Drawn plans: `docs/house/main_floor_plan.png`, `docs/house/main_floor.jpg`, `docs/house/basement_plan.png`, `docs/house/basement.jpg`. Elevations/sections: `docs/house/house_front.png`, `house_back.png`, `section_a.png`–`section_e.png`, `cutaway.png`, `house_exploded.png`, `site_plan_house.png`. Shop/site: `docs/shop/*.png` (floor plan, site plan, tunnel section, 3D). Parents' house plan photos: `docs/small_house/IMG_0415.PNG`–`IMG_0420.PNG`.
+- **Prior work:** `docs/house/House-Review-and-Research-2026-10-28.md` (the 23-item decision list), `docs/house/Redesign-and-Spec-2026-11-02.md`, permit set at `docs/permit/House-Drawing-Set.pdf` (+ `docs/permit/README.md`).
+- **Code documents:** the five PDFs live in the repo at `docs/codes/` (ABC 2023 Alberta Edition, National Plumbing Code 2020, NECB 2020, Alberta Electrical Utility Code 2022, Alberta Private Sewage SOP 2021). The **searchable** copy is the index at `~/code-library/` on oryx (`search.py` + `codes.db`) — citations come from there, per the runbook. Not available: CEC Part I (house wiring) and CSA B149.1 (gas) — flag "needs CEC/B149 check", never cite from memory.
+- **Kayla's notes:** Notion original (for Jordan/Kayla): https://app.notion.com/p/Home-Build-40f879a556f180ea8ae5f12afc36fe01 — agents work from the frozen in-repo copy: **Part 3 of this document** and `docs/review-agents/KAYLAS-NOTES.md`. Do not rely on reaching Notion from the agent session.
+
 ## Inputs (all on oryx)
 
 - Models: `~/github/house/models/*.scad` (main_floor, basement, house_combined, shop, site) + drawn plans/renders in the repo docs.
-- Prior review: `docs/House-Review-and-Research-2026-10-28.md` (the 23-item decision list — specialists check what's still open, don't redo what's decided).
+- Prior review: `docs/house/House-Review-and-Research-2026-10-28.md` (the 23-item decision list — specialists check what's still open, don't redo what's decided), plus `docs/house/Redesign-and-Spec-2026-11-02.md`.
 - **Kayla's notes (design intent — READ THESE):** Kayla's Notion "Home Build" notes, handed over by Jordan 2026-11-08. Full text is **Part 3 of this document** (also `KAYLAS-NOTES.md` / `docs/review-agents/KAYLAS-NOTES.md`). These are requirements, not background colour: room-by-room wishlists, accessibility needs (wide doors/hallways, no-threshold shower, generous clearances), noise and public/private separation, wet-wall grouping, cardinal-direction placement, storage, the mistakes-to-avoid list, and the things-she-doesn't-like-on-plans list. Every specialist checks the plan against the sections that touch their brief, and any mismatch is a finding (severity by impact, "Kayla's notes" as the evidence source). Where the model already reflects one of her earlier edits, verify it's actually there — present/absent, with evidence.
 - **Code library:** `~/code-library/` — full text of ABC 2023 (Alberta Ed.), NPC 2020, NECB 2020, Alberta Electrical Utility Code 2022, Alberta Private Sewage SOP 2021, indexed in `codes.db`.
   Query: `python3 ~/code-library/search.py [--doc <stem-prefix>] "<fts query>"` — full-text syntax, phrases in quotes. `--page <doc-prefix> <n>` dumps a whole PDF page.
@@ -65,6 +79,16 @@ Coordinator brief: `agents/coordinator.md`. It dedupes, **bounces any finding wh
 **Phase 3 — Delivery.**
 Final review lands in the repo as a document on a branch + PR, per household rules (Jordan merges). Coordinator states PR status explicitly: ✅ ready only if it's a clean docs PR; this run changes no models.
 
+**Phase 4 — Layout options (Sonnet, 2 at a time; Jordan's call 2026-11-08).**
+Using the review findings, `plan_facts.md`, and Kayla's notes (Part 3), build **three** genuinely different layout options for the new main-floor plan. One Sonnet agent per option, waves of 2. Each option is a strategy, not a tweak:
+- **Option A — Evolve the current model.** Same footprint, basement, stairs, shop and site. Fix the review's Blockers and Kayla's deal-breakers with the smallest moves that honestly fix them.
+- **Option B — The as-drawn sheet, with Kayla's notes applied.** Start from the arrangement on `docs/house/floor_plan.JPEG` (geometry only — its printed dimensions are unreliable) and apply her edits and notes to it. This makes the parked A/B baseline question concrete and decidable.
+- **Option C — Clean sheet inside the same envelope.** Re-plan the floor from Kayla's notes outward — public/private split, grouped wet walls, laundry tied to the master suite, broken-open living, cardinal orientation — keeping the same overall footprint, basement, shop and site unless a departure is listed and costed in the option's cons.
+Deliverables per option, in `docs/layout-options/option-<a|b|c>-<slug>/` on the `layout-options` branch: a compilable SCAD variant of the main floor (reusing `models/house_lib.scad` conventions; `tools/check_layout.py` must pass), a **readable, labelled top-down floor-plan render** plus one 3D render (`xvfb-run -a openscad` on oryx), the option's own plan facts (room areas, circulation %, door/hall widths, wet-wall/plumbing run lengths, stair and tunnel-landing fit), and a pros/cons sheet (template in the Layout Options brief). Basement/shop/site change only where an option truly needs it — and then it's drawn, listed, and costed, never silent.
+
+**Phase 5 — Decision pack (Opus coordinator).**
+The coordinator scores all three options on the fixed matrix in the Layout Options brief, writes the comparison + a ranked recommendation with its reasoning, and lands it as the top document of the `layout-options` PR. The pack ends with the decision Jordan and Kayla have to make — it does not make it. After they choose, a later run turns the chosen option into the final floor plan; nothing from the options branch merges to `main`'s models before that choice.
+
 ## Standard finding format (every specialist, no exceptions)
 
 | # | Severity | Location | Finding | Evidence | Code / standard | Cost impact |
@@ -77,7 +101,7 @@ Final review lands in the repo as a document on a branch + PR, per household rul
 
 ## Hard rules
 
-1. **Review only.** No SCAD edits, no commits by specialists. The coordinator's only write is the review document on its branch.
+1. **Review specialists: no edits.** No SCAD edits and no commits by review specialists; their only output is findings. **Layout agents (Phase 4) are the one exception:** they may create variant SCAD and renders, only on the `layout-options` branch, never on `main`. The coordinator's writes are the review document and the decision pack, each on its own branch + PR.
 2. **No stamped-engineer claims.** Findings are review items for Jordan and, where flagged, for a licensed Alberta engineer — structural and gas especially.
 3. **Known library gaps — flag, don't fake:** house wiring is governed by the Canadian Electrical Code, which is NOT in the library (the electrical doc on hand is the utility code); the gas code (CSA B149.1) is also not in the library. Electrical and gas agents cite what the library has and mark the rest "needs CEC/B149 check" instead of citing from memory.
 4. **Two agents max, always.** Waves, not a swarm.
@@ -253,6 +277,25 @@ You check the plans against the actual code text. You run LAST: you verify the p
 
 ---
 
+# Agent brief — Layout Options (Sonnet)
+
+You design ONE of the three layout options for the new main floor (your coordinator assigns A, B or C — strategies defined in Part 1, Phase 4). You work from evidence, not taste: `plan_facts.md`, the review findings (Blockers first), Kayla's notes (Part 3), the floor-plan images in `docs/house/`, and the code library for anything code-bound.
+
+**Build:**
+- A compilable SCAD variant of the main floor on the `layout-options` branch, under `docs/layout-options/option-<letter>-<slug>/`, following `models/house_lib.scad` conventions (door/window x,y = low end of opening). `tools/check_layout.py` must pass on it — run it and include the result.
+- Renders: one readable, labelled top-down floor plan (the decision document — Jordan reads these on a phone) and one 3D view. Render on oryx with `xvfb-run -a openscad`.
+- The option's plan facts, same measures as Phase 0 so options compare cleanly: room table with areas, circulation % of floor area, door and hallway widths (Kayla's accessibility items), wet-wall count and total plumbing run length, stair fit against the basement, tunnel landing, and what (if anything) changes in basement/shop/site.
+
+**Pros/cons sheet (detailed — this is what the decision is made from):**
+- **Pros** and **Cons**, each item tied to evidence (a plan-facts number, a Kayla's-notes item, a review finding it fixes or leaves, or a code item). No adjectives without a number or a citation behind them.
+- **Kayla's-notes compliance:** count from the Architecture agent's cross-check list — how many items this option satisfies, misses, or contradicts, naming the misses.
+- **What you give up:** one honest line — the option's real cost, stated plainly (space, money, a wishlist item, a harder build).
+- **Cost drivers:** $/$$/$$$ vs the current model, naming the two or three things that move the price.
+
+**Rules:** keep shop, site, septic (west), well (east) and the heated tunnel as they are unless your option genuinely can't — a departure is drawn, listed in Cons, and costed. Satisfy the review's code Blockers or list exactly which ones remain open in your option. Two agents max in flight; if the session limit hits, your branch work survives — note where you stopped in the option folder.
+
+---
+
 # Agent brief — Coordinator / Overseer (Opus)
 
 You oversee the run. Specialists (Sonnet) produce findings; you turn eight stacks of findings into one decision document Jordan can act on. You do not do specialist work yourself — you judge theirs.
@@ -266,7 +309,8 @@ You oversee the run. Specialists (Sonnet) produce findings; you turn eight stack
 4. **Sequence the decisions.** Final decision list ordered so site/land decisions (snow load, septic siting, well) come before the design freezes they gate — same discipline as the Oct 28 list. Mark which of the Oct 28 items this run closes, and which remain open.
 5. **Verdict first.** The report opens with: is this plan buildable as drawn, what are the top 3 risks, and what's the single most expensive surprise hiding in it. Then findings by severity, conflict table, decision list.
 6. **Respect the parked items.** The main-floor A/B baseline question (Kayla layer vs as-drawn) is Jordan's unmade call: state it as an assumption at the top of the report, do not let any specialist's finding quietly presume either answer. Roof product is parked. Land-dependent numbers stay flagged as assumptions.
-7. **Delivery.** Write the review as one document on a branch in the house repo, open a PR, and report its status explicitly (✅ ready to merge only if it's a clean docs PR). No model files change in this run.
+7. **Layout decision pack.** Score Options A/B/C on the fixed matrix — Kayla's-notes compliance count, review Blockers fixed, circulation %, plumbing run length, accessibility (door/hall widths, no-threshold shower), public/private and noise separation, orientation/daylight, basement/shop/site fit, cost drivers — one row per criterion, one column per option, numbers not adjectives. Give a ranked recommendation with the reasoning shown, including what the recommended option gives up. End the pack with the choice itself, framed for Jordan and Kayla (including hybrids: "B's kitchen inside A" is a legitimate answer — note which hybrids are cheap to combine). The decision is theirs; your job is to make it easy, not to make it.
+8. **Delivery.** Write the review as one document on a branch in the house repo, open a PR, and report its status explicitly (✅ ready to merge only if it's a clean docs PR). The layout options and decision pack go on the separate `layout-options` branch + PR, also reported explicitly. No model files on `main` change in this run.
 
 **Tone of the report:** Jordan reads verdict-first, on a phone, between other things. Short sentences, tables for comparisons, plain language for trade terms on first use.
 
@@ -274,7 +318,7 @@ You oversee the run. Specialists (Sonnet) produce findings; you turn eight stack
 
 # Part 3 — Kayla's Notes (full text)
 
-_Kayla's Notion page "Home Build", exported by Jordan and handed over 2026-11-08. Reproduced verbatim (spelling as in the original). This is the design-intent source the specialists check against — see "Kayla's notes — how this run uses them" in Part 1._
+_Kayla's Notion page "Home Build" (https://app.notion.com/p/Home-Build-40f879a556f180ea8ae5f12afc36fe01), exported by Jordan and handed over 2026-11-08. Reproduced verbatim (spelling as in the original). This frozen export is the copy agents work from — do not rely on reaching Notion from the session. This is the design-intent source the specialists check against — see "Kayla's notes — how this run uses them" in Part 1._
 
 ---
 

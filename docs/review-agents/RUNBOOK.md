@@ -2,7 +2,7 @@
 
 **When:** after the Claude usage reset, **Sunday 2026-11-08, 5:00 p.m. ET**.
 **Where:** Claude Code session on oryx, in `~/github/house`.
-**What:** a multi-agent plan review of the house (main house + shop + site; parents' house as a second pass if time allows). Review only — no model edits in this run. Fixes are a later run, on Jordan's word.
+**What:** (1) a multi-agent plan review of the house (main house + shop + site; parents' house as a second pass if time allows), and (2) three layout options for the new floor plan with a decision pack (Phase 4–5 in HOUSE-REVIEW-RUN.md, Jordan's call 2026-11-08). Review specialists make no model edits; layout variants live only on the `layout-options` branch. The final floor plan comes after Jordan and Kayla choose an option.
 
 ## Model assignments (Jordan's call, 2026-11-06)
 
@@ -13,7 +13,7 @@
 ## Inputs (all on oryx)
 
 - Models: `~/github/house/models/*.scad` (main_floor, basement, house_combined, shop, site) + drawn plans/renders in the repo docs.
-- Prior review: `docs/House-Review-and-Research-2026-10-28.md` (the 23-item decision list — specialists check what's still open, don't redo what's decided).
+- Prior review: `docs/house/House-Review-and-Research-2026-10-28.md` (the 23-item decision list — specialists check what's still open, don't redo what's decided), plus `docs/house/Redesign-and-Spec-2026-11-02.md`. Full repo map (SCAD, images, code PDFs, tools): HOUSE-REVIEW-RUN.md, "Where everything is".
 - **Kayla's notes (design intent — READ THESE):** Kayla's Notion "Home Build" notes, handed over by Jordan 2026-11-08. Full text in `HOUSE-REVIEW-RUN.md` Part 3 and in `KAYLAS-NOTES.md`. Requirements, not background: every specialist checks the plan against the sections touching their brief; mismatches are findings. Architecture / Flow owns the full cross-check, and the coordinator's report includes a Kayla's-notes compliance summary.
 - **Code library:** `~/code-library/` — full text of ABC 2023 (Alberta Ed.), NPC 2020, NECB 2020, Alberta Electrical Utility Code 2022, Alberta Private Sewage SOP 2021, indexed in `codes.db`.
   Query: `python3 ~/code-library/search.py [--doc <stem-prefix>] "<fts query>"` — full-text syntax, phrases in quotes. `--page <doc-prefix> <n>` dumps a whole PDF page.
@@ -52,7 +52,7 @@ Final review lands in the repo as a document on a branch + PR, per household rul
 
 ## Hard rules
 
-1. **Review only.** No SCAD edits, no commits by specialists. The coordinator's only write is the review document on its branch.
+1. **Review specialists: no edits.** No SCAD edits, no commits by review specialists. Layout agents (Phase 4) may create variant SCAD/renders only on the `layout-options` branch, never on `main`.
 2. **No stamped-engineer claims.** Findings are review items for Jordan and, where flagged, for a licensed Alberta engineer — structural and gas especially.
 3. **Known library gaps — flag, don't fake:** house wiring is governed by the Canadian Electrical Code, which is NOT in the library (the electrical doc on hand is the utility code); the gas code (CSA B149.1) is also not in the library. Electrical and gas agents cite what the library has and mark the rest "needs CEC/B149 check" instead of citing from memory.
 4. **Two agents max, always.** Waves, not a swarm.

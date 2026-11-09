@@ -1,6 +1,6 @@
 # Kayla's Notes — Home Build (design intent for the review)
 
-_Source: Kayla's Notion page "Home Build", exported by Jordan and handed over 2026-11-08. Verbatim below (spelling as in the original). This is the design-intent record for the house: what Kayla wants, room by room, plus mistakes to avoid and things she doesn't like on plans. The full text is also appended to `HOUSE-REVIEW-RUN.md` as Part 3._
+_Source: Kayla's Notion page "Home Build" (https://app.notion.com/p/Home-Build-40f879a556f180ea8ae5f12afc36fe01), exported by Jordan and handed over 2026-11-08. Verbatim below (spelling as in the original). This is the design-intent record for the house: what Kayla wants, room by room, plus mistakes to avoid and things she doesn't like on plans. The full text is also appended to `HOUSE-REVIEW-RUN.md` as Part 3._
 
 ---
 
