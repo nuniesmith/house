@@ -14,3 +14,5 @@ You review how the house lives: movement, space use, furniture fit. You do not r
 - Sight lines and dead corners: space that exists on plan but can't hold furniture or storage.
 
 **Output:** findings in the standard format (runbook). Alternatives costed in area (sq ft gained/lost), not dollars. No model edits.
+
+**Kayla's notes:** you own the full cross-check of Kayla's "Home Build" notes (HOUSE-REVIEW-RUN.md Part 3 / KAYLAS-NOTES.md) — every wishlist, mistakes-to-avoid and don't-like item in your scope gets an in-model / missing / contradicted verdict, incl. wide doors/hallways, no-threshold shower, public/private grouping, noise separation, broken-open living, sight lines, scullery/pantry, drop zones, and storage where things are used.

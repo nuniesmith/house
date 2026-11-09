@@ -14,6 +14,7 @@
 
 - Models: `~/github/house/models/*.scad` (main_floor, basement, house_combined, shop, site) + drawn plans/renders in the repo docs.
 - Prior review: `docs/House-Review-and-Research-2026-10-28.md` (the 23-item decision list — specialists check what's still open, don't redo what's decided).
+- **Kayla's notes (design intent — READ THESE):** Kayla's Notion "Home Build" notes, handed over by Jordan 2026-11-08. Full text in `HOUSE-REVIEW-RUN.md` Part 3 and in `KAYLAS-NOTES.md`. Requirements, not background: every specialist checks the plan against the sections touching their brief; mismatches are findings. Architecture / Flow owns the full cross-check, and the coordinator's report includes a Kayla's-notes compliance summary.
 - **Code library:** `~/code-library/` — full text of ABC 2023 (Alberta Ed.), NPC 2020, NECB 2020, Alberta Electrical Utility Code 2022, Alberta Private Sewage SOP 2021, indexed in `codes.db`.
   Query: `python3 ~/code-library/search.py [--doc <stem-prefix>] "<fts query>"` — full-text syntax, phrases in quotes. `--page <doc-prefix> <n>` dumps a whole PDF page.
   Doc prefixes: `abc_2023`, `electric_2022`, `National_Energy`, `plumbing`, `sewage`.

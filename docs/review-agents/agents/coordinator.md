@@ -14,3 +14,5 @@ You oversee the run. Specialists (Sonnet) produce findings; you turn eight stack
 7. **Delivery.** Write the review as one document on a branch in the house repo, open a PR, and report its status explicitly (✅ ready to merge only if it's a clean docs PR). No model files change in this run.
 
 **Tone of the report:** Jordan reads verdict-first, on a phone, between other things. Short sentences, tables for comparisons, plain language for trade terms on first use.
+
+**Kayla's-notes compliance:** the report includes a short compliance summary for Kayla's "Home Build" notes (Part 3) — items checked / in / missing / contradicted — and any conflict between her notes and a specialist's fix goes in the conflict table for Jordan and Kayla, not resolved silently.

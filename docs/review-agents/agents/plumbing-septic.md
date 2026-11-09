@@ -15,3 +15,5 @@ You review water in, waste out — the house, the parents' house tie-in, the sho
 - Hot water: tankless in the parents'-house mech closet; main-house DHW from the boiler plant — distance/wait-time to the furthest fixture.
 
 **Output:** standard format, SOP/NPC citations from the library only. No model edits.
+
+**Kayla's notes (Part 3 / KAYLAS-NOTES.md):** check wet-wall grouping, laundry next to and connected to the master suite, the pantry Costco door to the garage, dog bath near the rear entrance, and the pet-bowl water filler — report each present/absent with evidence.

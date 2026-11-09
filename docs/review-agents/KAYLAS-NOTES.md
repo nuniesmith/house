@@ -1,0 +1,415 @@
+# Kayla's Notes — Home Build (design intent for the review)
+
+_Source: Kayla's Notion page "Home Build", exported by Jordan and handed over 2026-11-08. Verbatim below (spelling as in the original). This is the design-intent record for the house: what Kayla wants, room by room, plus mistakes to avoid and things she doesn't like on plans. The full text is also appended to `HOUSE-REVIEW-RUN.md` as Part 3._
+
+---
+
+# Home Build
+
+[Floor Plans](https://app.notion.com/p/Floor-Plans-413879a556f18017bcc5c3cbdee03716?pvs=21) 
+
+- one story (no stairs to reach essential areas)
+- basement for honeybun
+- Wider doorwars/hallways to accomodate size & potential mobility aids
+- More space in areas like bathroom/shower/to walk around furniture d/t size
+- Driveway not past master suite or bedrooms - noise!
+- Considerate of cost/complications - group “wet walls” for plumbing runs where possible
+- Consider which spaces need daylight/windows
+- Consider which rooms need noise protection/quiet and which rooms are noisy to ensure proper noise separation (i.e. bedrooms somewhere quiet away from main areas, bathrooms not direct to main areas for privacy)
+- Which rooms are public vs private, group accordingly - shouldn’t have to walk through private area to reach public
+- Consider building materials come in 2’ increments - working with those measurements reduces extra costs
+
+Lot Notes
+
+- Cardinal directions play a big role in determining placement & plan
+- Ideal directions
+    - South - living spaces, backyard, driveway (for snow melt)
+    - North - master suite (cooler)
+    - East - bedrooms for morning light, sunroom (southeast)
+    - West
+
+Building Notes
+
+- Place blocking in walls during framing where anything will be wall mounted - towel racks, toilet paper holders,
+- Recess into wall behind fridge to reduce protruding into aisles - needs a 2x6 wall
+- Exhaust fan in laundry room - especially if no window
+- In wall insulation for noise protection between rooms - should consider for all bedrooms, office, library, laundry, bathrooms
+- Consider dutch doors - good for pet control (or kids), ventilation in hot weather
+
+Space Planning Notes
+
+- Somewhere to sit/hangout so not isolated when cooking in kitchen or close to living room with open concept
+- TV/large tablet space in kitchen for entertainent & recipes
+- Outdoor cooking space for BBQ that’s covered and easily connected to kitchen
+- Scullery/Butler’s pantry
+    - keep small appliances off main kitchen counters
+    - appliance storage for things like waffle maker/crock pot/etc
+    - baking zone with stand mixer and break maker
+    - shallow storage for pantry - things don’t get buried
+    - Upright freezer for extra storage
+    - Hide the microwave in here
+    - Lots of storage for food - like to stock up, emergency stores, buy in bulk
+- Home office with some privacy/noise separation - quiet place to study or work
+- Home library with floor to ceiling bookshelves and cozy seating/reading area that’s relatively quiet
+- Access to bathroom from all living zones (office, library, living room, kitchen/dining) and entries (front and mudroom) without crossing the whole house
+- Somewhere to sit outside that’s bug free - sunroom or screened in porch - maybe convertible windows that open
+- Direct access to dining room from kitchen - hate having to walk through living room, or around or through pantry, down a hallway
+- Laundry room next to and connected to master suite either through bathroom or closet - or a second W/D in master bath
+- Pantry directly adjacent/connected to garage with a costco door for ease of unloading groceries
+- Broom & vacuum closets - more than one so not hiking across whole house
+    - Home for robot vacuum to dock
+- Linen closets near bedrooms/bathrooms vs. storing all linens in laundry room
+- Adding a vestibule at the front entry - air lock for heat/cool control, privacy
+- Storage - think about things where we use them and need storage
+    - Mail drop zone/command centre near entrance
+    - Somewhere to drop purse/keys/wallets near entrance
+    - Blankets & pillows for the couch and extras for the beds
+    - Pet food - near bowls, pet leashes near door etc.
+    - Shoes in doorway - tend to kick off
+    - Random shit like board games & puzzles, coolers
+    - Cleaning supplies in every room (or close) - no central location or we won’t clean as often
+    - Maximize by avoiding or utilizing dead voids - blind corners, over fridge, under stairs, garage ceiling, attic
+- Pet Peeves I want to fix
+    - Clothes always end up on floor - kick laundry baskets - on floor, basket where I actually take off my clothes
+    - Walking into the bedframe - generous clearance around bed, clear path from door
+- Accessibility needs - current and potential future
+    - No threshold walk in shower
+    - Shower bench and foot notches
+    - Bathtub with steps in and out - no large step over
+    - Leave empty space for elevator?
+    - Dumb waiter! these were so smart
+    - Wide walkways - not skinny people plus future walker/wheelchair use
+    - Wide doorframes - again not skinny, plus easier to move furniture
+
+Notes on Interior Design/Architecture
+
+- Not open concept, not totally closed off - broken open
+    - Use half walls with glass or shelf partitions, pocket or barn doors, pony walls, full glass partitions
+- Living spaces should have windows on 2 walls
+    - If not possible, use skylights or mirrors to add additional light
+- Avoid creating glare on TVs/monitors/computers with side facing light
+    - Avoid backlight and light directly across
+- Need soft surfaces in large rooms - especially open concept to absorb noise and reduce echo
+- Simple forms/shapes are more efficient for insulation, water seal, keeping bugs out etc. - need to take extra care at every 90 degree joint
+- Closets = insulation - avoid on exterior walls as they can create condensation
+    - Ideally closets should be entirely on interior walls
+- Ideal exhaust placement has toilet between shower and door with exhaust fan over shower
+    - Water closets require separate exhaust fan
+- Bathtubs on exterior walls cause water to cool down faster
+- Avoid having 2 wings separated by great room - causes issues with running duct work
+- Rooms should have a focal point - somewhere to draw your eye
+- Window placement
+    - Don’t place windows directly across from each other (within room, or envelope)
+    - Want to place on a diagonal to promote cross breeze through entire room, not direct path
+    - Create pressure systems to pool in cool air by having larger windows placed lower and smaller windows higher in elevation
+    - Don’t place windows in centre of room - create dark corners/edges, pull windows to corners to create light reflection off walls
+    - Consider shading windows with overhangs especially hottest West facing windows for energy efficiency
+- Golden Ratio is 1:1.4 to 1:1.6
+    - Room dimensions that meet these ratios feel more comfortable
+    - Long wall points the eye
+        - Should hold your sofa as well
+    - Reduces echo
+- Ranch style houses
+    - Linear - garage on one end, bedrooms on the other
+    - L shaped, one wing public, one private, private back patio
+    - U shaped - surround central patio
+    - V shaped - ?no examples
+- Managing daylight
+    - Consider path of sun - northern hemisphere, most sunlight on N side
+        - E - morning light, noon - N, evening - W
+    - Covered patios - light fades off significantly after 4-5m, too deep and light doesn’t reach interior living areas
+        - Leave open tops like pergola style with retractable roof cover
+        - Reduce depth or reposition to allow light to reach living area windows unobstructed
+    - Kitchen counter runs (especially if using overheads) should go on inside walls
+    - Square shaped building - interiors are very dark
+        - Shallow building depth allows sun to warm interior areas in winter
+    - Considerations
+        - Active spaces should be nearest the sunlight - living room, dining room, kitchen and have access to nature
+        - Bedrooms should be positioned to receive morning light - circadian rhythm
+- Consider views & sightlines
+    - Bathrooms should never open to toilet
+    - Should not have a direct view of bathrooms from entry, couch, dining table, bed
+    - Should not have a direct view from public area into bedroom door
+    - Should not have direct view of laundry room from public area
+- 
+
+Room Wishlist
+
+- Kitchen
+    - large island - no seating
+    - breakfast nook - bench ok on one side, need to have some chairs
+    - Prefer nothing in island (sink/cooktop)
+    - No upper cabinets, full size ok
+    - All drawers/pull outs - no cupboards
+    - XL fridge & range
+    - Wall ovens
+    - Elevated dishwasher? - possible to stack 2 dishwasher like the ovens?
+    - Walk in pantry/butler’s pantry with space for small appliances
+    - Costco door in pantry - share wall with garage
+    - Kitchen near rear entrance - close for unloading groceries
+    - Coffee bar near breakfast nook - pot filler to fill coffee maker
+    - Glass rinser
+    - Instant hot water tap
+    - Pot filler for stove
+    - Extra freezer storage (deep freeze in pantry)
+    - Microwave not under or overhead
+    - Face living areas from island
+    - Ideally sink under window
+    - Pull out island extension - lower height - seated prep or extra seating?
+    - Workstation sink - single bowl or 70/30, side drain
+- Dining Room
+    - Access to outdoor kitchen/dining area
+    - Seats 8
+    - Fully openable doors to outside?
+- Living Room
+    - Gas fireplace
+    - TV/media center
+    - Room for sectional + chairs
+    - Access to outdoor patio or sunroom
+    - Fully openable doors to outside?
+    - Every seat have easy access to side/coffee table
+    - Built in storage
+    - Place to store blankets/pillows
+    - Pet stuff - cat tree/dog bed
+    - Ceiling fan
+- Entry
+    - Somewhere to sit and put on shoes
+    - Coat storage for guests
+    - Hidden coat/shoe storage
+    - Drop zone
+    - No direct line of sight to messiest areas - kitchen/living?
+    - Powder room near front door
+- Mudroom
+    - Seating to put on shoes
+    - Easy access shoe storage
+    - Coat hooks
+    - Hidden coat storage
+    - Seasonal storage - winter boots, hats, etc
+    - Drop zone!!
+    - Hooks for bags
+    - Mail organizer area - command center
+    - Garbage/recycle chutes to garage?
+    - Outdoor entrance
+    - Garage entrance
+    - Bathroom or powder room off mudroom
+- Laundry
+    - Near master suite? or a second laundry in/next to master
+    - washer/dryer raised to waist height
+    - Pull out shelf to rest basket on
+    - Pull out/down hang to dry racks
+    - Pull out/down ironing board
+    - laundry sink
+    - Lots of storage for soap/cleaning supplies
+    - Rod for hanging clothes on hangers
+    - Pull through laundry basket from master?
+    - Storage for linens
+    - Garbage for lint
+- Pets
+    - Pet bowl area with water filler (kitchen v mudroom)
+    - Dog bath near rear entrance (mudroom v laundry)
+    - Integrated space for cat/dog beds (counters/shelves) (mudroom?, library, living)
+    - Cat litter area (connect to garage?) - mudroom?
+    - Dog door to mudroom?
+    - Cat wall climbers (anywhere, stylish)
+- Library
+    - Floor to ceiling bookshelves (at least one wall, preferably 2 or more)
+    - Comfy seating - oversize chair, loveseat/couch, window seat?
+    - Fireplace?
+- Anywhere features
+    - Window seat - library, living room, bedroom, ?
+    - At least one full bathroom not through a bedroom
+- Office
+    - Lots of desk space to spread out
+    - Built in storage/shelves
+    - French or barn door?
+    - Access to porch?
+    - Shared with Jordan or shared with craft space?
+- Sunroom
+    - Full walls of windows/glass
+    - Open to patio (french doors)
+    - Windows open to screens - screened in porch
+    - Room for comfy lounge furniture (couch/chair)
+    - Small dining set for 4
+- Master Suite
+    - Bedroom
+        - TV on wall
+        - Access to private porch
+        - No fireplace
+        - Ceiling fan
+        - Extra AC blowers
+        - Lots of room to walk around bed
+        - Pet sleep area - dog/cat beds/tree
+        - Dog/cat door
+        - Chairs
+        - Bench at end of bed
+    - Closets
+        - Separate walk in closets
+        - Access from bedroom NOT JUST bathroom
+        - Access from bath ok as long as not only way into
+        - Access to laundry or through bathroom
+        - Kayla
+            - More drawer/easy access storage
+            - Pull out pant racks
+            - Hooks
+            - Space for jewelry
+            - hooks/rings for scarves/hats, etc
+            - Shoe storage
+            - Floor/kick laundry or pass through basket to laundry
+    - Bathroom
+        - Large walk in shower - lots of elbow room, no step/barrier
+        - Bench seat in shower
+        - Alcoves in shower for shampoo
+        - Hooks in shower for back brush
+        - Precise temperature control
+        - Hand shower right next to bench
+        - Fan/cooling in shower?
+        - Foot notch in wall to raise leg
+        - Somewhere to put water bottle in easy reach
+        - Sunken bathtub - large enough for HB and maybe 2?
+        - Steps up to bath for ease of access
+        - Shelf space next to tub for soaps
+        - Somewhere to put drink while in bath
+        - Double sink vanity or totally separate vanities
+        - Lots of storage next to vanity
+        - Closed storage for towels? or in laundry?
+        - Water closet - potentially 2 - spacious/wide
+        - Access to laundry?
+        - Access to closets?
+        - Makeup vanity with built in storage and storage for hot tools
+        - Built in hair dryer with seat
+- Craft/Hobby/Flex Room
+    - Lots of desk space for crafts
+    - Lots of storage
+    - Desk chair and space for laptop
+    - Comfy chair for crochet?
+    - Pull out island? with rolling stolls
+    - Arranged so a bed can be added or a day bed or murphy bed in room
+- Guest Room
+    - At least one set up with queen size bed
+    - Ensuite
+    - Private access? from porch or garage
+- Bedroom 3 & 4?
+    - Additional bedrooms for future planning - extra guests, kids?
+    - Potentially other uses in meantime
+    - Jack & Jill bath
+- One small bedroom/flex room near Master for nursery?
+- Front Porch
+    - Porch swing
+    - Couple of chairs & table
+    - Covered
+- Covered Entry to Mudroom
+- Back Patio
+    - Outdoor kitchen counter tops
+    - BBQ/smoker/blackstone
+    - Dining table for 6-8 under cover
+    - Lounge area with sofas and chairs and coffee table  under cover
+    - Open area to sit in sun
+    - Place to sit and work outside - small desk/table and chair
+
+Room Notes
+
+- Kitchen
+    - Clear counter tops on either side of cooktop and sink as landing zones - min. 15”
+    - Landing zone near fridge for putting groceries away - 30 to 60”
+    - Work triangle
+        - Fridge - Sink - Range
+        - Outdated now? originally designed for single person small kitchens
+        - Still somewhat applicable
+        - No more than 9’ per side, 26’ total journey
+    - No direct line of sight to kitchen mess from entry (keep semi-private)
+    - Try to centre features - sink tap or range on fireplace, sink on window, etc.
+    - Zones - new way to organize/plan your kitchen, potentially replace work triangle
+        - Zones:
+            - Consumables - fridge, pantry
+            - Non-Consumables - dishes, etc.
+            - Prep - cutting boards, sink, knives, prep bowls, etc
+            - Cooking - range, ovens, pots, pans, oven mitts, hot pads, spatulas
+            - Cleaning - sink, dishwasher, trash, cleaning supplies
+        - Try to aim for 3-5 steps between zones
+    - Consider counter vs. standard depth appliances
+    - Think about clearances when planning kitchen size/cabinet layout
+        - Oven/fridge/dishwasher doors opening into walkway
+            - Dishwasher door is 36” - consider 54” walkway on this side
+        - Handles/knobs hitting each other
+        - Drawers hitting appliance handles/bump outs
+    - Sink shouldn’t face a wall - under a window or in island/peninsula
+    - Consider a raised dishwasher - better on back, more efficient without constant bending
+    - Appliance placement
+        - Consider workflow
+            - Take food from pantry/fridge - need a landing zone!
+            - Wash food/hands in sink
+            - Prep food - empty counter space!
+                - Prep zone should be near/between both fridge and range
+            - Cook - need landing zones on either side of range and beside oven for hot items!
+                - Range hood needs to fully over range and be at least 6” wider
+            - Plate or Pack food
+            - Clean - scrape food into trash, rinse in sink, load in dishwasher, need landing zone for dirty dishes
+                - Trash/waste management should be next to sink
+                - Dishwasher should be next to sink
+                - Everyday dishes, silverware and glassware should be stored directly beside, above or across from dishwasher for ease of unloading
+        - Fridge should be - closer to sink than range, closer to pantry, at the end of a counter run, outside the prep/cooking zones, not next to stove or oven (increased wear on fridge due to extra compressor use)
+    - Counter slabs for island - consider maximum slab sizes, if island is larger, will require a seam that’s visible
+    - Tall cabinets or appliances should go at end of counter runs - not interrupt them or go on a separate tall unit wall
+    - Typical cabinet dimensions - 24” deep, 25.5-26” with overhang, 36” high (with countertop, 34.5 + 1.5), 3.5” toe-kick, width - can get 3&6” (useful?), 9” (spice) - 48” (corner)
+        - Come in 3” increments
+        - Anything over 24” = 2 doors, 2 knobs/handles, or long handle
+        - Can raise toe-kick to raise counter height for comfort - tall people
+- Dining Room
+- Living Room
+- Foyer/Entry
+    - Consider glass partitions instead of walls to allow in more natural light
+    - Access to powder room should be after closet or storage, ideally off a hallway not opening directly into main entryway
+    - Should have a focal point or something to draw your eye through the house directly across from front door
+        - i.e. large window to backyard or glass doors to outside
+    - Consider milk door (modern version for package receiving)
+- Mudroom
+- Laundry
+- Pets
+- Library
+- Office
+    - Consider door to bathroom?
+- Sunroom
+    - Motorized screens? very cool but probably expensive
+- Master Suite
+    - Access to closet should not require going through bathroom
+- Flex Room
+    - Consider making flex rooms vs. dedicated guest rooms by using murphy beds, furniture that can be easily stored, multi-use furniture (i.e. daybeds)
+- Bedrooms
+    - Avoid window directly behind bed
+    - Pull windows to corners to allow options for which wall bed goes on - measure headboard to ensure enough clearance
+    - Recess ceiling lights - should be in 4 corners not central
+- Garage
+    - Wall mount fans in garage
+    - Retractable - hose, outlet, extension cord, air compressor
+    - Electric vehicle charger
+    - Consider side mount garage door openers for greater height clearance, roof storage
+    - Insulated garage doors if want usable space
+    - Epoxy floor with extra clear coat - cleanable floor for spills/messes
+    - Costco door to pantry!
+- Outdoor
+
+Mistakes to Avoid
+
+- too much hallway space/circulation space - wasted sq. ft.
+    - Try to redesign room access to minimize
+- having the kitchen be a highway through the house - interferes with work zones of cooking
+- Not having landing zones!
+    - Entry for shoes, coats, bags, mail, groceries - think about everyday life and guests
+- Not enough usable wall space
+    - Needed for furniture placement, TV placement, art and photographs
+    - Leave wall space uninterrupted by windows or doors
+- Too open concept with no visual or functional zones
+- Bedrooms sharing walls with or too close to noisy living areas
+    - Use bathrooms and closets as buffers
+    - Think about in wall insulation
+
+Things I Don’t Like on Plans
+
+- Bedroom directly adjacent to foyer
+- Laundry far from bedrooms
+- Major path of traffic (i.e. to laundry, master suite) only through kitchen zone - past range or dishwasher or anything that might block path
+- Closets on exterior walls - waste of natural light - bad for condensation
+- Full open concept - linear living - dining - kitchen
+- Have to go all the way through master bath to access closet
+- Bedrooms directly sharing wall with living room
+- Garage at rear - require driving past master bedroom especially, or other bedrooms not ideal
