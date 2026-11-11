@@ -1,0 +1,2 @@
+main_floor_f.scad (defaults): 30 rooms, 32 doors, 17 windows - OK
+basement_f.scad (defaults): 23 rooms, 22 doors, 6 windows - OK

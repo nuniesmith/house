@@ -1,12 +1,36 @@
 #!/usr/bin/env python3
 """Regenerates every computed table of plan_facts.md (sections 1-12 computed parts).
 
-    python3 plan_facts.py [out_dir]      (default: the run folder, one level up)
+    python3 plan_facts.py [out_dir]                              Phase 0 run on /home/user/house/models
+    python3 plan_facts.py --main <main_floor variant.scad> [--basement <basement variant.scad>] --out <dir>
+                                                                  VARIANT MODE (layout options A/B/C)
 
 Reads /home/user/house read-only: runs openscad on the level files with
 -D audit=true, parses the SCAD tables for source line numbers, and writes
-  <out>/computed/secN.md   (markdown fragments, pasted into plan_facts.md)
-  <out>/computed/facts.json
+  <out>/computed/secN.md   (markdown fragments)       <out>/computed/facts.json
+  <out>/computed/matrix.md (the comparison block; also written in default mode)
+Variant mode also writes <out>/plan_facts.md (the computed sections concatenated) and <out>/matrix.md.
+Site (models/site.scad numbers) and, unless --basement is given, the basement stay the current ones.
+
+Room classification (nothing depends on the current model's exact labels; kind = the row's 7th field):
+  bedroom          kind bed.  Master bedroom = kind bed with MASTER in the label (else the largest bed row).
+  full bath        kind bath with BATH in the label (WC / POWDER rooms are toilet rooms, not full baths).
+  closet / WIC     kind closet (linen closets included). "WIC" label = walk-in closet.
+  foyer            label containing FOYER or VESTIBULE.      mudroom: label MUDROOM.
+  laundry          label LAUNDRY (main level); a W/D fixture (steel box, 3.2 ft high) inside a master-suite room also counts.
+  scullery/pantry  label SCULLERY or PANTRY.                 powder room: label POWDER.
+  living-kind      kind living with walls (ceiling > 0): GREAT ROOM, LIVING, DEN, SUN ROOM ...
+  kitchen          kind kitchen.  garage: kind garage.  stairwell: kind stairwell (main stair opening).
+  circulation      kind hall, foyer excluded (strict); "with foyer" adds the foyer rows.
+  hall (min width) circulation rooms whose longer clear side is >= 6 ft (so entries and sliver rows are not 'halls').
+  master suite     master bedroom + every bath/closet/hall room reached from it through doors without crossing a
+                   hall room larger than 100 sq ft.
+Wet fixtures (variant mode; the audit table has no type field) are recognised by colour, which the level
+files define once: basin = sink, tile = shower, white = toilet/tub (in a bath room, or in a PET/DOG/LAUNDRY/MUD
+utility room), counter = vanity (in a bath room), steel 3.2 ft high in a LAUNDRY room = washer/dryer.
+Water heater = the round fixture in the room labelled UTILITY, boiler = steel 3.5 ft box there. Validated against
+the hand lists used for the default Phase 0 run (see README-variant.md).
+Paths: Dijkstra over door midpoints, as in Phase 0.
 """
 import ast, json, math, re, subprocess, sys
 from collections import defaultdict
@@ -17,10 +41,22 @@ from shapely.ops import unary_union
 
 REPO = Path("/home/user/house")
 M = REPO / "models"
-OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
+import argparse
+_ap = argparse.ArgumentParser()
+_ap.add_argument("outdir", nargs="?")
+_ap.add_argument("--main"); _ap.add_argument("--basement"); _ap.add_argument("--out")
+ARGS = _ap.parse_args()
+VARIANT = ARGS.main is not None or ARGS.basement is not None
+RUNDIR = Path(__file__).resolve().parent.parent
+OUT = Path(ARGS.out or ARGS.outdir) if (ARGS.out or ARGS.outdir) else RUNDIR
 CMP = OUT / "computed"
-CMP.mkdir(exist_ok=True)
-model = json.load(open(OUT / "model.json"))
+CMP.mkdir(parents=True, exist_ok=True)
+model = json.load(open(RUNDIR / "model.json"))
+MAIN_FILE = Path(ARGS.main).resolve() if ARGS.main else M / "main_floor.scad"
+BASE_FILE = Path(ARGS.basement).resolve() if ARGS.basement else M / "basement.scad"
+def _lbl(p, default):
+    return default if p.parent == M else f"{p.parent.name}/{p.name}"
+MAIN_LBL, BASE_LBL = _lbl(MAIN_FILE, "main_floor.scad"), _lbl(BASE_FILE, "basement.scad")
 
 WALL_T = 0.4                       # house_lib.scad:40 wall_t (every wall, main floor)
 ICF_T = model["levels"]["icf_wall_t"]   # 13.25 in, foundation.scad:37
@@ -57,21 +93,26 @@ def rows_src(path, func):
 def grep(path, pat):
     return [i for i, l in enumerate(Path(path).read_text().splitlines(), 1) if re.search(pat, l)]
 
-mrooms, mdoors, mwins, mfix = audit(M / "main_floor.scad")
-brooms, bdoors, bwins, bfix = audit(M / "basement.scad")
+mrooms, mdoors, mwins, mfix = audit(MAIN_FILE)
+brooms, bdoors, bwins, bfix = audit(BASE_FILE)
 src = {
-    "mr": rows_src(M / "main_floor.scad", "main_rooms"), "md": rows_src(M / "main_floor.scad", "main_doors"),
-    "mw": rows_src(M / "main_floor.scad", "main_windows"),
-    "mf": rows_src(M / "main_floor.scad", "main_fixtures") + rows_src(M / "main_floor.scad", "main_furniture"),
-    "br": rows_src(M / "basement.scad", "base_rooms"), "bd": rows_src(M / "basement.scad", "base_doors"),
+    "mr": rows_src(MAIN_FILE, "main_rooms"), "md": rows_src(MAIN_FILE, "main_doors"),
+    "mw": rows_src(MAIN_FILE, "main_windows"),
+    "mf": rows_src(MAIN_FILE, "main_fixtures") + rows_src(MAIN_FILE, "main_furniture"),
+    "br": rows_src(BASE_FILE, "base_rooms"), "bd": rows_src(BASE_FILE, "base_doors"),
     "bw": rows_src(M / "foundation.scad", "basement_windows"),
-    "bf": rows_src(M / "basement.scad", "base_fixtures") + rows_src(M / "basement.scad", "base_furniture"),
+    "bf": rows_src(BASE_FILE, "base_fixtures") + rows_src(BASE_FILE, "base_furniture"),
 }
 for k, t in (("mr", mrooms), ("md", mdoors), ("mw", mwins), ("mf", mfix), ("br", brooms), ("bd", bdoors), ("bw", bwins)):
-    assert len(src[k]) == len(t), (k, len(src[k]), len(t))
+    if len(src[k]) != len(t):
+        if not VARIANT:
+            raise AssertionError((k, len(src[k]), len(t)))
+        print(f"note: {k}: {len(src[k])} source rows vs {len(t)} table rows; source lines for that table are approximate", file=sys.stderr)
+        src[k] = (src[k] + [(0, "")] * len(t))[:len(t)]
+if len(src["mf"]) < len(mfix): src["mf"] = src["mf"] + [(0, "")] * (len(mfix) - len(src["mf"]))
 src["bf"] = src["bf"] + [(168, "theatre seat (generated, basement.scad:167-170)")] * (len(bfix) - len(src["bf"]))
-FILE = {"mr": "main_floor.scad", "md": "main_floor.scad", "mw": "main_floor.scad", "mf": "main_floor.scad",
-        "br": "basement.scad", "bd": "basement.scad", "bw": "foundation.scad", "bf": "basement.scad"}
+FILE = {"mr": MAIN_LBL, "md": MAIN_LBL, "mw": MAIN_LBL, "mf": MAIN_LBL,
+        "br": BASE_LBL, "bd": BASE_LBL, "bw": "foundation.scad", "bf": BASE_LBL}
 def S(k, i):
     return f"{FILE[k]}:{src[k][i][0]}"
 
@@ -171,6 +212,36 @@ def exterior_edges(L, is_heated):
 MAIN.ext = exterior_edges(MAIN, heated_main)
 BASE.ext = exterior_edges(BASE, heated_base)
 
+# ---------------------------------------------------------------- classification (kind + label keywords)
+def LAB(L, i):
+    return label(L.rooms[i]).upper()
+def idx(L, f):
+    return [i for i, r in enumerate(L.rooms) if f(i, r)]
+def first(L, f, key=None):
+    c = idx(L, f)
+    if key: c.sort(key=key)
+    return c[0] if c else None
+def by_area_desc(L):
+    return lambda i: -area(L.rooms[i])
+GAR = first(MAIN, lambda i, r: r[6] == "garage")
+KIT = first(MAIN, lambda i, r: r[6] == "kitchen", by_area_desc(MAIN))
+FOY = first(MAIN, lambda i, r: any(k in LAB(MAIN, i) for k in ("FOYER", "VESTIBULE")))
+MUD = first(MAIN, lambda i, r: "MUDROOM" in LAB(MAIN, i))
+SCULS = idx(MAIN, lambda i, r: any(k in LAB(MAIN, i) for k in ("SCULLERY", "PANTRY")) and r[6] != "porch")
+LAUS = idx(MAIN, lambda i, r: "LAUNDRY" in LAB(MAIN, i))
+BEDS = idx(MAIN, lambda i, r: r[6] == "bed")
+MBR = first(MAIN, lambda i, r: r[6] == "bed" and "MASTER" in LAB(MAIN, i)) or (first(MAIN, lambda i, r: r[6] == "bed", by_area_desc(MAIN)))
+OTHER_BEDS = [i for i in BEDS if i != MBR]
+FULL_BATHS = idx(MAIN, lambda i, r: r[6] == "bath" and "BATH" in LAB(MAIN, i) and "POWDER" not in LAB(MAIN, i))
+POWDERS = idx(MAIN, lambda i, r: "POWDER" in LAB(MAIN, i))
+LIVINGS = idx(MAIN, lambda i, r: r[6] == "living" and r[5] > 0)
+STAIRW = first(MAIN, lambda i, r: r[6] == "stairwell")
+gar, kit, foy = GAR, KIT, FOY
+scull = SCULS[0] if SCULS else None
+NFIX_MAIN = len(rows_src(MAIN_FILE, "main_fixtures"))
+def nice_bath(n):
+    return "hall BATH" if n == "BATH" else n
+
 def thick(L, i, side):
     if L.tag == "main":
         return WALL_T
@@ -228,7 +299,14 @@ allx = [r[1] for r in MAIN.rooms] + [r[3] for r in MAIN.rooms]
 ally = [r[2] for r in MAIN.rooms] + [r[4] for r in MAIN.rooms]
 hx = [MAIN.rooms[i][1] for i in Hm] + [MAIN.rooms[i][3] for i in Hm]
 hy = [MAIN.rooms[i][2] for i in Hm] + [MAIN.rooms[i][4] for i in Hm]
-roof = model["main_roof"]
+def _variant_roof():
+    tmp = CMP / "_roof.scad"
+    tmp.write_text(f"use <{MAIN_FILE}>\necho(main_roof = main_roof());\n")
+    r = subprocess.run(["openscad", "-o", "/dev/stdout", "--export-format", "echo", str(tmp)], capture_output=True, text=True)
+    m = re.search(r"ECHO: main_roof = (.*)$", r.stdout + r.stderr, re.M)
+    tmp.unlink()
+    return lit(m.group(1)) if m else model["main_roof"]
+roof = _variant_roof() if VARIANT else model["main_roof"]
 out["env"] = dict(heated_sum=heated_sum, union_area=union.area, stairwell=stairwell_area, garage=garage_a,
                   perim=union.length, outside_corners=cx, inside_corners=rx, verts=nv, holes=holes,
                   base_sum=base_sum, base_poly=bpoly.area, base_perim=bpoly.length)
@@ -256,7 +334,7 @@ s += table(["Measure", "Value", "How"], [
     ["Bounding box, heated rooms", f"x {min(hx):g}..{max(hx):g} ({max(hx)-min(hx):g} ft), y {min(hy):g}..{max(hy):g} ({max(hy)-min(hy):g} ft)", "min/max of heated room rects"],
     ["Bounding box, everything on the main floor incl. garage, porches, deck", f"x {min(allx):g}..{max(allx):g} ({max(allx)-min(allx):g} ft), y {min(ally):g}..{max(ally):g} ({max(ally)-min(ally):g} ft)", "all main_rooms rows"],
     ["Basement outline", f"x {min(p[0] for p in bo):g}..{max(p[0] for p in bo):g}, y {min(p[1] for p in bo):g}..{max(p[1] for p in bo):g}; perimeter {bpoly.length:.1f} ft; {bcx} outside / {brx} inside corners ({bnv} vertices)", "foundation.scad:40-45"],
-    ["Roof", f"{len(roof)} hip-roof blocks in main_roof (main_floor.scad:{src['mr'] and grep(M/'main_floor.scad', 'function main_roof')[0]}); each hip block is 4 sloped facets, so 4 x {len(roof)} = {4*len(roof)} nominal facets before overlapping blocks merge; {sum(1 for b in roof if b[5]==0.5)} blocks at 6/12 pitch, {sum(1 for b in roof if b[5]!=0.5)} porch blocks at 4/12", "house_lib.scad:hip_roof; the model draws overlapping blocks, so true merged facet count is not in model"],
+    ["Roof", f"{len(roof)} hip-roof blocks in main_roof (main_floor.scad:{(grep(MAIN_FILE, 'function main_roof') or [0])[0]}); each hip block is 4 sloped facets, so 4 x {len(roof)} = {4*len(roof)} nominal facets before overlapping blocks merge; {sum(1 for b in roof if b[5]==0.5)} blocks at 6/12 pitch, {sum(1 for b in roof if b[5]!=0.5)} porch blocks at 4/12", "house_lib.scad:hip_roof; the model draws overlapping blocks, so true merged facet count is not in model"],
 ])
 s += "\n(Rooms with wall_t 0.4 ft: exterior and interior walls are drawn at the same thickness on the main floor, house_lib.scad:40; basement outside walls are ICF 13.25 in, foundation.scad:37.)\n"
 sec[1] = s
@@ -380,7 +458,7 @@ out["win_main"] = MW
 def circ(L, heated):
     idx = [i for i, r in enumerate(L.rooms) if heated(r)]
     base = sum(area(L.rooms[i]) for i in idx)
-    circ_i = [i for i in idx if L.rooms[i][6] == "hall" and "FOYER" not in L.names[i]]
+    circ_i = [i for i in idx if L.rooms[i][6] == "hall" and "FOYER" not in L.names[i] and "VESTIBULE" not in L.names[i]]
     return base, circ_i
 mb, mc = circ(MAIN, heated_main)
 bb_, bc = circ(BASE, heated_base)
@@ -392,19 +470,24 @@ def circ_table(L, ids):
     return table(["Circulation room", "rect", "area c/l sf", "clear width, length", "source"], rows)
 mc_a = sum(area(MAIN.rooms[i]) for i in mc)
 bc_a = sum(area(BASE.rooms[i]) for i in bc)
-foyer_i = [i for i, n in enumerate(MAIN.names) if n == "FOYER"][0]
-mud_i = [i for i, n in enumerate(MAIN.names) if n == "MUDROOM"][0]
-stair_main = [i for i, r in enumerate(MAIN.rooms) if r[6] == "stairwell"][0]
+foyer_i = FOY
+mud_i = MUD
+stair_main = STAIRW
 stair_base = [i for i, r in enumerate(BASE.rooms) if r[6] == "stair"][0]
 den_a = mb - 0  # denominators
 s = "**Definition.** Circulation = rooms of kind `hall` (halls, corridors, galleries, vestibules, landings) in the model's own classification, excluding the foyer (also kind hall) which is shown on its own line. The mudroom (kind utility), the stair flight/opening, porches and the garage are never in the total. Percent = circulation sq ft / conditioned sq ft (the §1.1 row sums, main incl. stairwell footprint).\n\n"
 s += "### 6.1 Main floor\n\n" + circ_table(MAIN, mc)
 s += f"\n**Circulation total (halls only): {mc_a:.0f} sq ft = {100*mc_a/mb:.1f}% of {mb:.0f} sq ft conditioned** ({100*mc_a/(mb-stairwell_area):.1f}% if the stair opening is excluded from the denominator).\n\n"
-s += table(["Separate lines (not in total)", "area c/l sf", "clear width", "% of conditioned if added", "source"], [
-    ["FOYER", f"{area(MAIN.rooms[foyer_i]):.0f}", f"{min(clear_dims(MAIN, foyer_i)):.1f} ft", f"{100*(mc_a+area(MAIN.rooms[foyer_i]))/mb:.1f}%", S("mr", foyer_i)],
-    ["MUDROOM", f"{area(MAIN.rooms[mud_i]):.0f}", f"{min(clear_dims(MAIN, mud_i)):.1f} ft", f"{100*(mc_a+area(MAIN.rooms[foyer_i])+area(MAIN.rooms[mud_i]))/mb:.1f}% (halls+foyer+mudroom)", S("mr", mud_i)],
-    ["STAIR DN opening (stairwell)", f"{stairwell_area:.0f}", f"{min(clear_dims(MAIN, stair_main)):.1f} ft", f"{100*(mc_a+area(MAIN.rooms[foyer_i])+area(MAIN.rooms[mud_i])+stairwell_area)/mb:.1f}% (all four)", S("mr", stair_main)],
-])
+_fa = area(MAIN.rooms[foyer_i]) if foyer_i is not None else 0.0
+_ma = area(MAIN.rooms[mud_i]) if mud_i is not None else 0.0
+_rows = []
+if foyer_i is not None:
+    _rows.append(["FOYER", f"{_fa:.0f}", f"{min(clear_dims(MAIN, foyer_i)):.1f} ft", f"{100*(mc_a+_fa)/mb:.1f}%", S("mr", foyer_i)])
+if mud_i is not None:
+    _rows.append(["MUDROOM", f"{_ma:.0f}", f"{min(clear_dims(MAIN, mud_i)):.1f} ft", f"{100*(mc_a+_fa+_ma)/mb:.1f}% (halls+foyer+mudroom)", S("mr", mud_i)])
+if stair_main is not None:
+    _rows.append(["STAIR DN opening (stairwell)", f"{stairwell_area:.0f}", f"{min(clear_dims(MAIN, stair_main)):.1f} ft", f"{100*(mc_a+_fa+_ma+stairwell_area)/mb:.1f}% (all four)", S("mr", stair_main)])
+s += table(["Separate lines (not in total)", "area c/l sf", "clear width", "% of conditioned if added", "source"], _rows)
 s += "\n### 6.2 Basement\n\n" + circ_table(BASE, bc)
 s += f"\n**Circulation total (halls only): {bc_a:.0f} sq ft = {100*bc_a/bb_:.1f}% of {bb_:.0f} sq ft** (rooms sum, excl. EXIT STAIR areaway).\n\n"
 s += table(["Separate line (not in total)", "area c/l sf", "clear width", "% if added", "source"], [
@@ -548,35 +631,104 @@ def add_path(L, title, p0, r0, p1, r1, note=""):
     d, seq, pp = route(L, p0, r0, p1, r1)
     paths.append(dict(title=title, len=d, seq=seq, pts=pp, L=L.tag, note=note))
     return d, seq
-fd = door_by_xy(MD, 72.0, 3.72)
-kit = find1(MAIN, "KITCHEN / DINING"); gar = find1(MAIN, "GARAGE"); scull = find1(MAIN, "SCULLERY"); foy = foyer_i
-range_pt = (37.05, 16.18)   # centre of range row main_floor.scad:198 [35.9,14.7,38.2,17.66]
-pantry_pt = (45.69, 28.155)  # centre of tall pantry cabinets row main_floor.scad:202
-mb_ = find1(MAIN, "MASTER BEDROOM"); mwic = [i for i, n in enumerate(MAIN.names) if n.startswith("WIC") and MAIN.rooms[i][1] > 90]
-lau = find1(MAIN, "LAUNDRY"); br2 = find1(MAIN, "BEDROOM 2"); bunk = find1(MAIN, "BUNK ROOM")
-baths = {"BATH 2": find1(MAIN, "BATH 2"), "hall BATH": [i for i, n in enumerate(MAIN.names) if n == "BATH"][0], "MASTER BATH": find1(MAIN, "MASTER BATH")}
-gd = door_by_xy(MD, 24.34, 31.9)
-add_path(MAIN, "front door -> kitchen/dining room centre", fd["mid"], foy, centroid(MAIN, kit), kit)
-add_path(MAIN, "front door -> range (main_floor.scad:198)", fd["mid"], foy, range_pt, kit)
-add_path(MAIN, "garage (room centre) -> kitchen/dining room centre", centroid(MAIN, gar), gar, centroid(MAIN, kit), kit)
-add_path(MAIN, "garage (room centre) -> range", centroid(MAIN, gar), gar, range_pt, kit)
-add_path(MAIN, "garage (room centre) -> SCULLERY centre (no pantry room in model)", centroid(MAIN, gar), gar, centroid(MAIN, scull), scull)
-add_path(MAIN, "garage (room centre) -> tall pantry cabinets in kitchen (main_floor.scad:202)", centroid(MAIN, gar), gar, pantry_pt, kit)
-for w in mwic:
-    add_path(MAIN, f"master bedroom centre -> {MAIN.names[w]} centre", centroid(MAIN, mb_), mb_, centroid(MAIN, w), w)
-add_path(MAIN, "master bedroom centre -> LAUNDRY centre", centroid(MAIN, mb_), mb_, centroid(MAIN, lau), lau)
-for bn, bi in (("BEDROOM 2", br2), ("BUNK ROOM", bunk)):
-    for k, v in baths.items():
-        add_path(MAIN, f"{bn} centre -> {k} centre", centroid(MAIN, bi), bi, centroid(MAIN, v), v)
-    add_path(MAIN, f"{bn} centre -> LAUNDRY centre", centroid(MAIN, bi), bi, centroid(MAIN, lau), lau)
-add_path(MAIN, "foyer centre -> hall BATH centre (no powder room in model; nearest toilet room reachable from the foyer side)", centroid(MAIN, foy), foy, centroid(MAIN, baths["hall BATH"]), baths["hall BATH"])
-landing = find1(MAIN, "(landing at the stair top)")
-top_pt = (44.96, 47.1)
-for nm, (p, r) in {"front door": (fd["mid"], foy), "garage mud-entry door": (gd["mid"], find1(MAIN, "HALL @24.34,29.51")), "master bedroom centre": (centroid(MAIN, mb_), mb_), "BEDROOM 2 centre": (centroid(MAIN, br2), br2)}.items():
-    add_path(MAIN, f"{nm} -> top of main stair (top nosing, (44.96, 47.1))", p, r, top_pt, landing)
-foot_pt = (44.96, model["stair"]["foot_y"])
-hallway = find1(BASE, "HALLWAY"); util = find1(BASE, "UTILITY")
-add_path(BASE, "basement stair foot (44.96, 28.725) -> UTILITY centre", foot_pt, hallway, centroid(BASE, util), util)
+COLOURS = {"wood": (0.55, 0.38, 0.22), "dark": (0.12, 0.12, 0.12), "basin": (0.62, 0.78, 0.86), "tile": (0.55, 0.75, 0.85),
+           "white": (0.97, 0.97, 0.97), "counter": (0.97, 0.97, 0.95), "steel": (0.70, 0.72, 0.74), "shelf": (0.62, 0.50, 0.36),
+           "sofa": (0.45, 0.50, 0.60), "bed": (0.92, 0.88, 0.80), "table": (0.66, 0.50, 0.34), "hearth": (0.35, 0.33, 0.32)}
+def cname(c):
+    for k, v in COLOURS.items():
+        if all(abs(c[n] - v[n]) < 0.006 for n in range(3)):
+            return k
+    return "?"
+def fix_room(L, f):
+    return room_of(L, (f[0] + f[2]) / 2, (f[1] + f[3]) / 2)
+def fixc(f):
+    return ((f[0] + f[2]) / 2, (f[1] + f[3]) / 2)
+# master suite: bath / closet / small hall rooms reached through doors from the master bedroom
+def suite_rooms():
+    seen, todo = {MBR}, [MBR]
+    while todo:
+        i = todo.pop()
+        for j in adjM[i]:
+            r = MAIN.rooms[j]
+            if j in seen or r[6] == "porch": continue
+            if r[6] in ("bath", "closet") or (r[6] == "hall" and area(r) <= 100):
+                seen.add(j); todo.append(j)
+    return seen
+SUITE = suite_rooms() if MBR is not None else set()
+fd = None
+if FOY is not None:
+    cand = [d for d in MD if d["type"] in ("double", "door") and {d["ai"], d["bi"]} - {FOY} and FOY in (d["ai"], d["bi"])
+            and any(MAIN.rooms[x][6] == "porch" for x in (d["ai"], d["bi"]) if x is not None)]
+    fd = max(cand, key=lambda d: d["w"]) if cand else None
+gdc = [d for d in MD if GAR in (d["ai"], d["bi"]) and d["type"] != "garage" and any(MAIN.rooms[x][6] == "hall" for x in (d["ai"], d["bi"]) if x is not None and x != GAR)]
+gd = gdc[0] if gdc else None
+gd_room = [x for x in (gd["ai"], gd["bi"]) if x != GAR][0] if gd else None
+range_k = next((k for k, f in enumerate(MAIN.fix) if cname(f[6]) == "dark" and abs(f[4] - 3) < 0.01 and KIT is not None and fix_room(MAIN, f) == KIT), None)
+pantry_k = next((k for k, f in enumerate(MAIN.fix) if cname(f[6]) == "wood" and abs(f[5] - 7) < 0.01 and KIT is not None and fix_room(MAIN, f) == KIT), None)
+mwic = [i for i in sorted(SUITE) if MAIN.rooms[i][6] == "closet" and "WIC" in LAB(MAIN, i)]
+paths = []
+def add_path(L, title, p0, r0, p1, r1, note=""):
+    d, seq, pp = route(L, p0, r0, p1, r1)
+    paths.append(dict(title=title, len=d, seq=seq, pts=pp, L=L.tag, note=note))
+    return d, seq
+if fd is not None and KIT is not None:
+    add_path(MAIN, "front door -> kitchen/dining room centre", fd["mid"], FOY, centroid(MAIN, KIT), KIT)
+    if range_k is not None:
+        add_path(MAIN, f"front door -> range ({S('mf', range_k)})", fd["mid"], FOY, fixc(MAIN.fix[range_k]), KIT)
+if GAR is not None and KIT is not None:
+    add_path(MAIN, "garage (room centre) -> kitchen/dining room centre", centroid(MAIN, GAR), GAR, centroid(MAIN, KIT), KIT)
+    if range_k is not None:
+        add_path(MAIN, "garage (room centre) -> range", centroid(MAIN, GAR), GAR, fixc(MAIN.fix[range_k]), KIT)
+if GAR is not None:
+    _np = "" if any("PANTRY" in LAB(MAIN, i) for i in SCULS) else " (no pantry room in model)"
+    for sc in SCULS:
+        add_path(MAIN, f"garage (room centre) -> {MAIN.names[sc]} centre{_np}", centroid(MAIN, GAR), GAR, centroid(MAIN, sc), sc)
+    if pantry_k is not None and KIT is not None:
+        add_path(MAIN, f"garage (room centre) -> tall pantry cabinets in kitchen ({S('mf', pantry_k)})", centroid(MAIN, GAR), GAR, fixc(MAIN.fix[pantry_k]), KIT)
+if MBR is not None:
+    for w in mwic:
+        add_path(MAIN, f"master bedroom centre -> {MAIN.names[w]} centre", centroid(MAIN, MBR), MBR, centroid(MAIN, w), w)
+    for lau in LAUS:
+        add_path(MAIN, f"master bedroom centre -> {MAIN.names[lau]} centre", centroid(MAIN, MBR), MBR, centroid(MAIN, lau), lau)
+for bi in OTHER_BEDS:
+    bn = MAIN.names[bi]
+    for v in FULL_BATHS:
+        add_path(MAIN, f"{bn} centre -> {nice_bath(MAIN.names[v])} centre", centroid(MAIN, bi), bi, centroid(MAIN, v), v)
+    for lau in LAUS:
+        add_path(MAIN, f"{bn} centre -> {MAIN.names[lau]} centre", centroid(MAIN, bi), bi, centroid(MAIN, lau), lau)
+if FOY is not None:
+    if POWDERS:
+        for pw in POWDERS:
+            add_path(MAIN, f"foyer centre -> {MAIN.names[pw]} centre (powder room)", centroid(MAIN, FOY), FOY, centroid(MAIN, pw), pw)
+    else:
+        _c = [(route(MAIN, centroid(MAIN, FOY), FOY, centroid(MAIN, v), v)[0], v) for v in FULL_BATHS]
+        _c = [x for x in _c if x[0] is not None]
+        if _c:
+            _v = min(_c)[1]
+            add_path(MAIN, f"foyer centre -> {nice_bath(MAIN.names[_v])} centre (no powder room in model; nearest toilet room reachable from the foyer side)", centroid(MAIN, FOY), FOY, centroid(MAIN, _v), _v)
+top_pt = None; landing = None
+if STAIRW is not None:
+    _sr = MAIN.rooms[STAIRW]
+    top_pt = ((_sr[1] + _sr[3]) / 2, _sr[4])
+    landing = room_of(MAIN, top_pt[0], top_pt[1] + 0.5)
+    if landing is None: landing = STAIRW
+    _orig = {}
+    if fd is not None: _orig["front door"] = (fd["mid"], FOY)
+    if gd is not None: _orig["garage mud-entry door"] = (gd["mid"], gd_room)
+    if MBR is not None: _orig["master bedroom centre"] = (centroid(MAIN, MBR), MBR)
+    for bi in (OTHER_BEDS if VARIANT else OTHER_BEDS[:1]):
+        _orig[f"{MAIN.names[bi]} centre"] = (centroid(MAIN, bi), bi)
+    for nm, (p, r) in _orig.items():
+        add_path(MAIN, f"{nm} -> top of main stair (top nosing, ({top_pt[0]:.2f}, {top_pt[1]:g}))", p, r, top_pt, landing)
+stair_base_ = first(BASE, lambda i, r: r[6] == "stair")
+util = first(BASE, lambda i, r: "UTILITY" in LAB(BASE, i))
+foot_pt = None
+if stair_base_ is not None and util is not None:
+    _br = BASE.rooms[stair_base_]
+    foot_pt = ((_br[1] + _br[3]) / 2, _br[2])
+    hallway = room_of(BASE, foot_pt[0], foot_pt[1] - 0.3)
+    if hallway is not None:
+        add_path(BASE, f"basement stair foot ({foot_pt[0]:.2f}, {foot_pt[1]:g}) -> {BASE.names[util]} centre", foot_pt, hallway, centroid(BASE, util), util)
 # stair bridge: top nosing -> foot is the stair itself
 stair_len = math.hypot(0, model["stair"]["top_y"] - model["stair"]["foot_y"])
 def ptable():
@@ -619,15 +771,22 @@ def neigh(L, i):
             rows.append([L.names[j], L.rooms[j][6] + (" (ceil 0)" if L.rooms[j][5] == 0 else ""), f"{ln:.1f}", ", ".join(f"{d['type']} {inch(d['w']):g} in" for d in doors) or "-"])
     return table(["shares a wall with", "kind", "shared length ft", "door/opening between"], rows)
 s = ""
-for nm in ("GREAT ROOM", "DEN", "SUN ROOM"):
-    i = find1(MAIN, nm)
+_liv = sorted([i for i in LIVINGS if label(MAIN.rooms[i])], key=lambda i: -area(MAIN.rooms[i]))
+for i in _liv:
+    nm = MAIN.names[i]
     s += f"### 8.1 {nm} (main; {S('mr', i)}) shares walls with\n\n" + neigh(MAIN, i) + "\n"
-s += "The model has no room labelled 'family room'; the main-floor living-type rooms (kind living) are GREAT ROOM, DEN, SUN ROOM. Basement LIVING ROOM:\n\n" + neigh(BASE, find1(BASE, "LIVING ROOM")) + "\n"
-s += f"### 8.2 FOYER ({S('mr', foy)}) shares walls with\n\n" + neigh(MAIN, foy) + "\n"
+s += "The model has no room labelled 'family room'; the main-floor living-type rooms (kind living) are " + ", ".join(MAIN.names[i] for i in _liv) + ". Basement LIVING ROOM:\n\n" + neigh(BASE, first(BASE, lambda i, r: r[6] == "living" and "LIVING" in LAB(BASE, i))) + "\n"
+if foy is not None:
+    s += f"### 8.2 FOYER ({S('mr', foy)}) shares walls with\n\n" + neigh(MAIN, foy) + "\n"
+else:
+    s += "### 8.2 No foyer/vestibule row (label FOYER or VESTIBULE) in this variant\n\n"
 def closet_like(L, i):
     r = L.rooms[i]; n = L.names[i]
     return r[6] == "closet" or "SCULLERY" in n or "PANTRY" in n or "STORAGE" in n
-s += "### 8.3 Closets, WICs, linen, scullery, storage: exterior exposure\n\nNo room is labelled PANTRY in the model. SCULLERY (kind utility) and the 'tall pantry cabinets' fixture row (main_floor.scad:202, inside KITCHEN/DINING) are the pantry-like items.\n\n"
+if not any("PANTRY" in LAB(MAIN, i) for i in SCULS) and pantry_k is not None:
+    s += f"### 8.3 Closets, WICs, linen, scullery, storage: exterior exposure\n\nNo room is labelled PANTRY in the model. SCULLERY (kind utility) and the 'tall pantry cabinets' fixture row ({S('mf', pantry_k)}, inside {MAIN.names[KIT].replace(' / ', '/')}) are the pantry-like items.\n\n"
+else:
+    s += "### 8.3 Closets, WICs, linen, scullery/pantry, storage: exterior exposure\n\nPantry-like rooms: " + (", ".join(MAIN.names[i] for i in SCULS) or "none (no SCULLERY/PANTRY label)") + ".\n\n"
 rows = []
 for L in (MAIN, BASE):
     for i in range(len(L.rooms)):
@@ -635,17 +794,26 @@ for L in (MAIN, BASE):
             ex = [(k, v) for k, v in L.ext[i].items() if True]
             rows.append([L.tag, L.names[i], S(L.rk, i), ext_str(L, i)])
 s += table(["level", "room", "source", "sides touching outside/porch/garage/soil (ft)"], rows)
-g = MAIN.rooms[gar]
-sc_garage = shared_edges(MAIN, scull, gar)
-gdoors = [d for d in MD if {d["ai"], d["bi"]} == {scull, gar}]
-s += f"\nPantry/garage: SCULLERY shares {sum(l for _,l in sc_garage):.1f} ft of wall with the garage; doors between SCULLERY and GARAGE: {len(gdoors)}. The garage's doors to the house are: " + "; ".join(f"{d['src']} ({d['a']} | {d['b']}, {inch(d['w']):g} in)" for d in MD if gar in (d['ai'], d['bi']) and d['type'] != 'garage') + ". The tall pantry cabinets (x 42.24-49.14) are 17.9 ft east of the garage wall (x 24.34): no shared wall.\n"
+_pg = ""
+for sc in SCULS:
+    sc_garage = shared_edges(MAIN, sc, gar) if gar is not None else []
+    gdoors = [d for d in MD if {d["ai"], d["bi"]} == {sc, gar}]
+    _nm = MAIN.names[sc]
+    _pg += f"\nPantry/garage: {_nm} shares {sum(l for _,l in sc_garage):.1f} ft of wall with the garage; doors between {_nm} and GARAGE: {len(gdoors)}. The garage's doors to the house are: " + "; ".join(f"{d['src']} ({d['a']} | {d['b']}, {inch(d['w']):g} in)" for d in MD if gar in (d['ai'], d['bi']) and d['type'] != 'garage') + "."
+if pantry_k is not None and gar is not None:
+    _pf = MAIN.fix[pantry_k]; _gr = MAIN.rooms[gar]
+    if _pf[0] >= _gr[3] + 0.5:
+        _pg += f" The tall pantry cabinets (x {_pf[0]:g}-{_pf[2]:g}) are {_pf[0]-_gr[3]:.1f} ft east of the garage wall (x {_gr[3]:g}): no shared wall."
+    else:
+        _pg += f" The tall pantry cabinets (x {_pf[0]:g}-{_pf[2]:g}) are {box(*_pf[:4]).distance(box(*rect(_gr))):.1f} ft from the garage rectangle."
+s += _pg + "\n"
 # kitchen fixtures on paths
 KW = re.compile(r"range|sink|dishwash|island|fridge|washer|dryer|prep", re.I)
 kfix = defaultdict(list)
 for k, f in enumerate(MAIN.fix):
     c = src["mf"][k][1]
     rr = room_of(MAIN, (f[0] + f[2]) / 2, (f[1] + f[3]) / 2)
-    if rr is not None and KW.search(c) and k < len(model["main_fixtures"]):
+    if rr is not None and KW.search(c) and k < NFIX_MAIN:
         kfix[rr].append(f"{c} ({src['mf'][k][0]})")
 extra = {"range": "main_floor.scad:198", "double island (counter row, no label 'island' in comment except line 203)": "main_floor.scad:203"}
 s += "\n### 8.4 Rooms containing kitchen-type fixtures (comment keywords range/sink/island/fridge/washer/dryer/prep) and which §7 paths cross them\n\n"
@@ -660,7 +828,7 @@ drive_rects = {"west driveway (site.scad:111)": box(-32, -100, -2, 42), "front l
                "loop west leg (:115)": box(25, -72, 39, -14), "loop east leg (:116)": box(116, -72, 130, -14), "connector (:117)": box(-2, -50, 25, -36)}
 drive_union = unary_union(list(drive_rects.values()))
 rows = []
-for i in Hm + [gar]:
+for i in Hm + ([gar] if gar is not None else []):
     r = box(*rect(MAIN.rooms[i]))
     d = r.distance(drive_union)
     if d < 40:
@@ -668,7 +836,14 @@ for i in Hm + [gar]:
         rows.append([MAIN.names[i], f"{d:.1f}", near[0], ext_str(MAIN, i)])
 rows.sort(key=lambda x: float(x[1]))
 s += "\n### 8.5 Rooms within 40 ft of a drive edge (phase house, site.scad:108-118; distance from the room's centre-line rectangle to the nearest drive rectangle edge)\n\n" + table(["room", "distance ft", "nearest drive piece", "exterior sides"], rows)
-s += f"\nOther rooms are > 40 ft from any drive. Garage doors face west (axis y, x=0: main_floor.scad:117-118) onto the west driveway; the drive's east edge is x=-2, i.e. 2.0 ft off the garage's west wall.\n"
+if not VARIANT:
+    s += f"\nOther rooms are > 40 ft from any drive. Garage doors face west (axis y, x=0: main_floor.scad:117-118) onto the west driveway; the drive's east edge is x=-2, i.e. 2.0 ft off the garage's west wall.\n"
+else:
+    _gd = [(k, d) for k, d in enumerate(MAIN.doors) if d[4] == "garage"]
+    _gr = MAIN.rooms[gar]
+    def _fac(d):
+        return ("W" if d[0] <= _gr[1] + 0.1 else "E") if d[2] == "y" else ("S" if d[1] <= _gr[2] + 0.1 else "N")
+    s += "\nOther rooms are > 40 ft from any drive. Garage doors (rows " + ", ".join(S("md", k) for k, d in _gd) + ") face " + ", ".join(sorted({_fac(d) for k, d in _gd})) + f"; garage rectangle to the nearest drive piece: {box(*rect(_gr)).distance(drive_union):.1f} ft.\n"
 sec[8] = s
 
 # ---------------------------------------------------------------- §9 plumbing
@@ -688,6 +863,16 @@ MECH = {"main": [("range (fuel not stated)", (35.9, 14.7, 38.2, 17.66)), ("fridg
                  ("well-water treatment", (33.8, 35.7, 36.6, 37.7)), ("HRV (wall-mounted, z 5.5-7)", (22.8, 40.4, 25.8, 42.3)),
                  ("pool filter (round)", (99.9, 38.7, 102.2, 41.0)), ("pool pump", (96.8, 39.2, 99.3, 41.0)), ("pool heater", (99.7, 33.0, 102.3, 36.0)),
                  ("pool dehumidifier", (99.4, 29.6, 102.3, 32.4)), ("pool chemicals", (97.0, 29.6, 98.6, 31.2)), ("laundry counter (sink not stated)", (77.0, 6.4, 81.1, 8.45))]}
+def wet_type(L, k):
+    f = L.fix[k]; c = cname(f[6]); ri = fix_room(L, f)
+    if ri is None: return None
+    r = L.rooms[ri]; lab_ = LAB(L, ri); kind = r[6]
+    if c == "basin": return "sink"
+    if c == "tile": return "shower"
+    if c == "white" and (kind in ("bath", "shower") or (kind == "utility" and any(w in lab_ for w in ("PET", "DOG", "LAUNDRY", "MUD")))): return "toilet/tub/wash basin"
+    if c == "counter" and kind in ("bath", "shower"): return "vanity"
+    if c == "steel" and abs(f[5] - 3.2) < 0.01 and "LAUNDRY" in lab_: return "washer/dryer"
+    return None
 def locate(L, box_):
     for k, f in enumerate(L.fix):
         if all(abs(f[n] - box_[n]) < 0.006 for n in range(4)):
@@ -695,8 +880,12 @@ def locate(L, box_):
     raise KeyError(box_)
 def wet_fixtures(L):
     res = []
-    for nm, b in WETDEF[L.tag]:
-        k = locate(L, b); f = L.fix[k]
+    if VARIANT:
+        entries = [(f"{wet_type(L, k)} ({L.names[fix_room(L, L.fix[k])]})", k, tuple(L.fix[k][:4])) for k in range(len(L.fix)) if wet_type(L, k)]
+    else:
+        entries = [(nm, locate(L, b), b) for nm, b in WETDEF[L.tag]]
+    for nm, k, b in entries:
+        f = L.fix[k]
         cx_, cy_ = (f[0] + f[2]) / 2, (f[1] + f[3]) / 2
         ri = room_of(L, cx_, cy_)
         r = L.rooms[ri]
@@ -763,12 +952,18 @@ def fixtable(fx, L):
     return table(["fixture", "room", "box (x0,y0,x1,y1)", "centre", "nearest wall", "gap ft", "source"],
                  [[w["name"], w["room"], w["box"], f"({w['c'][0]:.1f}, {w['c'][1]:.1f})", ("island" if w["island"] else f"{w['side']} wall {'y' if w['axis']=='x' else 'x'}={w['coord']:g}"), f"{w['gap']:.2f}", w["src"]] for w in fx])
 def mtable(L):
+    if VARIANT:
+        return "(equipment list omitted in variant mode)\n"
     rows = []
     for nm, b in MECH[L.tag]:
         k = locate(L, b); f = L.fix[k]
         rows.append([nm, room_of(L, (f[0] + f[2]) / 2, (f[1] + f[3]) / 2) is not None and L.names[room_of(L, (f[0] + f[2]) / 2, (f[1] + f[3]) / 2)], f"({(f[0]+f[2])/2:.1f}, {(f[1]+f[3])/2:.1f})", S(L.fk, k)])
     return table(["equipment (non-wet-wall list)", "room", "centre", "source"], rows)
-wh = [(29.0 + 31.2) / 2, (35.7 + 37.9) / 2]; boil = [(26.3 + 28.5) / 2, (35.7 + 37.7) / 2]
+_ut = [i for i in range(len(BASE.rooms)) if "UTILITY" in LAB(BASE, i)]
+wh_k = next((k for k, f in enumerate(BASE.fix) if len(f) > 8 and f[8] == "round" and fix_room(BASE, f) in _ut), None)
+boil_k = next((k for k, f in enumerate(BASE.fix) if cname(f[6]) == "steel" and abs(f[5] - 3.5) < 0.01 and fix_room(BASE, f) in _ut), None)
+wh = list(fixc(BASE.fix[wh_k])) if wh_k is not None else list(centroid(BASE, _ut[0]))
+boil = list(fixc(BASE.fix[boil_k])) if boil_k is not None else list(wh)
 def far(fx, pt, add=0):
     best = max(fx, key=lambda w: man(w["c"], pt))
     return best["name"], man(best["c"], pt)
@@ -790,7 +985,7 @@ s += f"\nMain-floor groups with a basement group within 5 ft Manhattan: {sum(1 f
 s += f"\n### 9.5 Drain-run index (used for all layout options)\n\n**DRI = sum over main-floor wet groups of the Manhattan distance (ft, plan) from the group centroid to the building-drain exit point E.** E is not stated as a number in any doc; the model draws the building sewer leaving the basement west wall at (22.16, 58) toward the tank (site.scad:188 `dashed([[22.16, 58], [t[2], 58]])`, tank face x=3). E = {DRAIN_EXIT}. (Note site.scad:185-187 and the Redesign/permit text say 'by the UTILITY room', which is at y 35.08-42.77; see §15.)\n\n"
 s += table(["group", "centroid", "Manhattan to E", "to alt E (22.16, 38.9) UTILITY west wall"], [[f"G{g['n']}", f"({g['cen'][0]:.1f},{g['cen'][1]:.1f})", f"{man(g['cen'], DRAIN_EXIT):.1f}", f"{man(g['cen'], (22.16,38.9)):.1f}"] for g in GM])
 s += f"\n**DRI (E = (22.16, 58)) = {drain:.1f} ft over {len(GM)} groups; mean {drain/len(GM):.1f} ft.** Sensitivity: with E at the UTILITY west wall (22.16, 38.9) the same sum is {drain_alt:.1f} ft.\n"
-s += f"\n### 9.6 Water heater / boiler to the furthest fixture\n\nWater heater centre (30.1, 36.8) (basement.scad:{src['bf'][locate(BASE,(29.0,35.7,31.2,37.9))][0]}, identified as the third equipment box in the comment list at basement.scad:135); boiler centre (27.4, 36.7) (basement.scad:{src['bf'][locate(BASE,(26.3,35.7,28.5,37.7))][0]}). The model has ONE boiler and ONE water heater, both in the basement UTILITY room; no recirculation loop or other heater is modelled.\n\n"
+s += f"\n### 9.6 Water heater / boiler to the furthest fixture\n\nWater heater centre (30.1, 36.8) (basement.scad:{src['bf'][wh_k][0]}, identified as the third equipment box in the comment list at basement.scad:135); boiler centre (27.4, 36.7) (basement.scad:{src['bf'][boil_k][0]}). The model has ONE boiler and ONE water heater, both in the basement UTILITY room; no recirculation loop or other heater is modelled.\n\n"
 bo_ = [(w, man(w['c'], wh)) for w in WFM]
 s += f"- Furthest main-floor fixture from the water heater (plan Manhattan): **{fm}, {fmv:.1f} ft** (plus ~{model['levels']['floor_to_floor']:.2f} ft vertical floor-to-floor; the runs go under the main floor). From the boiler: {far(WFM, boil)[0]}, {far(WFM, boil)[1]:.1f} ft.\n- Furthest basement fixture: **{fb}, {fbv:.1f} ft** from the water heater.\n- Nearest main-floor fixture: {min(bo_, key=lambda t:t[1])[0]['name']}, {min(t[1] for t in bo_):.1f} ft.\n"
 s += "\nPer fixture (Manhattan plan ft from the water heater): " + "; ".join(f"{w['name']} {man(w['c'], wh):.0f}" for w in WFM + WFB) + "\n"
@@ -838,7 +1033,7 @@ def dr(a, b):
     return a.distance(b)
 T, C, F, R = box(*tank), box(*chamber), box(*field), box(*reserve)
 house_heated = box(0, 0, 1, 1)  # placeholder
-HU = union.union(box(*rect(MAIN.rooms[gar])))   # heated + garage
+HU = union.union(box(*rect(MAIN.rooms[gar]))) if gar is not None else union   # heated + garage
 HU_only = union
 bs_wall = box(22.16 - 0.55, 35.08, 22.16, 63.16)   # outer face of basement west wall (c/l 22.16)
 basement_poly = bpoly
@@ -889,9 +1084,131 @@ s += "\nPhase house: parents' house and geothermal loop field are not in site.sc
 sec[12] = s
 out["site"] = dict(dri=drain)
 
+# ---------------------------------------------------------------- matrix (variant comparison block)
+SQFT_M2 = 0.09290304
+def footprint(rooms_):
+    return unary_union([box(*rect(r)).buffer(0.01, join_style=2) for r in rooms_ if r[6] != "porch"]).buffer(-0.01, join_style=2)
+_cur_union = footprint(model["main_rooms"])                 # the CURRENT model (model.json), for the calibration
+def _m2_at(u, t):
+    return (u.buffer(t, join_style=2).area if t else u.area) * SQFT_M2
+_lo, _hi = 0.0, 3.0
+for _ in range(60):
+    _mid = (_lo + _hi) / 2
+    if _m2_at(_cur_union, _mid) < 608.0: _lo = _mid
+    else: _hi = _mid
+OFFSET = (_lo + _hi) / 2
+bu = footprint(MAIN.rooms)
+M2_CL, M2_OUT = bu.area * SQFT_M2, _m2_at(bu, OFFSET)
+_hu = unary_union([box(*rect(r)).buffer(0.01, join_style=2) for r in MAIN.rooms if r[6] not in ("porch", "garage")]).buffer(-0.01, join_style=2)
+HEAT_FP_CL, HEAT_FP_OUT = _hu.area, _hu.buffer(OFFSET, join_style=2).area
+_bfu = unary_union([box(*rect(r)).buffer(0.01, join_style=2) for r in BASE.rooms if r[6] != "porch" and label(r) != "EXIT STAIR"]).buffer(-0.01, join_style=2)
+BASE_FP_CL, BASE_FP_OUT = _bfu.area, _bfu.buffer(OFFSET, join_style=2).area
+def sides_str(L, ids, skip_garage=False):
+    agg = defaultdict(lambda: defaultdict(float))
+    for i in ids:
+        for (sd, cl), v in L.ext[i].items():
+            agg[sd][cl.split(" ")[0].replace("yard/soil", "yard")] += v
+    parts = []
+    for sd in "NSEW":
+        if sd in agg:
+            parts.append(sd + "(" + ", ".join(f"{c} {v:.1f}" for c, v in sorted(agg[sd].items())) + ")")
+    return " ".join(parts) or "none"
+def has_outside_side(L, i):
+    return any(not cl.startswith("garage") for (sd, cl) in L.ext[i])
+fixed_halls = [i for i in mc if max(clear_dims(MAIN, i)) >= 6.0]
+min_hall = min((min(clear_dims(MAIN, i)), i) for i in fixed_halls) if fixed_halls else (None, None)
+raw_min_hall = min((min(clear_dims(MAIN, i)), i) for i in mc) if mc else (None, None)
+single = {"<32": 0, "32-35": 0, ">=36": 0}
+for r in MD:
+    if r["type"] == "door": single[bucket(r["w"])] += 1
+n_double = sum(1 for r in MD if r["type"] == "double"); n_open = sum(1 for r in MD if r["type"] == "open")
+stacked5 = sum(1 for _, _, dx, dy in nearest_stack if dx + dy <= 5)
+bed_living = []
+for i in BEDS:
+    liv = [MAIN.names[j] for j in LIVINGS if any(l > 1.0 for _, l in shared_edges(MAIN, i, j))]
+    if liv: bed_living.append(f"{MAIN.names[i]} - {', '.join(liv)}")
+bed_foyer = [MAIN.names[i] for i in BEDS if FOY is not None and any(l > 1.0 for _, l in shared_edges(MAIN, i, FOY))]
+def _wd_in_suite():
+    return [k for k, f in enumerate(MAIN.fix) if cname(f[6]) == "steel" and abs(f[5] - 3.2) < 0.01 and fix_room(MAIN, f) in SUITE]
+wd_suite = _wd_in_suite()
+laundry_count = len(LAUS) + len(wd_suite)
+m2l = [p for p in paths if p["title"].startswith("master bedroom centre -> ") and any(MAIN.names[l] in p["title"] for l in LAUS)]
+m2l_txt = ("0 (W/D inside the master suite)" if wd_suite else None) or (", ".join(f"{p['title'].split('-> ')[1].replace(' centre','')}: {p['len']:.1f} ft" for p in m2l) or "n/a (no laundry room)")
+m2l_min = min((p["len"] for p in m2l if p["len"] is not None), default=None)
+clos = [i for i in idx(MAIN, lambda i, r: r[6] == "closet") if has_outside_side(MAIN, i)]
+clos_all = idx(MAIN, lambda i, r: r[6] == "closet")
+pant_yes = []
+for sc in SCULS:
+    sh = sum(l for _, l in shared_edges(MAIN, sc, GAR)) if GAR is not None else 0
+    dr_ = [d for d in MD if {d["ai"], d["bi"]} == {sc, GAR}]
+    pant_yes.append((MAIN.names[sc], sh, len(dr_)))
+pant_flag = "Y" if any(sh > 1.0 and nd > 0 for _, sh, nd in pant_yes) else "N"
+liv_s = []
+for i in LIVINGS:
+    v = sum(l for (sd, cl), l in MAIN.ext[i].items() if sd == "S" and not cl.startswith("garage"))
+    if v > 0.5: liv_s.append(f"{MAIN.names[i]} ({v:.1f} ft)")
+multi_w = [f"{n} ({'/'.join(f)})" for n, f in mm]
+if STAIRW is not None and stair_base_ is not None:
+    _sr, _br = MAIN.rooms[STAIRW], BASE.rooms[stair_base_]
+    _run = (model["stair"]["risers"] - 1) * model["stair"]["run"]
+    _al = abs(_sr[1] - _br[1]) < 0.05 and abs(_sr[3] - _br[3]) < 0.05
+    _len = _sr[4] - _br[2]
+    stair_txt = (f"top (nosing) at x {_sr[1]:g}..{_sr[3]:g}, y {_sr[4]:g}; basement foot room x {_br[1]:g}..{_br[3]:g}, y {_br[2]:g}; "
+                 + ("**same** (aligned, run %.3f ft)" % _len if _al and abs(_len - _run) < 0.05 else
+                    f"**moved** (x offset {_sr[1]-_br[1]:+.2f}/{_sr[3]-_br[3]:+.2f} ft, run {_len:.3f} ft vs flight {_run:.3f} ft)")
+                 + f"; vs Phase 0 stair top y {model['stair']['top_y']}, foot y {model['stair']['foot_y']:.3f}")
+else:
+    stair_txt = "no stairwell/stair row found"
+bed_drive = sorted((box(*rect(MAIN.rooms[i])).distance(drive_union), MAIN.names[i]) for i in BEDS)
+chk_args = [str(MAIN_FILE)] + ([str(BASE_FILE)] if (ARGS.basement or ARGS.main) else [])
+if not VARIANT: chk_args = []
+_chk = subprocess.run(["python3", "/home/user/house/tools/check_layout.py"] + chk_args, capture_output=True, text=True)
+chk_txt = (_chk.stdout.strip().replace("\n", " ; ") or _chk.stderr.strip()[-300:]) + f" (exit {_chk.returncode})"
+far_by_wh = fm, fmv
+MX = [
+    ("Main-floor conditioned sq ft", f"{heated_sum:,.0f}", f"{heated_sum:.1f}; excl. stair opening {heated_sum - stairwell_area:.1f}"),
+    ("Building area, centre lines (house + attached garage)", f"{M2_CL:.1f} m2", f"{bu.area:.0f} sq ft"),
+    ("Building area, outside face", f"{M2_OUT:.1f} m2", f"offset {OFFSET:.4f} ft outward on every wall, calibrated so the CURRENT model = 608 m2 (permit README:41); same offset for all variants"),
+    ("Heated main-floor footprint excl. garage, outside face", f"{HEAT_FP_OUT:,.0f} sq ft", f"centre lines {HEAT_FP_CL:,.0f} sq ft; same {OFFSET:.2f} ft outward offset; round-2 target <= 3,000 sq ft"),
+    ("Basement footprint, outside face (excl. exit-stair areaway)", f"{BASE_FP_OUT:,.0f} sq ft", f"centre lines {BASE_FP_CL:,.0f} sq ft"),
+    ("Circulation % (strict / with foyer)", f"{100*mc_a/mb:.1f}% / {100*(mc_a+(area(MAIN.rooms[FOY]) if FOY is not None else 0))/mb:.1f}%", f"{mc_a:.0f} sq ft strict of {mb:.0f}"),
+    ("Single doors <32 in / 32-35 in / 36 in+ (main)", f"{single['<32']} / {single['32-35']} / {single['>=36']}", "type `door` rows, by opening width"),
+    ("Double / open counts (main)", f"{n_double} / {n_open}", "type `double` / type `open`"),
+    ("Minimum hall clear width", f"{min_hall[0]:.2f} ft ({MAIN.names[min_hall[1]]})" if min_hall[0] is not None else "n/a", f"halls = circulation rooms with longer clear side >= 6 ft; raw min incl. entries/slivers {raw_min_hall[0]:.2f} ft ({MAIN.names[raw_min_hall[1]] if raw_min_hall[1] is not None else ''})"),
+    ("Wet-wall groups (main / basement)", f"{len(GM)} / {len(GB)}", "8 ft along-wall chaining, same-line within 1 ft"),
+    ("Main groups within 5 ft of a basement group", f"{stacked5} of {len(GM)}", "Manhattan between centroids"),
+    ("Drain-run index, E = (22.16, 58)", f"{drain:.1f} ft", f"alternate exit (22.16, 38.9): {drain_alt:.1f} ft"),
+    ("Water heater -> furthest fixture (main / basement)", f"{fmv:.1f} ft ({fm}) / {fbv:.1f} ft ({fb})", f"water heater at ({wh[0]:.1f}, {wh[1]:.1f}); plan Manhattan"),
+    ("Bedrooms sharing a wall with a living-kind room", f"{len(bed_living)}" + (": " + "; ".join(bed_living) if bed_living else ""), "shared length > 1 ft; living-kind rooms with walls"),
+    ("A bedroom shares a wall with the foyer", ("Y: " + ", ".join(bed_foyer)) if bed_foyer else "N", "foyer/vestibule label" if FOY is not None else "no foyer row"),
+    ("Master bed -> laundry path", m2l_txt, "walk ft, Dijkstra over door midpoints (Phase 0 method)"),
+    ("Laundry count", f"{laundry_count}", f"{len(LAUS)} LAUNDRY room(s)" + (f" + {len(wd_suite)} W/D in the master suite" if wd_suite else "")),
+    ("Closets/WICs touching an exterior wall (not garage)", f"{len(clos)} of {len(clos_all)}: " + "; ".join(f"{MAIN.names[i]} [{sides_str(MAIN, [i])}]" for i in clos), "kind closet; yard / porch faces count, garage does not"),
+    ("Pantry/scullery shares a wall with the garage AND has a door to it", pant_flag, "; ".join(f"{n}: {sh:.1f} ft shared, {nd} door(s)" for n, sh, nd in pant_yes) or "no SCULLERY/PANTRY room"),
+    ("Each bedroom's exterior sides", " ;; ".join(f"{MAIN.names[i]}: {sides_str(MAIN, [i])}" for i in BEDS), "N/S/E/W with the length (ft) facing yard / porch / garage"),
+    ("Master suite exterior sides", sides_str(MAIN, sorted(SUITE)) if SUITE else "n/a", "suite rooms: " + ", ".join(MAIN.names[i] for i in sorted(SUITE))),
+    ("Living-kind rooms with S exposure", "; ".join(liv_s) or "none", "S edge facing yard/porch"),
+    ("Rooms with windows on 2+ walls", f"{len(mm)}: " + "; ".join(multi_w), "window rows, facade per Phase 0 rule"),
+    ("Main stair top/foot vs the basement stair", stair_txt, ""),
+    ("Min distance bedroom -> drive (house phase)", f"{bed_drive[0][0]:.1f} ft ({bed_drive[0][1]})" if bed_drive else "n/a", "centre-line rectangle to nearest drive piece, site.scad:108-118"),
+    ("check_layout.py", chk_txt, "python3 tools/check_layout.py on the variant file(s)" if VARIANT else "both current level files"),
+]
+mx = "## Layout matrix\n\nSource files: main = `%s`; basement = `%s`.\n\n" % (MAIN_FILE, BASE_FILE)
+mx += table(["Measure", "Value", "Note"], [list(r) for r in MX])
+(CMP / "matrix.md").write_text(mx)
+out["matrix"] = {k: v for k, v, _ in MX}
+
 # ---------------------------------------------------------------- write
 for k, v in sec.items():
     (CMP / f"sec{k}.md").write_text(v)
 json.dump(out, open(CMP / "facts.json", "w"), indent=1, default=str)
 print("ok", {k: (round(v, 1) if isinstance(v, float) else v) for k, v in out["env"].items()})
 print(out["circ"]); print(out["plumbing"])
+if VARIANT:
+    head = f"# Plan facts (variant mode)\n\nmain = `{MAIN_FILE}`, basement = `{BASE_FILE}`. Computed sections of Phase 0 plan_facts.md, regenerated for this variant. Table `source` columns point at the variant files; hard-coded line references in prose (e.g. main_floor.scad:NNN, site.scad:NNN) are the CURRENT models'. Section 11 and 13-15 of Phase 0 are about the current repo and are not repeated.\n\n"
+    body = ""
+    for k in sorted(sec):
+        body += f"## Section {k}\n\n" + sec[k] + "\n"
+    (OUT / "plan_facts.md").write_text(head + mx + "\n" + body)
+    (OUT / "matrix.md").write_text(mx)
+    print("variant facts ->", OUT)
