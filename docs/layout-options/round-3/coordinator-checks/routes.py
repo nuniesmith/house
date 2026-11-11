@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Coordinator check (round 3): daily routes and the living rooms they pass through.
 
-Usage: routes.py MAIN.scad [--md]
+Usage: routes.py MAIN.scad [--md] [--extended]
+
+--extended adds four living-room trips: front door -> living, front door -> dining,
+kitchen -> living, dining -> living (the "linear row" test).
 
 Loads the main floor through OpenSCAD's audit echo (same as plan_facts.py), links rooms through
 their doors and openings, and finds the shortest walk between room centres via door midpoints
@@ -31,7 +34,7 @@ LIVING_KINDS = {"living", "kitchen", "dining", "office"}
 def is_living(r):
     return r[6] in LIVING_KINDS or re.search(r"DINING|NOOK|LIBRARY", label(r), re.I) is not None
 
-def main(path, md=False):
+def main(path, md=False, extended=False):
     rooms, doors = audit(path)[:2]
     R = [r for r in rooms if r[6] not in ("porch",)]
     def room_at(px, py):
@@ -110,10 +113,14 @@ def main(path, md=False):
         "library": find(r"LIBRARY|OFFICE|STUDY"),
         "laundry": find(r"LAUNDRY|LDRY"),
         "lift": find(r"ELEVATOR|LIFT"),
+        "living": find(r"LIVING|GREAT ROOM", {"living"}, True),
+        "dining": find(r"DINING|NOOK|BREAKFAST"),
     }
     routes = [("garage", "kitchen"), ("garage", "primary"), ("front door", "primary"), ("front door", "kitchen"),
               ("front door", "library"), ("primary", "kitchen"), ("bedroom 2", "kitchen"), ("primary", "laundry"),
               ("lift", "kitchen"), ("lift", "primary")]
+    if extended:
+        routes += [("front door", "living"), ("front door", "dining"), ("kitchen", "living"), ("dining", "living")]
     rows, total_d, total_t = [], 0.0, 0
     for a, b in routes:
         if pts.get(a) is None or pts.get(b) is None:
@@ -134,4 +141,4 @@ def main(path, md=False):
         print(f"{'TOTAL':<24} {total_d:>4.0f} ft   {total_t} pass-throughs")
 
 if __name__ == "__main__":
-    main(sys.argv[1], "--md" in sys.argv)
+    main(sys.argv[1], "--md" in sys.argv, "--extended" in sys.argv)

@@ -37,7 +37,10 @@ Living rooms are kitchen, dining, living and library/office. Round 3 has to reac
 ## Hard targets (every option)
 
 1. **Heated main-floor footprint, outside face, excluding the garage: 3,400–3,600 sq ft. Hard ceiling 3,650** (the matrix row in `plan_facts.py`). The basement sits under the main floor, same outline or smaller.
-2. **Routes:** `routes.py` reports **0 pass-throughs** on all 10 routes. Garage → kitchen may pass through the mudroom or pantry; those are utility rooms, not living rooms. **Total walk ≤ 420 ft.**
+2. **Routes:** `routes.py --extended` reports **0 pass-throughs on all 14 routes**. That's the 10 above plus four living-room trips added on 11 Nov after the first H drawing: front door → living, front door → dining, kitchen → living, dining → living.
+   - Garage → kitchen may pass through the mudroom or pantry; those are utility rooms, not living rooms.
+   - **Total walk ≤ 420 ft for the 10 and ≤ 560 ft for all 14.**
+   - Round-2 baseline on the 14: D 13 pass-throughs (653 ft), E 4 (514 ft), F 16 (850 ft).
 3. **Not linear:** the kitchen/dining, the living and the library each open onto the hub. No three living rooms in a row along one axis. Kitchen → dining stays direct (K-035). Dining ↔ living may connect through a wide opening, as long as no route needs it.
 4. **Halls:** strict circulation ≤ 12% (matrix row). The hub counts as circulation, so keep it a compact room, not a gallery. Halls ≥ 5 ft clear (K-060).
 5. **Daylight:** building depth ≤ 40 ft wherever there are living rooms (outside face). Every bedroom, living room, kitchen, dining room and library has an exterior wall with a window, and a window on 2 walls where possible (K-064).
