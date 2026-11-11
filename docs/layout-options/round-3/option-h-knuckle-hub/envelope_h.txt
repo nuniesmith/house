@@ -1,0 +1,3 @@
+main heated (excl. garage, porch): area 3,571 sq ft; perimeter 288.8 ft; corners 22 (13 out, 9 in); bbox 66.0 x 71.4 ft; pieces 1; holes 0
+garage: area 625 sq ft; perimeter 100.0 ft; corners 4 (4 out, 0 in); bbox 25.0 x 25.0 ft; pieces 1; holes 0
+basement (excl. porch, EXIT STAIR): area 2,551 sq ft; perimeter 283.8 ft; corners 24 (14 out, 10 in); bbox 63.0 x 61.4 ft; pieces 1; holes 0
