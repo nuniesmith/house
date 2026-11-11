@@ -7,4 +7,4 @@ Independent re-measurements of each option, the same way for every column.
 
 **One known tool artefact.** The matrix row "Main stair top/foot vs the basement stair" assumes today's north-to-south 21-tread flight. It reads "moved" for the round-2 options, whose 18-tread flights run north (D) or west (E). The stair is checked properly in `../review/r2-code-structure.md`.
 
-The matrix for F is added when its drawing lands.
+`matrix_f.md` is F as committed (Kayla's Nov 11 list, drawn compact); `matrix_f_nov10.md` is the dated Nov 10 version.

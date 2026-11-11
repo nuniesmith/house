@@ -58,7 +58,7 @@ def best(room, fixes, doors, inset=0.2, use_swing=True):
     return 2*bestr,bc
 if __name__=='__main__':
     import json
-    for opt in 'DE':
+    for opt in (sys.argv[1] if len(sys.argv)>1 else 'DE'):
       for lvl in ('main','base'):
         d=load(opt,lvl); fx=[f for f in d['fixtures']+d['furniture']]
         for r in d['rooms']:

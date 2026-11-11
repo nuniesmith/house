@@ -1,7 +1,7 @@
 import ast, re, subprocess, sys, math, json
 from pathlib import Path
 O = Path("/home/user/house-review/docs/layout-options/round-2")
-OPT = {"D": ("option-d-compact-l", "d"), "E": ("option-e-linear-ranch", "e")}
+OPT = {"D": ("option-d-compact-l", "d"), "E": ("option-e-linear-ranch", "e"), "F": ("option-f-your-sizes-fitted", "f")}
 if len(sys.argv) > 1 and sys.argv[1] == "F":
     pass
 FT = 0.3048
@@ -24,7 +24,7 @@ def run(tag):
     mr,md,mw,mf = audit(M); br,bd,bw,bf = audit(B)
     return mr,md,mw,mf,br,bd,bw,bf
 res = {}
-for tag in "DE":
+for tag in "F":
     mr,md,mw,mf,br,bd,bw,bf = run(tag)
     print("=====", tag)
     # stair
@@ -33,7 +33,9 @@ for tag in "DE":
     sw = [r for r in mr if r[6]=="stairwell"][0]
     print("stairwell room", sw[:6])
     wt = 0.4
-    if tag=="D":
+    if tag=="F":
+        top=20.2; olen_cut=20.2-(8.4+0.2+0.01)
+    elif tag=="D":
         top = 27.0; far = sw[4]-wt/2+ -0.01   # opening cut: 27.01 .. 38.49
         open_len_cl = 11.5 - 0.02             # as cut in floor_assembly
         olen = (sw[2]-0.0) - (27.0)           # centre line

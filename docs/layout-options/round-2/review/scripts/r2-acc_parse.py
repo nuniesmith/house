@@ -1,6 +1,6 @@
 import re, ast
 R='/home/user/house-review/docs/layout-options/round-2/'
-P={'D':R+'option-d-compact-l/','E':R+'option-e-linear-ranch/'}
+P={'D':R+'option-d-compact-l/','E':R+'option-e-linear-ranch/','F':R+'option-f-your-sizes-fitted/'}
 def load(opt, level):
     f=P[opt]+('main_floor_%s.scad'%opt.lower() if level=='main' else 'basement_%s.scad'%opt.lower())
     t=open(f).read()

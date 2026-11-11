@@ -1,12 +1,12 @@
-# R2-PMC: plumbing, mechanical and cost (round 2, options D and E)
+# R2-PMC: plumbing, mechanical and cost (round 2, options D, E and F)
 
-**Specialist:** R2-PMC (prefix PMC). **Status:** D and E complete; **F pending** (its column is marked "pending"; findings, the comparison table, the verdict and the cost ranking will be rewritten for all three when F lands). **Date:** 2026-11-11.
+**Specialist:** R2-PMC (prefix PMC). **Status:** D, E and F complete (F added 2026-11-11 from `main_floor_f.scad`, `basement_f.scad`, `house_lib_f.scad` only; the `*_nov10.*` files ignored). F is deliberately uncapped (3,910 sq ft at the outside face): its size is context, not a defect. Verdict and cost ranking rewritten for all three. **Date:** 2026-11-11.
 
-**Inputs read:** REVIEW-R2.md, ROUND2-BRIEF.md, COMMON-RULES.md; round-1 `04-plumbing-septic.md` (PLB), `06-gas-hvac.md` (GAS), `07-cost-ve.md` (COST); `r2-code-structure.md` (CS, esp. CS-18) and `r2-accessibility-kayla.md` (ACC); both options' scad files, PNGs, matrix, plan_facts, PROS-CONS; `site.scad` (tank, drives); the repo research doc (HR:line).
+**Inputs read:** REVIEW-R2.md, ROUND2-BRIEF.md, COMMON-RULES.md; round-1 `04-plumbing-septic.md` (PLB), `06-gas-hvac.md` (GAS), `07-cost-ve.md` (COST); `r2-code-structure.md` (CS, esp. CS-18) and `r2-accessibility-kayla.md` (ACC); the three options' scad files, PNGs, matrix, plan_facts, PROS-CONS; `site.scad` (tank, drives); the repo research doc (HR:line).
 
 **Method.** Re-ran `envelope.py`, `plan_facts.py` (`work/R2-PMC/d`, `e`) and `check_layout.py` (D: 29 main rooms / 28 basement, OK; E: 28 / 22, OK). Geometry measured with `work/R2-PMC/pmc.py` (shapely over the audit tables, outside face = centre line + 0.5 ft, same as the matrix). Gas items: "needs B149.1 check". Wiring: "needs CEC check". Prices come only from the repo's ranges (HR:line, or COST-nn); anything else is "no data, needs a quote". No stamped-engineer claims: structural and plumbing layout are review items for a licensed Alberta engineer / plumber / septic designer. Land is not chosen, so soil, frost depth, grade and utility availability are assumptions.
 
-**Counting rule for the septic bedroom count.** A basement bedroom counts as a bedroom. The murphy-bed-ready FLEX / CRAFT room counts as a bedroom for a conservative design, because it has an egress window and a bed footprint (D `basement_d.scad:151`; D also draws it a closet). So both options are **4 bedrooms as drawn (BR 2, primary, BR 3, BR 4) and 5 if the flex room is counted**. I give both.
+**Counting rule for the septic bedroom count.** A basement bedroom counts as a bedroom. The murphy-bed-ready FLEX / CRAFT room counts as a bedroom for a conservative design, because it has an egress window and a bed footprint (D `basement_d.scad:151`; D also draws it a closet). So both options are **4 bedrooms as drawn (BR 2, primary, BR 3, BR 4) and 5 if the flex room is counted**. I give both. F is the same, plus a main-floor OFFICE / LIBRARY (with windows, no closet) that I do not count; a 6-bedroom reading is shown for F only.
 
 ## 1. Findings
 
@@ -24,82 +24,91 @@
 | PMC-10 | Consider | D, E | Hot water | **One water heater in the utility room serves each house; the furthest fixture is 94.7 ft (D) and 83.9 ft (E) away, against 119.8 ft today.** Add 11.75 ft of rise: D 106.5 ft, E 95.7 ft, today 133.6 ft. Using PLB-07's pipe volumes (1/2 in 0.0104 US gal/ft, 3/4 in 0.0231) and 5.7 L/min: D 0.74 min (1/2 in) to 1.63 min (3/4 in) before hot arrives; E 0.66 to 1.47 min; today 0.92 to 2.05 min. The basement fixtures: D's bath 2 is 94.4 ft from the heater, E's Jack-and-Jill 51.3 ft. A recirculation loop or point-of-use heater is still worth pricing for the primary suite (D, in the north-east of the private wing). Heater fuel and size are not in the model: gas needs a B149.1 check. | matrix_d.md / matrix_e.md water-heater rows; PLB-07 | needs B149.1 check | $ |
 | PMC-11 | Consider | D, E | Wet-wall grouping and stacking | **Main-floor wet groups fall from 14 to 7 (D) and 8 (E); basement groups from 8 to 4 and 3.** D stacks 3 of 7 main groups within 5 ft of a basement group (the guest bath sits exactly over basement bath 1, 0.0 ft); E stacks 1 of 8 within 5 ft (the master shower/vanity over the Jack-and-Jill, 0.8 ft) and 2 within 10 ft. E's laundry group backs onto the living-room wall (y 19.5) and the powder room is 29.5-34.3 ft from the basement bath. Neither has island plumbing, so round-1 PLB-13's island-vent item no longer applies. Kitchen sink on an exterior wall in both (D south wall 0.4 ft, E north wall 0.5 ft): supplies inside the insulated wall (PLB-14). | matrix rows; plan_facts 9.3/9.4 | NPC 2.3.5.3. (freezing) | $ |
 | PMC-12 | Consider | ALL | Hot-tub sunroom (not drawn) | **Neither option draws it.** D lists it as a future addition outside the 3,000 sq ft; E drops it. If added later: spa clearwater may not go to the septic unless the system is designed for it, and a sunroom with a spa needs its own humidity exhaust and dehumidification (ABC 9.32 ventilation; sizing: needs a mechanical designer). | D PROS-CONS section 2 ("sun room and hot-tub sunroom (none; a future addition outside the 3,000)"); E PROS-CONS section 8 | SOP 2.1.2.6. (spa clearwater) | unknown, no data, needs a quote |
+| PMC-13 | Should fix | F | Main-floor drains from the quiet wing (x 98-127) to the septic side | **F is today's master-wing problem again: 8 of 9 wet groups are 100-133 ft from the matrix exit and none stacks over a basement fixture.** Matrix drain-run index 1,017.1 ft (alternate exit 847.8); groups over 98 ft (30 m) at the matrix point: 8 of 9 (123.0, 132.6, 125.7, 127.0, 128.0, 111.7, 101.5, 113.3; only the kitchen, 54.1, is under). At a physical exit (utility north-west corner (16.6, 41.2)) the index is **916.0 ft with 7 of 9 over 98 ft and the longest 121.4 ft (37 m)**, against D 485.6 / none over, E 500.3 / none over. 121 ft at 1 in 100 needs 1.2 ft of fall inside a 1.625 ft truss floor, the same marginal case as PLB-03 (120-145 ft, today); every long line needs an intermediate cleanout. The basement is under the whole wing (future theatre, FUTURE ROOM at x 98-127) but holds no fixtures, so the cheap options are a basement-ceiling line with access panels, or a second ejector/stack at the east end (no data, needs a quote). Wet-wall groups 9 main, 2 basement; 0 of 9 within 5 ft of a basement group (D 3 of 7, E 1 of 8). | plan_facts_f 9.3-9.5; matrix_f.md; pmc_f.py exit sums; PLB-03, PLB-11 | NPC 2.4.7.1.(6); Table 2.4.7.2; NPC 2.4.8.1; Table 2.4.10.6.-C | $$ (ejector or hung line; no data, needs a quote) |
+| PMC-14 | Should fix | F | Utility louvres and vent chase (x 16.6, y 28-31 and 32-33.5) | **The room is the best sited of the three, but the vents are not yet outdoors.** The west wall is 16.4 ft long and entirely free of the garage (the garage ends at y 24.8; the louvres are 3.2 ft north of it), the north wall is 10.0 ft free, and there is no crawl space. But both openings are 3.75 ft below grade with no well (CS-18, CS-21), so combustion air and the water-heater and HRV terminals are underground as drawn. Both sit directly under the office windows at (16.6, 26) and (16.6, 35) (sill 2.5 ft above the main floor, about 8 ft above the louvre heads), so terminal-to-window clearance is a live question. Take the vents through the rim above grade. The air handler and boiler are on the west and south of the room (17-23, 25.4-28.6), the water heater and HRV on the west wall (17-23, 30.4-32.6): short routes. | `basement_f.scad:34-35,103-107`; `main_floor_f.scad` office windows; pmc_f.py (west wall 16.4 ft free); CS-18, CS-21 | ABC 9.33.5.5; clearances needs B149.1 check | $ |
+| PMC-15 | Consider | F | Laundry (x 98.4-107.8, y 25.8-36.2) | **Interior laundry, no window; the dryer (106.2-107.7, 26.2-36) is 9.5 ft in a straight line and 11.7 ft by plan from the nearest exterior wall** (the 3 ft stub of the laundry's west wall at y 33.2-36.2, north of the elevator, where the elevator's north wall is the exterior wall: CS-11). Better than E (18.6 ft), worse than D (1.8 ft), better than today (23.7 ft, PLB-08). The 1,800 mm outlet-to-intake clearance applies; duct length limits are not in the library: needs a manufacturer / ABC check. | pmc_f.py; `main_floor_f.scad:172-176`; CS-11 | ABC 9.32.3.13.(4) | $ |
+| PMC-16 | Consider | F | Hot water | **One heater at the far west end (18.1, 31.5) serves a house 111 ft wide: the furthest fixture is 114.8 ft away (master bath WC), 126.6 ft with the 11.75 ft rise.** Using PLB-07's volumes and 5.7 L/min: 0.87 min (1/2 in, 5.0 L) to 1.94 min (3/4 in, 11.1 L) before hot arrives, against 0.92-2.05 min today (133.6 ft), D 0.74-1.63, E 0.66-1.47. F is 5% shorter than today, so PLB-07's recirculation or point-of-use heater in the quiet wing is still needed. Basement furthest 62.4 ft. Fuel and size are not in the model: gas needs a B149.1 check. | matrix_f.md; PLB-07 | needs B149.1 check | $ to $$ (no data, needs a quote) |
+| PMC-17 | Consider | F | Septic flow, tank and setback | **F's flow equals D's, and the tank is the closest of the three to a heated wall.** Fixture units 32.0 (main 25.5: kitchen 1.5, powder 5, shared bath 6.5, laundry 3.5, ensuite 9.0 with tub, shower, WC and a double vanity; basement Jack-and-Jill 6.5). 4 bedrooms: 2,040 + 4.0 x 50 = **2,240 L/day**, tank 4,640 L (table 4,260 L); 5 bedrooms (flex counted): **2,600 L/day**, tank 5,600 L (table 5,220 L), field 265 m2 (2,856 sq ft) at 9.80 L/m2/d; if the main-floor office/library were also counted as a bedroom, 3,060 L/day, tank 6,660 L (table 6,130 L), field 312 m2, equal to today's. Softener +15% not included (none drawn). Tank (x -3..3, y 52-64) to F's heated wall (office/utility corner, outside face) **16.7 ft**, garage 26.7 ft, basement 16.7 ft, deck 69.4 ft; SOP minimum 3.25 ft. Excavating beside the 10 ft ICF wall at that corner is for the engineer. F's drive strip (23 x 16 ft = 368 sq ft, south) is a site change that PROS-CONS section 9 lists under garage doors but not as a site departure (D lists it as one). | pmc_f.py; plan_facts_f 9.1/9.2; `site.scad:70-73`; F PROS-CONS section 9 | SOP Table 2.2.2.2.A.; SOP 4.2.1.1.; Table 4.2.2.2.; 8.2.1.13.; 4.2.2.1. | $ to $$ (tank: no data, needs a quote) |
+| PMC-18 | Consider | F | Basement ejector and bath | **The pit is labelled only in a comment (23.8-26, 38.4-40; 2.2 x 1.6 ft, 0.05 ft high) and the Jack-and-Jill bath (x 44.8-53.2, y 0-14.4) is 55.2-63.3 ft from it by plan (17-19 m).** Inside the 30 m two-way spacing but past the 15 m one-way figure, so a cleanout at the bath end is needed; fall 0.55-0.63 ft. Basement load 6.5 FU (D 13, E 7.5). The pit is in the north-west corner of the utility room, 1.2 ft from the north wall (y 41.2): a short force main to the tank (about 33 ft). Same unlabelled-pit point as PMC-04. | `basement_f.scad:107`; pmc_f.py; matrix | NPC 2.4.6.3.(1); Table 2.4.7.2 | $ |
+| PMC-19 | Consider | F | Roof over the pantry and mudroom; elevator north wall | **165 sq ft of heated rooms (pantry, mudroom, x 23-32.4, y 0-24.8) sit under no roof block (CS-20); the fix is another block on a roof table already at 7 (5 house, 2 porch), against D 9 and E 4.** The elevator's north wall at y 33.2 is the exterior ICF wall (CS-11), so the basement-slab elevator pit sits against the exterior wall and its footing: pit drain, waterproofing and sump are the manufacturer's and a licensed plumber's (no repo figure). No price for either in the repo. | CS-11, CS-20; `main_floor_f.scad:232-240` | no article found in the library for the pit drain | unknown, no data, needs a quote |
+| PMC-20 | Consider | F | Services route to the utility room | **Shortest of the three.** From the west-wall landing (7.27, 48; GAS-02) to F's free west wall (16.6, 33) is 24.3 ft by plan, against E 31.7 ft and D 48.7 ft. Gas run and meter: needs B149.1 check; power feeder: needs CEC check. | pmc_f.py geometry; GAS-02 | needs B149.1 check; needs CEC check | $ (no data, needs a quote) |
+| PMC-21 | Consider | F | Hot-tub sunroom (not drawn) | **Not drawn and not listed as a future addition** (D lists it as outside the 3,000 sq ft; F has no cap to be outside of). Same constraints as PMC-12 if added. | F PROS-CONS (K-034 MISSING: "No sunroom or screened porch drawn") | SOP 2.1.2.6. (spa clearwater) | unknown, no data, needs a quote |
 
-*plan_facts note.* Section 9.6 of both `plan_facts_d.md` and `plan_facts_e.md` still prints the water-heater position of today's model ("(30.1, 36.8)", `basement.scad`); the matrix rows are right (D (32.0, 20.0), E (25.7, 29.6)). Not used here.
+*plan_facts note.* Section 9.6 of `plan_facts_d.md`, `plan_facts_e.md` and `plan_facts_f.md` still prints the water-heater position of today's model ("(30.1, 36.8)", `basement.scad`); the matrix rows are right (D (32.0, 20.0), E (25.7, 29.6), F (18.1, 31.5)). Not used here.
 
 ## 2. Quantities (re-measured; today's model from `envelope.py`)
 
 | Driver | Today | D | E | F |
 |---|---|---|---|---|
-| Heated main floor, outside face, sq ft | 5,685 | 2,934 | 2,940 | pending |
-| Basement footprint, outside face, sq ft | 3,617 | 2,934 | 2,940 | pending |
-| Heated envelope perimeter, ft (outside face) | 399.5 | 311.8 | 227.0 | pending |
-| Envelope corners (out + in) | 30 (17+13) | 14 (9+5) | 4 (4+0) | pending |
-| Basement perimeter, ft | 285.3 | 311.8 | 227.0 | pending |
-| ICF wall area, sq ft (perimeter x slab-top-to-main-floor: 12.125 ft today, 10.125 ft D/E) | 3,459 | 3,157 | 2,298 | pending |
+| Heated main floor, outside face, sq ft | 5,685 | 2,934 | 2,940 | 3,910 (no cap, by design) |
+| Basement footprint, outside face, sq ft | 3,617 | 2,934 | 2,940 | 3,917 |
+| Heated envelope perimeter, ft (outside face) | 399.5 | 311.8 | 227.0 | 413.2 |
+| Envelope corners (out + in) | 30 (17+13) | 14 (9+5) | 4 (4+0) | 24 (14+10) |
+| Basement perimeter, ft | 285.3 | 311.8 | 227.0 | 413.2 |
+| ICF wall area, sq ft (perimeter x slab-top-to-main-floor: 12.125 ft today, 10.125 ft D/E/F) | 3,459 | 3,157 | 2,298 | 4,184 |
 | ICF wall area on today's 12.96 ft basis (COST-01) | 3,697 | n/a | n/a | n/a |
-| Roof blocks (house + porch) | 16 hip blocks (PF 1.2, COST-08) | 9 (5 house, 4 porch) | 4 (bar ridge, garage, 2 porch) | pending |
-| Porch / patio / deck area under roof, sq ft (excl. drive) | 2,221 (COST-10) | 756 | 772 | pending |
-| Garage, outside face, sq ft | 892 | 645 | 700 | pending |
-| Window rows (main + basement) | 19 (COST-09) | 24 (16 + 8) | 23 (16 + 7) | pending |
-| Basement window wells drawn | 0 | 3 | 5 | pending |
-| Wet-wall groups (main + basement) | 14 + 8 | 7 + 4 | 8 + 3 | pending |
-| Drain-run index at matrix point, ft | 879.4 | 587.2 | 667.1 | pending |
-| Drain-run index at a physical exit, ft | 747.1 (alternate) | 485.6 | 500.3 | pending |
-| Fixture units (SOP table) | 55.5 | 32.0 | 32.5 | pending |
-| Bedrooms for septic (flex not counted / counted) | 3 | 4 / 5 | 4 / 5 | pending |
-| Design flow, L/day (flex not counted / counted) | 3,055 | 2,240 / 2,600 | 2,265 / 2,625 | pending |
-| Elevator rough-in | none | stacked 6.0 x 7.4 ft, offset 0.0 | stacked 6.0 x 7.4 ft, offset 0.0 | pending |
-| Stair | 22 risers, 13.75 ft | 19 risers, one flight, 3,581 mm | 19 risers, one flight | pending |
+| Roof blocks (house + porch) | 16 hip blocks (PF 1.2, COST-08) | 9 (5 house, 4 porch) | 4 (bar ridge, garage, 2 porch) | 7 (5 house, 2 porch); 165 sq ft of rooms under none (CS-20) |
+| Porch / patio / deck area, sq ft (excl. drive; F's deck is unroofed) | 2,221 (COST-10) | 756 | 772 | 224 (176 under roof) |
+| Garage, outside face, sq ft | 892 | 645 | 700 | 619 |
+| Window rows (main + basement) | 19 (COST-09) | 24 (16 + 8) | 23 (16 + 7) | 23 (17 + 6) |
+| Basement window wells drawn | 0 | 3 | 5 | 3 |
+| Wet-wall groups (main + basement) | 14 + 8 | 7 + 4 | 8 + 3 | 9 + 2 |
+| Drain-run index at matrix point, ft | 879.4 | 587.2 | 667.1 | 1,017.1 |
+| Drain-run index at a physical exit, ft | 747.1 (alternate) | 485.6 | 500.3 | 916.0 |
+| Fixture units (SOP table) | 55.5 | 32.0 | 32.5 | 32.0 |
+| Bedrooms for septic (flex not counted / counted) | 3 | 4 / 5 | 4 / 5 | 4 / 5 (6 if the office counts) |
+| Design flow, L/day (flex not counted / counted) | 3,055 | 2,240 / 2,600 | 2,265 / 2,625 | 2,240 / 2,600 (3,060 at 6) |
+| Elevator rough-in | none | stacked 6.0 x 7.4 ft, offset 0.0 | stacked 6.0 x 7.4 ft, offset 0.0 | stacked 6.4 x 7.4 ft, offset 0.0; north wall is exterior ICF (CS-11) |
+| Stair | 22 risers, 13.75 ft | 19 risers, one flight, 3,581 mm | 19 risers, one flight | 19 risers, one flight; foot landing short (CS-19) |
 
 ## 3. Cost: drivers ranked, priced only from the repo
 
-Scale for the table below: "down" = a saving against today's model, "$ / $$ / $$$" = small / medium / large. Dollar figures are the repo's ICF range multiplied by the measured area (the rows marked "computed").
+Scale: "down" = a saving against today's model, "up" = added cost; "$ / $$ / $$$" = small / medium / large. Dollar figures are the repo's ICF range multiplied by the measured area (rows marked "computed"). Everything else is "no data, needs a quote".
 
-| Rank | Driver | D vs today | E vs today | Repo price |
-|---|---|---|---|---|
-| 1 | Heated footprint (both levels) | $$$ down (5,685 to 2,934; 3,617 to 2,934) | $$$ down (to 2,940; 2,940) | no whole-house $/sq ft in the repo (COST header) |
-| 2 | ICF basement wall | $ down: 3,157 sq ft = $110K-$158K vs $121K-$173K today (**-$10.6K to -$15.2K**, computed, HR:321 $35-50/sq ft) | $$ down: 2,298 sq ft = $80K-$115K (**-$40.7K to -$58.2K**, computed) | HR:321; Winnipeg low end $20-30 (HR:316) would give D $63K-$95K, E $46K-$69K |
-| 3 | Whole foundation package at 1.8-2.2x the wall (HR:321, "unverified for this scale") | D $199K-$347K vs $218K-$381K today | E $145K-$253K | computed from HR:321 |
-| 4 | Envelope perimeter and corners | $ down (311.8 ft, 14 corners vs 399.5, 30) | $$ down (227.0 ft, 4 corners) | no $/ft in the repo (COST-08) |
-| 5 | Roof form | $$ down (9 blocks, 5 inside corners in the L) | $$$ down (one ridge, 4 blocks; but a 39 ft clear span, CS-08) | no data, needs a quote |
-| 6 | Porches and patios | $$ down (756 sq ft) | $$ down (772 sq ft) | no data, needs a quote |
-| 7 | Windows | $ up (24 rows vs 19) | $ up (23 rows vs 19) | HR:434 $850-$1,600 each: D $20.4K-$38.4K, E $19.6K-$36.8K vs $16.2K-$30.4K today (computed; egress rows and wells are priced separately: no data) |
-| 8 | Plumbing groups and runs | $$ down (11 groups vs 22; longer ejector run to bath 2, PMC-03) | $$ down (11 groups vs 22) | no data, needs a quote |
-| 9 | Elevator rough-in (stacked shaft, pit in the basement slab) | $ up, same in both | $ up, same | no repo price |
-| 10 | Straight stair | no difference | no difference | no repo price |
-| 11 | Utility venting and services | $ (PMC-01, PMC-09: +17 ft of services) | $ (PMC-02) | no data, needs a quote |
-| 12 | New south drive and apron (both depart from the site's west drive) | D 390 sq ft | E 384 sq ft | no data, needs a quote |
+| Rank | Driver | D vs today | E vs today | F vs today | Repo price |
+|---|---|---|---|---|---|
+| 1 | Heated footprint (both levels) | $$$ down (5,685 to 2,934; 3,617 to 2,934) | $$$ down (2,940; 2,940) | $$ down (5,685 to 3,910 main, **basement up** 3,617 to 3,917) | no whole-house $/sq ft in the repo (COST header) |
+| 2 | ICF basement wall | $ down: 3,157 sq ft = $110K-$158K vs $121K-$173K today (**-$10.6K to -$15.2K**, computed) | $$ down: 2,298 sq ft = $80K-$115K (**-$40.7K to -$58.2K**) | **$$ up: 4,184 sq ft = $146K-$209K (+$25.4K to +$36.3K)**; +$35.9K-$51.4K over D, +$66.0K-$94.3K over E | HR:321 $35-50/sq ft; the Winnipeg $20-30 (HR:316) would give D $63K-$95K, E $46K-$69K, F $84K-$126K |
+| 3 | Whole foundation package at 1.8-2.2x the wall (HR:321, "unverified for this scale") | $199K-$347K vs $218K-$381K today | $145K-$253K | $264K-$460K | computed from HR:321 |
+| 4 | Envelope perimeter and corners | $ down (311.8 ft, 14 corners) | $$ down (227.0 ft, 4 corners) | about equal: +3% perimeter, 24 corners vs 30 | no $/ft in the repo (COST-08) |
+| 5 | Roof form | $$ down (9 blocks) | $$$ down (one ridge, 4 blocks; 39 ft clear span, CS-08) | $$ down (7 blocks, 24 corners; one more block for CS-20) | no data, needs a quote |
+| 6 | Porches and patios | $$ down (756 sq ft) | $$ down (772 sq ft) | $$$ down (224 sq ft) | no data, needs a quote |
+| 7 | Windows | $ up (24 rows vs 19) | $ up (23 rows) | $ up (23 rows) | HR:434 $850-$1,600 each: D $20.4K-$38.4K, E and F $19.6K-$36.8K, today $16.2K-$30.4K (computed; wells priced nowhere) |
+| 8 | Plumbing groups and runs | $$ down (11 groups vs 22; long ejector run to bath 2) | $$ down (11 groups) | $ down (11 groups, but 7 of 9 lines over 98 ft: PMC-13 offsets the saving) | no data, needs a quote |
+| 9 | Elevator rough-in | $ up | $ up | $ up (pit against an exterior wall, PMC-19) | no repo price |
+| 10 | Straight stair | no difference | no difference | no difference | no repo price |
+| 11 | Utility venting and services | $ (PMC-01, 09: +17 ft vs E) | $ (PMC-02) | $ (PMC-14; shortest services run, PMC-20) | no data, needs a quote |
+| 12 | New south drive and apron (all three depart from the site's west drive) | 390 sq ft | 384 sq ft | 368 sq ft | no data, needs a quote |
 
-**Which is cheapest to build, and by what driver.** On the repo's ranges, **E**, and the driver is the envelope, not the floor area (the two have the same area to within 6 sq ft). E's outline is a 73.5 x 40 ft rectangle: 227.0 ft of perimeter against D's 311.8 ft (85 ft or 27% less), 4 corners against 14, a single ridge, and 2,298 sq ft of ICF wall against D's 3,157 (859 sq ft less, which is **$30K-$43K** at HR:321). Against today, D saves little on the basement wall (-9%) while E saves about a third. E's offsets: a 39 ft clear roof span that is within the 12.2 m Part 9 limit by 0.43 m (CS-08), a stair-headroom blocker to fix (CS-02), 5 window wells against 3, and the louvre fix (PMC-02). D's offsets: a L-shaped roof with 5 inside corners, a 16 ft garage-door header beyond the lintel table (CS-09), and the longer ejector run (PMC-03). Plumbing, septic and elevator are a wash between them.
+**Which is cheapest to build, and by what driver.** **E**, by the envelope and the basement wall. E's outline is a 73.5 x 40 ft rectangle: 227.0 ft of perimeter and 4 corners against D's 311.8 ft and 14 and F's 413.2 ft and 24, one roof ridge against 9 and 7 blocks, and **2,298 sq ft of ICF wall against D's 3,157 and F's 4,184**. At HR:321 that is $30K-$43K under D and $66K-$94K under F, computed. D is second: it matches E's floor area (2,934 vs 2,940 sq ft) but carries 85 ft more wall. **F is the most expensive of the three**, and the driver is again the wall: F's basement outline is 413.2 ft, 45% longer than today's 285.3 ft, so even at 2 ft less height its ICF area is 21% above today's (+$25K-$36K), while D and E are below today's. Against today, all three save on the main floor and the roof; E and D save $$$, F only $ to $$ overall (its main floor is 31% smaller than today, its basement is 8% larger). E's offsets: 39 ft roof span within 0.43 m of the Part 9 limit (CS-08), the stair headroom blocker (CS-02), 5 wells. Plumbing, septic and the elevator are not what separates D and E; F's drain runs add cost on top of its wall (PMC-13).
 
 ## 4. Comparison table (one column per option, with today's model)
 
 | Criterion | Today | D | E | F |
 |---|---|---|---|---|
-| Wet-wall groups main / basement | 14 / 8 | 7 / 4 | 8 / 3 | pending |
-| Main groups within 5 ft of a basement group | 1 of 14 | 3 of 7 | 1 of 8 | pending |
-| Drain-run index (matrix point / physical exit), ft | 879.4 / 747.1 | 587.2 / 485.6 | 667.1 / 500.3 | pending |
-| Groups over 98 ft at the matrix point | 4 of 14 | 3 of 7 | 4 of 8 | pending |
-| Ejector pit drawn (labelled) | no | yes (unlabelled), SW corner | yes (unlabelled), north wall | pending |
-| Longest basement drain to the pit, ft (m) | not drawn | 109.2 (33.3) | 45.1 (13.7) | pending |
-| Utility room on an exterior wall | no (crawl space) | yes, 10.6 ft free (north); west is garage | yes, 11.5 ft free west + 8.0 ft north | pending |
-| Vent openings drawn above grade | no | none drawn | 2, both below grade | pending |
-| Water heater to furthest fixture, ft (main / basement) | 119.8 / 84.8 | 94.7 / 94.4 | 83.9 / 51.3 | pending |
-| Dryer to the nearest exterior wall, ft | 23.7 (PLB-08) | 1.8 | 18.6 | pending |
-| Hot-tub sunroom | none | none (future, outside 3,000) | none | pending |
-| Septic bedrooms (4 / 5 reading) and flow, L/day | 3: 3,055 | 4: 2,240; 5: 2,600 | 4: 2,265; 5: 2,625 | pending |
-| Tank to nearest heated wall, ft (SOP min 3.25) | 4.3 (PLB-15) | 36.5 | 24.0 | pending |
-| Perimeter / corners (cost) | 399.5 / 30 | 311.8 / 14 | 227.0 / 4 | pending |
-| ICF wall, sq ft | 3,459 | 3,157 | 2,298 | pending |
-| ICF at HR:321 $35-50 | $121K-$173K | $110K-$158K | $80K-$115K | pending |
-| Cost vs today (overall) | n/a | $$$ down | $$$ down, the larger saving | pending |
+| Wet-wall groups main / basement | 14 / 8 | 7 / 4 | 8 / 3 | 9 / 2 |
+| Main groups within 5 ft of a basement group | 1 of 14 | 3 of 7 | 1 of 8 | 0 of 9 |
+| Drain-run index (matrix point / physical exit), ft | 879.4 / 747.1 | 587.2 / 485.6 | 667.1 / 500.3 | 1,017.1 / 916.0 |
+| Groups over 98 ft at the matrix point / at a physical exit | 4 of 14 / n.a. | 3 of 7 / 0 | 4 of 8 / 0 | 8 of 9 / 7 of 9 |
+| Ejector pit drawn (labelled) | no | yes (unlabelled), SW corner | yes (unlabelled), north wall | yes (unlabelled), NW corner of utility |
+| Longest basement drain to the pit, ft (m) | not drawn | 109.2 (33.3) | 45.1 (13.7) | 63.3 (19.3) |
+| Utility room on an exterior wall | no (crawl space) | yes, 10.6 ft free (north); west is garage | yes, 11.5 ft free west + 8.0 ft north | yes, 16.4 ft free west + 10.0 ft north |
+| Vent openings drawn above grade | no | none drawn | 2, both below grade | 2, both below grade (no wells) |
+| Water heater to furthest fixture, ft (main / basement) | 119.8 / 84.8 | 94.7 / 94.4 | 83.9 / 51.3 | 114.8 / 62.4 |
+| Dryer to the nearest exterior wall, ft | 23.7 (PLB-08) | 1.8 | 18.6 | 9.5 (11.7 by plan) |
+| Hot-tub sunroom | none | none (future, outside 3,000) | none | none (not listed) |
+| Septic bedrooms (4 / 5 reading) and flow, L/day | 3: 3,055 | 4: 2,240; 5: 2,600 | 4: 2,265; 5: 2,625 | 4: 2,240; 5: 2,600 |
+| Tank to nearest heated wall, ft (SOP min 3.25) | 4.3 (PLB-15) | 36.5 | 24.0 | 16.7 |
+| Perimeter / corners (cost) | 399.5 / 30 | 311.8 / 14 | 227.0 / 4 | 413.2 / 24 |
+| ICF wall, sq ft | 3,459 | 3,157 | 2,298 | 4,184 |
+| ICF at HR:321 $35-50 | $121K-$173K | $110K-$158K | $80K-$115K | $146K-$209K |
+| Cost vs today (overall) | n/a | $$$ down | $$$ down, the largest saving | $ to $$ down, the smallest |
 
-## 5. Verdict (D and E only; F pending)
+## 5. Verdict
 
-1. **E is cheapest to build** (227.0 ft perimeter, 4 corners, one ridge, ICF wall $30K-$43K below D's, computed from HR:321); D and E are equal on floor area (2,934 and 2,940 sq ft), septic flow (2,240-2,600 vs 2,265-2,625 L/day) and plumbing group count (11 each).
-2. **D is stronger on stacking and the laundry** (3 of 7 groups stacked; dryer 1.8 ft from a wall) **but has a far ejector pit (bath 2 at 109 ft) and a utility room with no free west wall; E's defects are the interior laundry (18.6 ft dryer run) and below-grade louvres, while its hot-water run is shorter (83.9 vs 94.7 ft).**
-3. Both fix round 1's crawl-space venting root cause and lower the septic load below today's; each still needs its vent openings drawn above grade (PMC-01, PMC-02) and its pit labelled (PMC-04).
+1. **E is strongest on cost and the simplest to plumb for its size**: cheapest to build (227.0 ft perimeter, 4 corners, one ridge, ICF wall $30K-$43K below D's and $66K-$94K below F's, computed from HR:321), no main-floor line over 98 ft at a physical exit, and the shortest ejector run (45 ft). Its faults: an interior laundry (18.6 ft dryer run) and below-grade louvres (PMC-02, PMC-06).
+2. **D is second**: same floor area as E, best stacking (3 of 7) and a dryer 1.8 ft from a wall, but 85 ft more envelope than E and a far ejector pit (109 ft) with no free west wall (PMC-01, PMC-03). **F is third on cost and plumbing**: the largest ICF wall (4,184 sq ft, above today's 3,459), the longest drains (7 of 9 groups over 98 ft, longest 121 ft, 0 stacked) and a hot-water run (114.8 ft) near today's; its utility room is the best sited (16.4 ft free west wall, shortest services), and its size is by design.
+3. All three remove the crawl-space venting root cause of round 1 and carry a design flow below today's (2,240-2,625 L/day against 3,055; F reaches today's only if its office counts as a sixth bedroom); each still needs its vent openings drawn above grade and its ejector pit labelled (PMC-01, 02, 04, 14).
 
 ## Citation log
 
@@ -124,4 +133,6 @@ Scale for the table below: "down" = a saving against today's model, "$ / $$ / $$
 | PMC-07 | `search.py --page sewage 103` | sewage | 103 | 8.2.1.13. | A treatment field shall not be installed on soils that have an effluent hydraulic loading rate of less than 9.80 L per square metre |
 | PMC-07 | `search.py --page sewage 39` | sewage | 39 | Table 2.2.2.3. | Water Softener Discharge 15% increase in peak daily wastewater volume |
 | PMC-08 | `search.py --page sewage 59` | sewage | 59 | 4.2.2.1. | 1 m (3.25 ft.) of a building. |
+| PMC-17 | `search.py --page sewage 59` | sewage | 59 | 4.2.2.1. | 1 m (3.25 ft.) of a building. |
+| PMC-17 | `search.py --page sewage 103` | sewage | 103 | 8.2.1.13. | A treatment field shall not be installed on soils that have an effluent hydraulic loading rate of less than 9.80 L per square metre |
 | PMC-12 | `search.py --page sewage 31` | sewage | 31 | 2.1.2.6. | clearwater waste from a hot tub, spa, or hydro massage bath that is not of the fill-and-drain design |

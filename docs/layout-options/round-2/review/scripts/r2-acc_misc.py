@@ -2,7 +2,8 @@ from parse import load
 from circ import lab, swing_geoms
 from shapely.geometry import box
 from shapely.ops import unary_union
-for o in 'DE':
+import sys
+for o in (sys.argv[1] if len(sys.argv)>1 else 'DE'):
   for l in ('main','base'):
     d=load(o,l)
     ws=[(x[4],x[3]) for x in d['doors'] if x[4] in('door','double')]
