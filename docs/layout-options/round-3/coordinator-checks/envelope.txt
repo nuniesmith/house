@@ -1,0 +1,16 @@
+== today
+main heated (excl. garage, porch): area 5,685 sq ft; perimeter 399.5 ft; corners 30 (17 out, 13 in); bbox 121.9 x 67.6 ft; pieces 1; holes 0
+garage: area 892 sq ft; perimeter 121.1 ft; corners 4 (4 out, 0 in); bbox 25.3 x 35.2 ft; pieces 1; holes 0
+basement (excl. porch, EXIT STAIR): area 3,617 sq ft; perimeter 285.3 ft; corners 14 (9 out, 5 in); bbox 81.9 x 58.4 ft; pieces 1; holes 0
+== D
+main heated (excl. garage, porch): area 2,934 sq ft; perimeter 311.8 ft; corners 14 (9 out, 5 in); bbox 81.6 x 70.5 ft; pieces 1; holes 0
+garage: area 645 sq ft; perimeter 101.6 ft; corners 4 (4 out, 0 in); bbox 25.4 x 25.4 ft; pieces 1; holes 0
+basement (excl. porch, EXIT STAIR): area 2,934 sq ft; perimeter 311.8 ft; corners 14 (9 out, 5 in); bbox 81.6 x 70.5 ft; pieces 1; holes 0
+== F
+main heated (excl. garage, porch): area 3,910 sq ft; perimeter 413.2 ft; corners 24 (14 out, 10 in); bbox 111.4 x 68.0 ft; pieces 1; holes 0
+garage: area 619 sq ft; perimeter 99.6 ft; corners 4 (4 out, 0 in); bbox 24.0 x 25.8 ft; pieces 1; holes 0
+basement (excl. porch, EXIT STAIR): area 3,917 sq ft; perimeter 413.2 ft; corners 24 (14 out, 10 in); bbox 111.4 x 68.0 ft; pieces 1; holes 0
+== H
+main heated (excl. garage, porch): area 3,571 sq ft; perimeter 288.8 ft; corners 22 (13 out, 9 in); bbox 66.0 x 71.4 ft; pieces 1; holes 0
+garage: area 625 sq ft; perimeter 100.0 ft; corners 4 (4 out, 0 in); bbox 25.0 x 25.0 ft; pieces 1; holes 0
+basement (excl. porch, EXIT STAIR): area 2,551 sq ft; perimeter 283.8 ft; corners 24 (14 out, 10 in); bbox 63.0 x 61.4 ft; pieces 1; holes 0
